@@ -1,0 +1,10 @@
+{
+  "files.exclude": {
+    "**/.gradle": true,
+    "**/.gradle-user-home": true,
+    "**/build": true,
+    "**/work": true
+  },
+  "java.import.gradle.enabled": true,
+  "java.configuration.updateBuildConfiguration": "automatic"
+}

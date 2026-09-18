@@ -1,0 +1,61 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.automation.template'
+version = '1.0'
+
+// ES: Java 21 es el valor predeterminado. Puede seleccionarse una toolchain LTS compatible
+// mediante -PjavaVersion=17 o -PjavaVersion=21.
+// EN: Java 21 is the default. A compatible LTS toolchain can be selected with
+// -PjavaVersion=17 or -PjavaVersion=21.
+def targetJavaVersion = (findProperty('javaVersion') ?: '21').toString().toInteger()
+
+if (targetJavaVersion < 17) {
+    throw new GradleException('Java 17 is the minimum supported version. Use -PjavaVersion=17 or -PjavaVersion=21.')
+}
+
+java {
+    toolchain {
+        // ES: Gradle resuelve la toolchain seleccionada de forma consistente entre equipos.
+        // EN: Gradle resolves the selected toolchain consistently across machines.
+        languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.seleniumhq.selenium:selenium-java:4.48.0'
+    implementation 'io.cucumber:cucumber-java:7.34.7'
+
+    testImplementation platform('org.junit:junit-bom:5.13.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.junit.platform:junit-platform-suite'
+    testImplementation 'io.cucumber:cucumber-junit-platform-engine:7.34.7'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = targetJavaVersion
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    systemProperties System.properties.findAll { key, value ->
+        key in ['browser', 'headless', 'baseUrl', 'timeoutSeconds', 'screenshotOnFailure']
+    }
+}
+
+tasks.register('cucumber', Test) {
+    group = 'verification'
+    description = 'Ejecuta los escenarios de Cucumber mediante JUnit Platform.'
+
+    useJUnitPlatform()
+
+    systemProperty 'cucumber.junit-platform.naming-strategy', 'long'
+}
+
+

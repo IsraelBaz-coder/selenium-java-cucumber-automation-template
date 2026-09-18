@@ -1,0 +1,23 @@
+# Gradle output and local state
+.gradle/
+.gradle-user-home/
+build/
+
+# IDE configuration
+.idea/
+*.iml
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+
+# Local test configuration and logs
+config/local.properties
+*.log
+
+# Temporary documentation/PDF generation files
+work/
+
+# Environment / secrets
+.env
+.env.*
