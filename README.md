@@ -4,10 +4,10 @@ Template reutilizable para pruebas Web UI con Java 21, Selenium WebDriver, Cucum
 
 | Release | Valor |
 |---|---|
-| Versión | **v1.0.1** |
-| Estado | **Stable / Validated** |
-| Tipo | **First Stable Release** |
-| Fecha | **17 de septiembre de 2026** |
+| Versión interna en preparación | **1.0.1** |
+| Estado | **En preparación; baseline publicada: v1.0.0** |
+| Tipo | **Hardening y preparación profesional/CI** |
+| Fecha de baseline estable | **17 de septiembre de 2026** |
 
 | Información del documento | Valor |
 |---|---|
@@ -118,13 +118,13 @@ Chrome es el navegador predeterminado. Use `-Dbrowser=EDGE` para Edge y `-DbaseU
 3. Implemente Steps en `src/test/java/com/automation/template/steps`; exprese intención, no Selenium.
 4. Ejecute el Wrapper y revise el reporte.
 
-Para un nuevo proyecto, copie/clone el template, cambie `rootProject.name` y `group`, configure `baseUrl`, sustituya el ejemplo y cree su repositorio Git. Nunca almacene secretos en configuración; use ambiente o secretos del pipeline. No se incluyó licencia porque debe definirla el propietario.
+Para un nuevo proyecto, copie/clone el template, cambie `rootProject.name` y `group`, configure `baseUrl`, sustituya el ejemplo y cree su repositorio Git. Nunca almacene secretos en configuración; use ambiente o secretos del pipeline. El repositorio se distribuye bajo [Apache License 2.0](LICENSE).
 
 ## CI/CD y documentación
 
 Ejecute el Gradle Wrapper en modo headless dentro de CI/CD y publique `build/reports`, `build/evidence` y `build/logs` como artefactos. La guía contiene un ejemplo que requiere adaptación a la infraestructura corporativa; no incluye runners, URLs ni secretos internos.
 
-Documentación adicional: [guía de uso](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md), [arquitectura](docs/ARCHITECTURE.md), [troubleshooting](docs/TROUBLESHOOTING.md) y [reporte de migración](docs/TEMPLATE_MIGRATION_REPORT.md).
+Documentación adicional: [guía de uso](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md), [arquitectura](docs/ARCHITECTURE.md), [troubleshooting](docs/TROUBLESHOOTING.md), [reporte de migración](docs/TEMPLATE_MIGRATION_REPORT.md), [versionado](docs/VERSIONING.md) y [proceso de release](docs/RELEASE_PROCESS.md). Revise también el [changelog](CHANGELOG.md), la [guía de contribución](CONTRIBUTING.md), la [política de seguridad](SECURITY.md) y el [código de conducta](CODE_OF_CONDUCT.md).
 
 ## Regeneración del manual y archivos temporales
 
@@ -134,9 +134,9 @@ Documentación adicional: [guía de uso](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.m
 
 ## Release history
 
-### v1.0.1 - 24 de septiembre de 2026
+### v1.0.1 - En preparación
 
-**Hardening + CI/CD Readiness.** Logging nativo en consola y archivo, evidencia de fallos persistida con nombres únicos, attachment de screenshots a Cucumber y rutas de artifacts documentadas.
+**Hardening + CI/CD Readiness.** Logging nativo en consola y archivo, evidencia de fallos persistida con nombres únicos, attachment de screenshots a Cucumber y rutas de artifacts documentadas. Esta versión aún no está publicada ni etiquetada.
 
 ### v1.0.0 - 17 de septiembre de 2026
 

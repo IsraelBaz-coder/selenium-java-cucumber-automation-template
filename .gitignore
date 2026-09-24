@@ -14,6 +14,9 @@ Thumbs.db
 # Local test configuration and logs
 config/local.properties
 *.log
+*.tmp
+*.temp
+*.bak
 
 # Temporary documentation/PDF generation files
 work/

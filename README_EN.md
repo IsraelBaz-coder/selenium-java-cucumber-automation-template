@@ -4,10 +4,10 @@ Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD
 
 | Release | Value |
 |---|---|
-| Version | **v1.0.1** |
-| Status | **Stable / Validated** |
-| Type | **First Stable Release** |
-| Date | **September 17, 2026** |
+| Internal version in preparation | **1.0.1** |
+| Status | **In preparation; published baseline: v1.0.0** |
+| Type | **Hardening and professional/CI readiness** |
+| Stable baseline date | **September 17, 2026** |
 
 | Document information | Value |
 |---|---|
@@ -85,7 +85,7 @@ Chrome is the default browser. Use `-Dbrowser=EDGE` for Edge and `-DbaseUrl=http
 
 Create a feature, Page Object and Step Definitions in their respective folders, then run the wrapper. To start a project, clone/copy this template, change `rootProject.name` and `group`, configure `baseUrl`, replace the example and initialize Git. Do not store secrets in files; use environment variables or pipeline secrets.
 
-For architecture, VS Code setup, CI/CD, first test tutorial and troubleshooting, read the Spanish [user guide](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md). No license was added because ownership must define it.
+For architecture, VS Code setup, CI/CD, first test tutorial and troubleshooting, read the Spanish [user guide](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md). This repository is distributed under the [Apache License 2.0](LICENSE).
 
 ## CI/CD, manual generation and temporary files
 
@@ -95,11 +95,15 @@ Run the Gradle Wrapper headlessly in CI/CD and publish `build/reports`, `build/e
 
 `work/` contains temporary documentation/PDF-generation and validation files. It is ignored by Git, is not part of the final product, must not be versioned, and can be deleted without affecting the framework.
 
+## Governance and release documentation
+
+For the versioning policy and repeatable release procedure, see [Versioning](docs/VERSIONING.md) and the [Release process](docs/RELEASE_PROCESS.md). Before contributing, read [Contributing](CONTRIBUTING.md), the [Security policy](SECURITY.md), the [Code of Conduct](CODE_OF_CONDUCT.md), and the [Changelog](CHANGELOG.md).
+
 ## Release history
 
-### v1.0.1 - September 24, 2026
+### v1.0.1 - In preparation
 
-**Hardening + CI/CD Readiness.** Native console/file logging, uniquely named persisted failure evidence, Cucumber screenshot attachment and documented artifact locations.
+**Hardening + CI/CD Readiness.** Native console/file logging, uniquely named persisted failure evidence, Cucumber screenshot attachment and documented artifact locations. This version has not been published or tagged yet.
 
 ### v1.0.0 - September 17, 2026
 
