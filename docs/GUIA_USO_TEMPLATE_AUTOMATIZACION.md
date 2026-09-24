@@ -221,7 +221,7 @@ screenshotOnFailure=true
 | Información Gradle | .\gradlew.bat --version |
 | Estado Git | git status |
 
-Variables disponibles: BASE_URL, BROWSER, HEADLESS, TIMEOUT_SECONDS y SCREENSHOT_ON_FAILURE. Reporte: build/reports/cucumber/cucumber.html; screenshots: build/screenshots.
+Variables disponibles: BASE_URL, BROWSER, HEADLESS, TIMEOUT_SECONDS y SCREENSHOT_ON_FAILURE. Reporte: `build/reports/cucumber/cucumber.html`; screenshots de fallos: `build/evidence/screenshots/`; log: `build/logs/automation.log`.
 
 ## Primera automatización
 
@@ -305,7 +305,8 @@ steps:
       BASE_URL: referencia a secreto corporativo
       BROWSER: CHROME
   - publish: build/reports
-  - publish: build/screenshots
+  - publish: build/evidence
+  - publish: build/logs
 ~~~
 
 Use Wrapper, headless, variables/secrets corporativos y artifacts. La pipeline debe fallar si Gradle devuelve código distinto de cero. Runners, permisos, URLs y secretos se definen con el equipo de plataforma.

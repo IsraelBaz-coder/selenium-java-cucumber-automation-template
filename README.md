@@ -4,7 +4,7 @@ Template reutilizable para pruebas Web UI con Java 21, Selenium WebDriver, Cucum
 
 | Release | Valor |
 |---|---|
-| Versión | **v1.0.0** |
+| Versión | **v1.0.1** |
 | Estado | **Stable / Validated** |
 | Tipo | **First Stable Release** |
 | Fecha | **17 de septiembre de 2026** |
@@ -22,7 +22,7 @@ El template fue validado y puede utilizarse como baseline para nuevos proyectos.
 - Java 21 predeterminado, Java 17 compatible, Gradle Wrapper y codificación UTF-8.
 - Page Object Model, Steps y Hooks separados.
 - Chrome/Edge, modo headless y URL configurables por archivo, variable de entorno o `-D`.
-- Esperas explícitas, screenshots al fallar y reporte HTML Cucumber.
+- Esperas explícitas, logging de ejecución, screenshots al fallar y reporte HTML Cucumber.
 
 ## Arquitectura y estructura
 
@@ -63,7 +63,7 @@ Instale **Extension Pack for Java**, **Gradle for Java**, **Cucumber (Gherkin) F
 
 ## Selección de versión de Java
 
-Java 21 es el valor predeterminado de v1.0.0. El código puede compilarse con Java 17 o Java 21 mediante la propiedad Gradle `javaVersion`:
+Java 21 es el valor predeterminado de v1.0.1. El código puede compilarse con Java 17 o Java 21 mediante la propiedad Gradle `javaVersion`:
 
 | Objetivo | PowerShell |
 |---|---|
@@ -93,7 +93,19 @@ Para la instalación, configuración de `JAVA_HOME`, VS Code, validación y regr
 | Dependencias | `.\gradlew.bat dependencies` |
 | Estado Git | `git status` |
 
-Reportes: `build/reports/cucumber/cucumber.html`; screenshots: `build/screenshots`.
+## Evidencias y reportes
+
+Cada ejecución genera artifacts bajo `build/`, excluidos por Git y regenerables:
+
+| Artifact | Ruta |
+|---|---|
+| Cucumber HTML | `build/reports/cucumber/cucumber.html` |
+| Gradle HTML | `build/reports/tests/test/` |
+| JUnit XML | `build/test-results/test/` |
+| Screenshots de fallos | `build/evidence/screenshots/` |
+| Log de ejecución | `build/logs/automation.log` |
+
+Los Hooks registran el inicio y fin de cada escenario, navegador, modo headless y ciclo de vida del driver. Si un escenario falla y `screenshotOnFailure=true`, intentan adjuntar una imagen PNG al escenario Cucumber y guardarla físicamente. El archivo usa un nombre saneado del escenario, fecha/hora y UUID para evitar sobrescrituras. Si capturar, adjuntar o persistir evidencia falla, el detalle y la excepción quedan en el log; el error original del escenario se conserva.
 
 ## Navegadores, URL y Cucumber
 
@@ -110,7 +122,7 @@ Para un nuevo proyecto, copie/clone el template, cambie `rootProject.name` y `gr
 
 ## CI/CD y documentación
 
-Ejecute el Gradle Wrapper en modo headless dentro de CI/CD y publique `build/reports` y `build/screenshots` como artefactos. La guía contiene un ejemplo que requiere adaptación a la infraestructura corporativa; no incluye runners, URLs ni secretos internos.
+Ejecute el Gradle Wrapper en modo headless dentro de CI/CD y publique `build/reports`, `build/evidence` y `build/logs` como artefactos. La guía contiene un ejemplo que requiere adaptación a la infraestructura corporativa; no incluye runners, URLs ni secretos internos.
 
 Documentación adicional: [guía de uso](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md), [arquitectura](docs/ARCHITECTURE.md), [troubleshooting](docs/TROUBLESHOOTING.md) y [reporte de migración](docs/TEMPLATE_MIGRATION_REPORT.md).
 
@@ -121,6 +133,10 @@ Documentación adicional: [guía de uso](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.m
 `work/` contiene archivos temporales de generación y validación documental. Está excluida por `.gitignore`, no forma parte del producto final, no debe versionarse y puede eliminarse sin afectar el framework; se recrea al regenerar o validar documentación.
 
 ## Release history
+
+### v1.0.1 - 24 de septiembre de 2026
+
+**Hardening + CI/CD Readiness.** Logging nativo en consola y archivo, evidencia de fallos persistida con nombres únicos, attachment de screenshots a Cucumber y rutas de artifacts documentadas.
 
 ### v1.0.0 - 17 de septiembre de 2026
 

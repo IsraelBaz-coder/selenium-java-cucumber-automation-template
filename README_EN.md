@@ -4,7 +4,7 @@ Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD
 
 | Release | Value |
 |---|---|
-| Version | **v1.0.0** |
+| Version | **v1.0.1** |
 | Status | **Stable / Validated** |
 | Type | **First Stable Release** |
 | Date | **September 17, 2026** |
@@ -22,11 +22,11 @@ The template was validated and can be used as a baseline for new projects. Confi
 - Java 21 by default, Java 17 compatible, Gradle Wrapper and UTF-8 source encoding.
 - Page Object Model, Steps and Hooks kept separate.
 - Chrome/Edge, headless mode and URL configured by file, environment or `-D`.
-- Explicit waits, failure screenshots and Cucumber HTML reporting.
+- Explicit waits, execution logging, failure screenshots and Cucumber HTML reporting.
 
 ## Java version selection
 
-Java 21 is the v1.0.0 default. The framework can compile with Java 17 or Java 21 through the Gradle `javaVersion` property:
+Java 21 is the v1.0.1 default. The framework can compile with Java 17 or Java 21 through the Gradle `javaVersion` property:
 
 | Purpose | PowerShell |
 |---|---|
@@ -63,7 +63,19 @@ Features express Gherkin behavior; Steps translate intent; Page Objects encapsul
 | URL | `.\gradlew.bat test -DbaseUrl=https://example.com` |
 | Cucumber tags | `.\gradlew.bat test -Dcucumber.filter.tags=@example` |
 
-Reports are at `build/reports/cucumber/cucumber.html`; failure screenshots are in `build/screenshots`.
+## Evidence and reports
+
+Each execution creates regenerable Git-ignored artifacts under `build/`:
+
+| Artifact | Path |
+|---|---|
+| Cucumber HTML | `build/reports/cucumber/cucumber.html` |
+| Gradle HTML | `build/reports/tests/test/` |
+| JUnit XML | `build/test-results/test/` |
+| Failure screenshots | `build/evidence/screenshots/` |
+| Execution log | `build/logs/automation.log` |
+
+Hooks log every scenario start and finish, browser, headless mode and driver lifecycle. If a scenario fails and `screenshotOnFailure=true`, they attempt to attach a PNG to the Cucumber scenario and persist it physically. The file name combines a sanitized scenario name, timestamp and UUID to prevent overwrites. If capturing, attaching or persisting evidence fails, the log records the failure and exception while preserving the original scenario failure.
 
 ## Browsers, URL and Cucumber
 
@@ -77,13 +89,17 @@ For architecture, VS Code setup, CI/CD, first test tutorial and troubleshooting,
 
 ## CI/CD, manual generation and temporary files
 
-Run the Gradle Wrapper headlessly in CI/CD and publish `build/reports` and `build/screenshots` as artifacts. The guide provides an example that needs corporate-infrastructure adaptation; it contains no internal runners, URLs or secrets.
+Run the Gradle Wrapper headlessly in CI/CD and publish `build/reports`, `build/evidence` and `build/logs` as artifacts. The guide provides an example that needs corporate-infrastructure adaptation; it contains no internal runners, URLs or secrets.
 
 `scripts/create_manual.py` generates the PDF manual with ReportLab. It requires Python with `reportlab`; run `python scripts/create_manual.py` from the project root. It generates `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf` and retains an external project-directory copy.
 
 `work/` contains temporary documentation/PDF-generation and validation files. It is ignored by Git, is not part of the final product, must not be versioned, and can be deleted without affecting the framework.
 
 ## Release history
+
+### v1.0.1 - September 24, 2026
+
+**Hardening + CI/CD Readiness.** Native console/file logging, uniquely named persisted failure evidence, Cucumber screenshot attachment and documented artifact locations.
 
 ### v1.0.0 - September 17, 2026
 
