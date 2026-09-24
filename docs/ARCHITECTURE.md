@@ -1,6 +1,6 @@
 # Arquitectura del Template
 
-**Release:** v1.0.0 · **Estado:** Stable / Validated · **Fecha:** 17 de septiembre de 2026
+**Baseline estable:** v1.0.0 · **Versión en preparación:** v1.0.1 (Hardening + CI/CD Readiness)
 
 ## Capas y responsabilidades
 
@@ -27,6 +27,6 @@ flowchart TD
   H --> R[Reports and screenshots]
 ```
 
-El Runner descubre features; Cucumber ejecuta `@Before`; `DriverManager` crea un driver por hilo; Steps invocan Pages; `@After` adjunta captura ante fallo y libera el navegador. Steps no contienen selectores, Pages no contienen aserciones de escenario y Hooks no contienen lógica de negocio. La configuración prioriza propiedades `-D`, variables de entorno y `config.properties`.
+El Runner descubre features; Cucumber ejecuta `@Before`; `DriverManager` crea un driver por hilo; Steps invocan Pages; `@After` adjunta captura ante fallo y libera el navegador. Steps no contienen selectores, Pages no contienen aserciones de escenario y Hooks no contienen lógica de negocio. La configuración prioriza propiedades `-D`, variables de entorno y `config.properties`. `FrameworkLogger` escribe en consola y en `build/logs/automation.log`; las capturas sólo se persisten bajo `build/evidence/screenshots/` ante un fallo elegible.
 
 Docker y Healenium no forman parte de la release v1.0.0 y, por tanto, no intervienen en este flujo.

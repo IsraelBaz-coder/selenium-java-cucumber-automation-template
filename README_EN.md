@@ -81,6 +81,32 @@ Hooks log every scenario start and finish, browser, headless mode and driver lif
 
 Chrome is the default browser. Use `-Dbrowser=EDGE` for Edge and `-DbaseUrl=https://your-application` for a temporary URL. Use Cucumber tags such as `@smoke` with `-Dcucumber.filter.tags=@smoke` to select scenarios.
 
+## Configuration inventory
+
+For the five framework properties, precedence is JVM `-D` property, environment variable, then `config.properties`. `cucumber.filter.tags` is passed directly to Cucumber through `-D`. `javaVersion` is a Gradle (`-P`) property, not a JVM property.
+
+| Property | Purpose | Default | Supported values | Example |
+|---|---|---|---|---|
+| `baseUrl` / `BASE_URL` | Initial URL of the system under test. | `https://example.com/` | Any non-blank URL. | `-DbaseUrl=https://example.com` or `$env:BASE_URL='https://example.com'` |
+| `browser` / `BROWSER` | WebDriver browser. | `CHROME` | `CHROME`, `EDGE` (case-insensitive). | `-Dbrowser=EDGE` |
+| `headless` / `HEADLESS` | Runs the browser without a window. | `false` | `true`, `false`. | `-Dheadless=true` |
+| `timeoutSeconds` / `TIMEOUT_SECONDS` | Explicit page-wait timeout. | `15` | Integer usable by the framework. | `-DtimeoutSeconds=20` |
+| `screenshotOnFailure` / `SCREENSHOT_ON_FAILURE` | Attempts to attach and persist PNG evidence for failed scenarios. | `true` | `true`, `false`. | `-DscreenshotOnFailure=false` |
+| `cucumber.filter.tags` | Filters scenarios Cucumber executes. | No filter: all. | Valid Cucumber tag expression. | `"-Dcucumber.filter.tags=@example"` |
+| `javaVersion` | Selects Gradle's Java toolchain. | `21` | `17` or `21`; values below 17 fail. | `-PjavaVersion=17` |
+
+## CI/CD execution contract
+
+The standard entry point for a future pipeline is:
+
+```powershell
+.\gradlew.bat clean test
+```
+
+Gradle exits with code `0` when the build and tests succeed; a non-zero code means a build or test failure and must fail the job. For a displayless agent, use `-Dheadless=true`. It can be combined with `-Dbrowser=CHROME` or `-Dbrowser=EDGE`, the configuration properties above, and `"-Dcucumber.filter.tags=@example"`.
+
+When they exist, a pipeline should collect `build/reports/cucumber/cucumber.html`, `build/reports/tests/test/`, `build/test-results/test/`, `build/logs/automation.log`, and `build/evidence/screenshots/`. The log is initialized during execution and records scenario lifecycle, driver activity, and evidence failures. Screenshots exist only when a scenario fails, the option is enabled, and the driver can capture them. This repository does not yet contain a CI/CD workflow.
+
 ## Create and reuse
 
 Create a feature, Page Object and Step Definitions in their respective folders, then run the wrapper. To start a project, clone/copy this template, change `rootProject.name` and `group`, configure `baseUrl`, replace the example and initialize Git. Do not store secrets in files; use environment variables or pipeline secrets.
@@ -89,7 +115,7 @@ For architecture, VS Code setup, CI/CD, first test tutorial and troubleshooting,
 
 ## CI/CD, manual generation and temporary files
 
-Run the Gradle Wrapper headlessly in CI/CD and publish `build/reports`, `build/evidence` and `build/logs` as artifacts. The guide provides an example that needs corporate-infrastructure adaptation; it contains no internal runners, URLs or secrets.
+Run the Gradle Wrapper headlessly in CI/CD and publish `build/reports`, `build/evidence` and `build/logs` as artifacts. The guide documents the contract a future pipeline must adopt; it contains no workflow, internal runners, URLs, or secrets.
 
 `scripts/create_manual.py` generates the PDF manual with ReportLab. It requires Python with `reportlab`; run `python scripts/create_manual.py` from the project root. It generates `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf` and retains an external project-directory copy.
 

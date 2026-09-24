@@ -34,7 +34,7 @@ When scenario selection is affected, validate the supported filter too:
 .\gradlew.bat clean test -Dheadless=true "-Dcucumber.filter.tags=@example"
 ```
 
-Future CI can use `./gradlew clean test -Dheadless=true` as its base command. The supported system properties are `browser`, `headless`, `baseUrl`, and `cucumber.filter.tags`. Publish only real generated outputs when applicable: Gradle test report (`build/reports/tests/test/`), JUnit XML (`build/test-results/test/`), Cucumber HTML (`build/reports/cucumber/cucumber.html`), screenshots (`build/evidence/screenshots/`), and logs (`build/logs/automation.log`).
+Future CI can use `.\gradlew.bat clean test -Dheadless=true` as its base command. The supported framework properties are `browser`, `headless`, `baseUrl`, `timeoutSeconds`, and `screenshotOnFailure`; Cucumber receives `cucumber.filter.tags`. Use their uppercase environment-variable equivalents where supported. `javaVersion` is selected through Gradle with `-PjavaVersion=17` or `-PjavaVersion=21`. Collect only real generated outputs when applicable: Gradle test report (`build/reports/tests/test/`), JUnit XML (`build/test-results/test/`), Cucumber HTML (`build/reports/cucumber/cucumber.html`), screenshots (`build/evidence/screenshots/`), and logs (`build/logs/automation.log`). A `0` exit code is successful; a non-zero exit code must fail the future pipeline. No CI/CD workflow is included in this repository.
 
 ## 5. Review the repository
 

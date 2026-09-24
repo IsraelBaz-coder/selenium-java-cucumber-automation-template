@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-No unreleased changes have been recorded.
+Documentation consolidation for the v1.0.1 preparation is pending review; it does not represent a published release.
 
 ## [1.0.1] - In preparation
 
@@ -18,6 +18,7 @@ No unreleased changes have been recorded.
 ### Changed
 
 - Documented the CI execution contract based on the supported `browser`, `headless`, `baseUrl`, and `cucumber.filter.tags` properties.
+- Consolidated the configuration inventory, artifact collection contract, logging, screenshot behavior, and bilingual execution guidance.
 - Aligned the Gradle root project name with the official repository name.
 
 > `1.0.1` is in preparation and has not been published or tagged.

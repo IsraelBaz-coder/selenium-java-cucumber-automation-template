@@ -1,6 +1,6 @@
 # Guía de Uso del Template de Automatización
 
-<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>Versión v1.0.0 · Estado: Stable / Validated · First Stable Release<br>17 de septiembre de 2026<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
+<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>Baseline estable v1.0.0 · v1.0.1 en preparación: Hardening + CI/CD Readiness<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
 
 ## Índice
 
@@ -39,10 +39,11 @@ No es necesario conocer este repositorio. Para avanzar con seguridad, basta con 
 
 ## Estado e historial de la release
 
-**Release Status: Stable / Validated.** La versión v1.0.0 fue validada como baseline para nuevos proyectos de automatización Web UI. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM. Las capacidades nuevas deben planearse y validarse en una versión posterior.
+**Release Status.** La versión v1.0.0 permanece como baseline estable para nuevos proyectos de automatización Web UI. La v1.0.1 está en preparación para el Hito 2, **Hardening + CI/CD Readiness**; no está publicada ni etiquetada. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM.
 
 | Versión | Fecha | Tipo | Estado | Cambios principales |
 |---|---|---|---|---|
+| v1.0.1 | En preparación | Hardening + CI/CD Readiness | Unreleased | Logging, screenshots ante fallo, propagación de tags, contrato de artifacts y documentación consolidada para una integración futura. No incluye workflow CI/CD. |
 | v1.0.0 | 17 de septiembre de 2026 | First Stable Release | Stable / Validated | Generalización del origen, Selenium + Cucumber + POM, Gradle Wrapper, Chrome/Edge, headless, `baseUrl`, ejemplo funcional, documentación técnica, diagramas, troubleshooting, reporte de migración, CI/CD documentado y manual PDF regenerable. |
 
 ## Arquitectura
@@ -131,7 +132,7 @@ Si VS Code muestra “Importing Gradle project”, espere a que termine. Si soli
 
 ## Selección de versión de Java
 
-### Compatibilidad de v1.0.0
+### Compatibilidad de v1.0.1
 
 Java 21 es la versión predeterminada y recomendada. El build también admite Java 17 porque el código y las dependencias utilizadas son compatibles con esa versión LTS. Java 8 y Java 11 no son compatibles con el código actual: se usan expresiones `switch` modernas y APIs como `String.isBlank()` y `Path.of()`.
 
@@ -284,7 +285,7 @@ Siga esta secuencia para transformar el template en un proyecto de automatizaci�
 
 Genérico: driver, configuración, hooks, runner, reporting y convenciones. Personalizable: URL, datos, pages, features, steps, tags y pipeline.
 
-## CI/CD
+## Contrato CI/CD futuro
 
 ~~~mermaid
 flowchart TD
@@ -296,20 +297,9 @@ flowchart TD
   TEST --> ART[Reports / Artifacts]
 ~~~
 
-EJEMPLO - REQUIERE ADAPTACIÓN A LA INFRAESTRUCTURA DE LA EMPRESA:
+El entry point que deberá usar un pipeline futuro es ` .\gradlew.bat clean test`; para un agente sin interfaz use ` .\gradlew.bat clean test -Dheadless=true`. Un exit code `0` representa éxito y cualquier código distinto de cero debe fallar el job. El contrato permite seleccionar `CHROME` o `EDGE`, aplicar `cucumber.filter.tags` y recolectar `build/reports/cucumber/cucumber.html`, `build/reports/tests/test/`, `build/test-results/test/`, `build/logs/automation.log` y, si un escenario falló, `build/evidence/screenshots/`.
 
-~~~yaml
-steps:
-  - run: .\gradlew.bat clean test -Dheadless=true
-    env:
-      BASE_URL: referencia a secreto corporativo
-      BROWSER: CHROME
-  - publish: build/reports
-  - publish: build/evidence
-  - publish: build/logs
-~~~
-
-Use Wrapper, headless, variables/secrets corporativos y artifacts. La pipeline debe fallar si Gradle devuelve código distinto de cero. Runners, permisos, URLs y secretos se definen con el equipo de plataforma.
+No existe todavía un workflow, runner, Docker, Grid ni configuración de CI/CD en este repositorio. Runners, permisos, URLs y secretos se definirán en el hito correspondiente con el equipo de plataforma.
 
 ## Regeneración del manual
 

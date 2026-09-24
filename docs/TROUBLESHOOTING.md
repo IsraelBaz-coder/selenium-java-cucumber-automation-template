@@ -1,6 +1,6 @@
 # Troubleshooting
 
-**Release:** v1.0.0 · **Estado:** Stable / Validated · **Fecha:** 17 de septiembre de 2026
+**Baseline estable:** v1.0.0 · **Versión en preparación:** v1.0.1 (Hardening + CI/CD Readiness)
 
 | Síntoma | Causa probable | Solución |
 |---|---|---|
@@ -13,6 +13,7 @@
 | Headless falla | Entorno restringido | Use `-Dheadless=true`; revise permisos y tamaño de ventana. |
 | Feature no ejecuta | Ruta/extensión/tags | Use `.feature` bajo `src/test/resources/features`; valide tags. |
 | Step no encontrado | Texto/glue no coincide | Haga coincidir Gherkin/anotación y conserve el glue `com.automation.template`. |
-| CI falla, local no | Configuración diferente | Compare variables, use headless y publique artifacts. |
-| Puerto ocupado | Servicio existente | Identifique proceso/contenedor y ajuste mapeo según política. |
-| Docker o Healenium no responde | Se intentó aplicar una integración que no pertenece al template | Docker y Healenium no forman parte de v1.0.0; no son requisito para ejecutar las pruebas. |
+| CI falla, local no | Configuración diferente | Compare `-D`, variables de entorno y navegador; ejecute `-Dheadless=true` y recolecte los artifacts documentados. |
+| No se ejecuta el tag esperado | Expresión o propagación incorrecta | Verifique el tag en la feature y ejecute `"-Dcucumber.filter.tags=@example"`; el tag incluido actualmente es `@example`. |
+| No encuentro un reporte | Se busca una ruta incorrecta o el build falló antes de reportar | Revise `build/reports/cucumber/cucumber.html`, `build/reports/tests/test/` y `build/test-results/test/`. |
+| No hay screenshot | No ocurrió fallo, la opción está desactivada o el driver no puede capturar | Revise `screenshotOnFailure`, `build/evidence/screenshots/` y `build/logs/automation.log`. |

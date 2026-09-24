@@ -111,6 +111,32 @@ Los Hooks registran el inicio y fin de cada escenario, navegador, modo headless 
 
 Chrome es el navegador predeterminado. Use `-Dbrowser=EDGE` para Edge y `-DbaseUrl=https://su-aplicacion` para una URL temporal. Para seleccionar escenarios, use tags Cucumber como `@smoke` y `-Dcucumber.filter.tags=@smoke`.
 
+## Inventario de configuración
+
+La prioridad para las cinco propiedades del framework es: propiedad JVM `-D`, variable de entorno y, finalmente, `config.properties`. `cucumber.filter.tags` se entrega directamente a Cucumber mediante `-D`. `javaVersion` es una propiedad Gradle (`-P`), no una propiedad JVM.
+
+| Propiedad | Propósito | Predeterminado | Valores admitidos | Ejemplo |
+|---|---|---|---|---|
+| `baseUrl` / `BASE_URL` | URL inicial de la aplicación bajo prueba. | `https://example.com/` | URL no vacía. | `-DbaseUrl=https://example.com` o `$env:BASE_URL='https://example.com'` |
+| `browser` / `BROWSER` | Navegador WebDriver. | `CHROME` | `CHROME`, `EDGE` (sin distinguir mayúsculas). | `-Dbrowser=EDGE` |
+| `headless` / `HEADLESS` | Ejecuta el navegador sin ventana. | `false` | `true`, `false`. | `-Dheadless=true` |
+| `timeoutSeconds` / `TIMEOUT_SECONDS` | Tiempo de espera explícita de las páginas. | `15` | Entero positivo utilizable por el framework. | `-DtimeoutSeconds=20` |
+| `screenshotOnFailure` / `SCREENSHOT_ON_FAILURE` | Intenta adjuntar y persistir evidencia PNG ante un escenario fallido. | `true` | `true`, `false`. | `-DscreenshotOnFailure=false` |
+| `cucumber.filter.tags` | Filtra escenarios que Cucumber debe ejecutar. | Sin filtro: todos. | Expresión de tags Cucumber válida. | `"-Dcucumber.filter.tags=@example"` |
+| `javaVersion` | Selecciona la toolchain Java de Gradle. | `21` | `17` o `21`; valores menores de 17 fallan. | `-PjavaVersion=17` |
+
+## Contrato de ejecución para CI/CD
+
+El entry point estándar para un pipeline futuro es:
+
+```powershell
+.\gradlew.bat clean test
+```
+
+Gradle termina con código `0` cuando el build y las pruebas son exitosos; un código distinto de `0` indica fallo de build o de pruebas y debe marcar el job como fallido. Para un agente sin interfaz, utilice `-Dheadless=true`. Puede combinarlo con `-Dbrowser=CHROME` o `-Dbrowser=EDGE`, las propiedades de configuración anteriores y `"-Dcucumber.filter.tags=@example"`.
+
+Un pipeline debe recolectar, cuando existan, `build/reports/cucumber/cucumber.html`, `build/reports/tests/test/`, `build/test-results/test/`, `build/logs/automation.log` y `build/evidence/screenshots/`. El log se inicializa durante la ejecución y registra ciclo de escenarios, driver y fallos de evidencia. Las screenshots sólo existen cuando un escenario falla, la opción está activada y el driver permite capturarlas. Este repositorio no incluye todavía un workflow CI/CD.
+
 ## Crear y reutilizar
 
 1. Cree una feature en `src/test/resources/features`.
@@ -122,7 +148,7 @@ Para un nuevo proyecto, copie/clone el template, cambie `rootProject.name` y `gr
 
 ## CI/CD y documentación
 
-Ejecute el Gradle Wrapper en modo headless dentro de CI/CD y publique `build/reports`, `build/evidence` y `build/logs` como artefactos. La guía contiene un ejemplo que requiere adaptación a la infraestructura corporativa; no incluye runners, URLs ni secretos internos.
+Ejecute el Gradle Wrapper en modo headless dentro de CI/CD y publique `build/reports`, `build/evidence` y `build/logs` como artefactos. La guía documenta el contrato que deberá adoptar un pipeline futuro; no incluye workflow, runners, URLs ni secretos internos.
 
 Documentación adicional: [guía de uso](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md), [arquitectura](docs/ARCHITECTURE.md), [troubleshooting](docs/TROUBLESHOOTING.md), [reporte de migración](docs/TEMPLATE_MIGRATION_REPORT.md), [versionado](docs/VERSIONING.md) y [proceso de release](docs/RELEASE_PROCESS.md). Revise también el [changelog](CHANGELOG.md), la [guía de contribución](CONTRIBUTING.md), la [política de seguridad](SECURITY.md) y el [código de conducta](CODE_OF_CONDUCT.md).
 
