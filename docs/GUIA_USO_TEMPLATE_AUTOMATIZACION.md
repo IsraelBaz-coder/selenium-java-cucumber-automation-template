@@ -1,6 +1,6 @@
 # Guía de Uso del Template de Automatización
 
-<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>Baseline estable v1.0.0 · v1.0.1 en preparación: Hardening + CI/CD Readiness<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
+<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>Baseline estable actual v1.0.1 · Stable / Validated / Published · 25 de septiembre de 2026<br>v1.0.2: hotfix documental en preparación<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
 
 ## Índice
 
@@ -39,11 +39,12 @@ No es necesario conocer este repositorio. Para avanzar con seguridad, basta con 
 
 ## Estado e historial de la release
 
-**Release Status.** La versión v1.0.0 permanece como baseline estable para nuevos proyectos de automatización Web UI. La v1.0.1 está en preparación para el Hito 2, **Hardening + CI/CD Readiness**; no está publicada ni etiquetada. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM.
+**Release Status.** La versión v1.0.1 es la baseline estable actual: **Hardening + CI/CD Readiness**, Stable / Validated / Published el 25 de septiembre de 2026. La v1.0.2 está en preparación como hotfix documental de estado post-release; no contiene cambios funcionales y aún no está publicada ni etiquetada. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM.
 
 | Versión | Fecha | Tipo | Estado | Cambios principales |
 |---|---|---|---|---|
-| v1.0.1 | En preparación | Hardening + CI/CD Readiness | Unreleased | Logging, screenshots ante fallo, propagación de tags, contrato de artifacts y documentación consolidada para una integración futura. No incluye workflow CI/CD. |
+| v1.0.2 | En preparación | Documentation-only hotfix | Unreleased | Corrección de inconsistencias de estado post-release; no incluye cambios funcionales. |
+| v1.0.1 | 25 de septiembre de 2026 | Hardening + CI/CD Readiness | Stable / Validated / Published | Logging, screenshots ante fallo, propagación de tags, contrato de artifacts y documentación consolidada para futura integración. No incluye workflow CI/CD. |
 | v1.0.0 | 17 de septiembre de 2026 | First Stable Release | Stable / Validated | Generalización del origen, Selenium + Cucumber + POM, Gradle Wrapper, Chrome/Edge, headless, `baseUrl`, ejemplo funcional, documentación técnica, diagramas, troubleshooting, reporte de migración, CI/CD documentado y manual PDF regenerable. |
 
 ## Arquitectura

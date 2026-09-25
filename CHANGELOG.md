@@ -6,9 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-Documentation consolidation for the v1.0.1 preparation is pending review; it does not represent a published release.
+Documentation-only post-release state corrections for the future v1.0.2 patch.
 
-## [1.0.1] - In preparation
+## [1.0.1] - 2026-09-25
 
 ### Added
 
@@ -21,7 +21,7 @@ Documentation consolidation for the v1.0.1 preparation is pending review; it doe
 - Consolidated the configuration inventory, artifact collection contract, logging, screenshot behavior, and bilingual execution guidance.
 - Aligned the Gradle root project name with the official repository name.
 
-> `1.0.1` is in preparation and has not been published or tagged.
+> `1.0.1` is the current stable, validated, and published release.
 
 ## [1.0.0] - 2026-09-17
 

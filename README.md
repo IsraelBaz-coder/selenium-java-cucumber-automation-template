@@ -4,10 +4,10 @@ Template reutilizable para pruebas Web UI con Java 21, Selenium WebDriver, Cucum
 
 | Release | Valor |
 |---|---|
-| Versión interna en preparación | **1.0.1** |
-| Estado | **En preparación; baseline publicada: v1.0.0** |
-| Tipo | **Hardening y preparación profesional/CI** |
-| Fecha de baseline estable | **17 de septiembre de 2026** |
+| Versión estable actual | **v1.0.1** |
+| Estado | **Stable / Validated / Published** |
+| Tipo | **Hardening + CI/CD Readiness** |
+| Fecha de publicación | **25 de septiembre de 2026** |
 
 | Información del documento | Valor |
 |---|---|
@@ -162,9 +162,13 @@ Documentación adicional: [guía de uso](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.m
 
 ## Release history
 
-### v1.0.1 - En preparación
+### v1.0.1 - 25 de septiembre de 2026
 
-**Hardening + CI/CD Readiness.** Logging nativo en consola y archivo, evidencia de fallos persistida con nombres únicos, attachment de screenshots a Cucumber y rutas de artifacts documentadas. Esta versión aún no está publicada ni etiquetada.
+**Hardening + CI/CD Readiness. Stable / Validated / Published.** Logging nativo en consola y archivo, evidencia de fallos persistida con nombres únicos, attachment de screenshots a Cucumber y rutas de artifacts documentadas.
+
+### v1.0.2 - En preparación
+
+**Documentation-only hotfix.** Corrección de inconsistencias de estado post-release; no contiene cambios funcionales y aún no está publicada ni etiquetada.
 
 ### v1.0.0 - 17 de septiembre de 2026
 

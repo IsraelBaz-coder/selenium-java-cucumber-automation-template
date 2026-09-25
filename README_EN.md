@@ -4,10 +4,10 @@ Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD
 
 | Release | Value |
 |---|---|
-| Internal version in preparation | **1.0.1** |
-| Status | **In preparation; published baseline: v1.0.0** |
-| Type | **Hardening and professional/CI readiness** |
-| Stable baseline date | **September 17, 2026** |
+| Current stable version | **v1.0.1** |
+| Status | **Stable / Validated / Published** |
+| Type | **Hardening + CI/CD Readiness** |
+| Publication date | **September 25, 2026** |
 
 | Document information | Value |
 |---|---|
@@ -129,9 +129,13 @@ For the versioning policy and repeatable release procedure, see [Versioning](doc
 
 ## Release history
 
-### v1.0.1 - In preparation
+### v1.0.1 - September 25, 2026
 
-**Hardening + CI/CD Readiness.** Native console/file logging, uniquely named persisted failure evidence, Cucumber screenshot attachment and documented artifact locations. This version has not been published or tagged yet.
+**Hardening + CI/CD Readiness. Stable / Validated / Published.** Native console/file logging, uniquely named persisted failure evidence, Cucumber screenshot attachment and documented artifact locations.
+
+### v1.0.2 - In preparation
+
+**Documentation-only hotfix.** Corrects post-release state inconsistencies; it contains no functional changes and has not yet been published or tagged.
 
 ### v1.0.0 - September 17, 2026
 
