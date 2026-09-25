@@ -1,6 +1,6 @@
 # Guía de Uso del Template de Automatización
 
-<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>Versión v1.0.0 · Estado: Stable / Validated · First Stable Release<br>17 de septiembre de 2026<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
+<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>Baseline estable v1.0.0 · v1.0.1 en preparación: Hardening + CI/CD Readiness<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
 
 ## Índice
 
@@ -39,10 +39,11 @@ No es necesario conocer este repositorio. Para avanzar con seguridad, basta con 
 
 ## Estado e historial de la release
 
-**Release Status: Stable / Validated.** La versión v1.0.0 fue validada como baseline para nuevos proyectos de automatización Web UI. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM. Las capacidades nuevas deben planearse y validarse en una versión posterior.
+**Release Status.** La versión v1.0.0 permanece como baseline estable para nuevos proyectos de automatización Web UI. La v1.0.1 está en preparación para el Hito 2, **Hardening + CI/CD Readiness**; no está publicada ni etiquetada. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM.
 
 | Versión | Fecha | Tipo | Estado | Cambios principales |
 |---|---|---|---|---|
+| v1.0.1 | En preparación | Hardening + CI/CD Readiness | Unreleased | Logging, screenshots ante fallo, propagación de tags, contrato de artifacts y documentación consolidada para una integración futura. No incluye workflow CI/CD. |
 | v1.0.0 | 17 de septiembre de 2026 | First Stable Release | Stable / Validated | Generalización del origen, Selenium + Cucumber + POM, Gradle Wrapper, Chrome/Edge, headless, `baseUrl`, ejemplo funcional, documentación técnica, diagramas, troubleshooting, reporte de migración, CI/CD documentado y manual PDF regenerable. |
 
 ## Arquitectura
@@ -131,9 +132,9 @@ Si VS Code muestra “Importing Gradle project”, espere a que termine. Si soli
 
 ## Selección de versión de Java
 
-### Compatibilidad de v1.0.0
+### Compatibilidad de v1.0.1
 
-Java 21 es la versión predeterminada y recomendada. El build también admite Java 17 porque el código y las dependencias utilizadas son compatibles con esa versión LTS. Java 8 y Java 11 no son compatibles con el código actual: se usan expresiones `switch` modernas y APIs como `String.isBlank()` y `Path.of()`.
+Java 21 es la versión predeterminada y recomendada. El build también admite Java 17 como única compatibilidad alternativa. Java 18, 19, 20, 22 y cualquier otra versión distinta de 17 o 21 no están soportadas: `build.gradle` las rechaza explícitamente.
 
 > Gradle debe ejecutarse con JDK 17 o superior. Además, la toolchain que seleccione debe estar instalada o ser resoluble por Gradle en el equipo o agente CI.
 
@@ -146,7 +147,7 @@ El archivo `build.gradle` define una propiedad llamada `javaVersion`. No cambie 
 | Usar el predeterminado | `.\gradlew.bat test` | Compila y ejecuta con Java 21. |
 | Usar Java 17 | `.\gradlew.bat clean test -PjavaVersion=17` | Compila y ejecuta con Java 17. |
 | Declarar Java 21 explícitamente | `.\gradlew.bat clean test -PjavaVersion=21` | Útil para CI/CD o scripts. |
-| Intentar Java inferior | `.\gradlew.bat test -PjavaVersion=11` | El build se detiene con un mensaje de versión mínima. |
+| Versión no admitida | `.\gradlew.bat clean test -PjavaVersion=18` | El build se detiene: sólo admite Java 17 o Java 21. |
 
 ### Paso a paso: configurar Java 17
 
@@ -161,10 +162,9 @@ java -version
 
 3. **Valide el JDK.** El comando anterior debe indicar Java 17. Si no lo hace, revise la ruta de `JAVA_HOME` antes de continuar.
 4. **Seleccione Java 17 en VS Code.** Abra la Paleta de comandos con `Ctrl+Shift+P`, ejecute `Java: Configure Java Runtime`, seleccione el JDK 17 para el proyecto y espere que Gradle termine de importarse. Si la extensión solicita recargar la ventana, acepte.
-5. **Detenga daemons anteriores y ejecute las pruebas.**
+5. **Ejecute las pruebas.**
 
 ~~~powershell
-.\gradlew.bat --stop
 .\gradlew.bat clean test -PjavaVersion=17
 ~~~
 
@@ -177,7 +177,6 @@ Abra una consola nueva o reemplace `jdk-17` por la ruta de su JDK 21. Después, 
 ~~~powershell
 $env:JAVA_HOME = 'C:\ruta\jdk-21'
 $env:Path = "$env:JAVA_HOME\bin;$env:Path"
-.\gradlew.bat --stop
 .\gradlew.bat clean test -PjavaVersion=21
 ~~~
 
@@ -212,16 +211,18 @@ screenshotOnFailure=true
 | Limpiar | .\gradlew.bat clean |
 | Ejecutar | .\gradlew.bat test |
 | Limpiar y ejecutar | .\gradlew.bat clean test |
-| Headless | .\gradlew.bat test -Dheadless=true |
-| Chrome | .\gradlew.bat test -Dbrowser=CHROME |
-| Edge | .\gradlew.bat test -Dbrowser=EDGE |
-| URL temporal | .\gradlew.bat test -DbaseUrl=https://example.com |
-| Subconjunto por tag | .\gradlew.bat test -Dcucumber.filter.tags=@example |
+| Headless | .\gradlew.bat clean test -Dheadless=true |
+| Chrome | .\gradlew.bat clean test -Dbrowser=CHROME |
+| Edge | .\gradlew.bat clean test -Dbrowser=EDGE |
+| URL temporal | .\gradlew.bat clean test -DbaseUrl=https://example.com |
+| Subconjunto por tag | .\gradlew.bat clean test "-Dcucumber.filter.tags=@example" |
+| Subconjunto headless | .\gradlew.bat clean test -Dheadless=true "-Dcucumber.filter.tags=@example" |
+| Alias Cucumber | .\gradlew.bat cucumber |
 | Dependencias | .\gradlew.bat dependencies |
 | Información Gradle | .\gradlew.bat --version |
 | Estado Git | git status |
 
-Variables disponibles: BASE_URL, BROWSER, HEADLESS, TIMEOUT_SECONDS y SCREENSHOT_ON_FAILURE. Reporte: build/reports/cucumber/cucumber.html; screenshots: build/screenshots.
+Variables disponibles: BASE_URL, BROWSER, HEADLESS, TIMEOUT_SECONDS y SCREENSHOT_ON_FAILURE. Reporte: `build/reports/cucumber/cucumber.html`; screenshots de fallos: `build/evidence/screenshots/`; log: `build/logs/automation.log`.
 
 ## Primera automatización
 
@@ -284,7 +285,7 @@ Siga esta secuencia para transformar el template en un proyecto de automatizaci�
 
 Genérico: driver, configuración, hooks, runner, reporting y convenciones. Personalizable: URL, datos, pages, features, steps, tags y pipeline.
 
-## CI/CD
+## Contrato CI/CD futuro
 
 ~~~mermaid
 flowchart TD
@@ -296,19 +297,9 @@ flowchart TD
   TEST --> ART[Reports / Artifacts]
 ~~~
 
-EJEMPLO - REQUIERE ADAPTACIÓN A LA INFRAESTRUCTURA DE LA EMPRESA:
+El entry point que deberá usar un pipeline futuro es ` .\gradlew.bat clean test`; para un agente sin interfaz use ` .\gradlew.bat clean test -Dheadless=true`. Un exit code `0` representa éxito y cualquier código distinto de cero debe fallar el job. El contrato permite seleccionar `CHROME` o `EDGE`, aplicar `cucumber.filter.tags` y recolectar `build/reports/cucumber/cucumber.html`, `build/reports/tests/test/`, `build/test-results/test/`, `build/logs/automation.log` y, si un escenario falló, `build/evidence/screenshots/`.
 
-~~~yaml
-steps:
-  - run: .\gradlew.bat clean test -Dheadless=true
-    env:
-      BASE_URL: referencia a secreto corporativo
-      BROWSER: CHROME
-  - publish: build/reports
-  - publish: build/screenshots
-~~~
-
-Use Wrapper, headless, variables/secrets corporativos y artifacts. La pipeline debe fallar si Gradle devuelve código distinto de cero. Runners, permisos, URLs y secretos se definen con el equipo de plataforma.
+No existe todavía un workflow, runner, Docker, Grid ni configuración de CI/CD en este repositorio. Runners, permisos, URLs y secretos se definirán en el hito correspondiente con el equipo de plataforma.
 
 ## Regeneración del manual
 

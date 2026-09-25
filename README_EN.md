@@ -4,10 +4,10 @@ Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD
 
 | Release | Value |
 |---|---|
-| Version | **v1.0.0** |
-| Status | **Stable / Validated** |
-| Type | **First Stable Release** |
-| Date | **September 17, 2026** |
+| Internal version in preparation | **1.0.1** |
+| Status | **In preparation; published baseline: v1.0.0** |
+| Type | **Hardening and professional/CI readiness** |
+| Stable baseline date | **September 17, 2026** |
 
 | Document information | Value |
 |---|---|
@@ -22,19 +22,19 @@ The template was validated and can be used as a baseline for new projects. Confi
 - Java 21 by default, Java 17 compatible, Gradle Wrapper and UTF-8 source encoding.
 - Page Object Model, Steps and Hooks kept separate.
 - Chrome/Edge, headless mode and URL configured by file, environment or `-D`.
-- Explicit waits, failure screenshots and Cucumber HTML reporting.
+- Explicit waits, execution logging, failure screenshots and Cucumber HTML reporting.
 
 ## Java version selection
 
-Java 21 is the v1.0.0 default. The framework can compile with Java 17 or Java 21 through the Gradle `javaVersion` property:
+Java 21 is the v1.0.1 default. The only supported toolchains are Java 17 and Java 21, selected through the Gradle `javaVersion` property:
 
 | Purpose | PowerShell |
 |---|---|
-| Default Java (21) | `.\gradlew.bat test` |
-| Use Java 17 | `.\gradlew.bat test -PjavaVersion=17` |
-| Return to Java 21 | Omit `-PjavaVersion` or use `-PjavaVersion=21` |
+| Default Java (21) | `.\gradlew.bat clean test` |
+| Use Java 17 | `.\gradlew.bat clean test -PjavaVersion=17` |
+| Explicit Java 21 | `.\gradlew.bat clean test -PjavaVersion=21` |
 
-Java 17 is the minimum supported version. Java 8 and Java 11 are not supported by the current code. Gradle itself must run with JDK 17 or later, and the selected toolchain must be installed or available to Gradle.
+Java 17 is the only supported alternative. `-PjavaVersion=18`, `19`, `20`, `22`, and every value other than `17` or `21` are rejected with a `GradleException`. Gradle itself must run with JDK 17 or later, and the selected toolchain must be installed or available to Gradle.
 
 For the installation, `JAVA_HOME`, VS Code, validation and Java 21 rollback steps, read [Java version selection](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md#selección-de-versión-de-java).
 
@@ -57,33 +57,81 @@ Features express Gherkin behavior; Steps translate intent; Page Objects encapsul
 | Clean | `.\gradlew.bat clean` |
 | Run | `.\gradlew.bat test` |
 | Clean and run | `.\gradlew.bat clean test` |
-| Headless | `.\gradlew.bat test -Dheadless=true` |
-| Chrome | `.\gradlew.bat test -Dbrowser=CHROME` |
-| Edge | `.\gradlew.bat test -Dbrowser=EDGE` |
-| URL | `.\gradlew.bat test -DbaseUrl=https://example.com` |
-| Cucumber tags | `.\gradlew.bat test -Dcucumber.filter.tags=@example` |
+| Headless | `.\gradlew.bat clean test -Dheadless=true` |
+| Chrome | `.\gradlew.bat clean test -Dbrowser=CHROME` |
+| Edge | `.\gradlew.bat clean test -Dbrowser=EDGE` |
+| URL | `.\gradlew.bat clean test -DbaseUrl=https://example.com` |
+| Cucumber tags | `.\gradlew.bat clean test "-Dcucumber.filter.tags=@example"` |
+| Headless Cucumber tags | `.\gradlew.bat clean test -Dheadless=true "-Dcucumber.filter.tags=@example"` |
+| Cucumber alias | `.\gradlew.bat cucumber` |
 
-Reports are at `build/reports/cucumber/cucumber.html`; failure screenshots are in `build/screenshots`.
+## Evidence and reports
+
+Each execution creates regenerable Git-ignored artifacts under `build/`:
+
+| Artifact | Path |
+|---|---|
+| Cucumber HTML | `build/reports/cucumber/cucumber.html` |
+| Gradle HTML | `build/reports/tests/test/` |
+| JUnit XML | `build/test-results/test/` |
+| Failure screenshots | `build/evidence/screenshots/` |
+| Execution log | `build/logs/automation.log` |
+
+Hooks log every scenario start and finish, browser, headless mode and driver lifecycle. If a scenario fails and `screenshotOnFailure=true`, they attempt to attach a PNG to the Cucumber scenario and persist it physically. The file name combines a sanitized scenario name, timestamp and UUID to prevent overwrites. If capturing, attaching or persisting evidence fails, the log records the failure and exception while preserving the original scenario failure.
 
 ## Browsers, URL and Cucumber
 
 Chrome is the default browser. Use `-Dbrowser=EDGE` for Edge and `-DbaseUrl=https://your-application` for a temporary URL. Use Cucumber tags such as `@smoke` with `-Dcucumber.filter.tags=@smoke` to select scenarios.
 
+## Configuration inventory
+
+For the five framework properties, precedence is JVM `-D` property, environment variable, then `config.properties`. `cucumber.filter.tags` is passed directly to Cucumber through `-D`. `javaVersion` is a Gradle (`-P`) property, not a JVM property.
+
+| Property | Purpose | Default | Supported values | Example |
+|---|---|---|---|---|
+| `baseUrl` / `BASE_URL` | Initial URL of the system under test. | `https://example.com/` | Any non-blank URL. | `-DbaseUrl=https://example.com` or `$env:BASE_URL='https://example.com'` |
+| `browser` / `BROWSER` | WebDriver browser. | `CHROME` | `CHROME`, `EDGE` (case-insensitive). | `-Dbrowser=EDGE` |
+| `headless` / `HEADLESS` | Runs the browser without a window. | `false` | `true`, `false`. | `-Dheadless=true` |
+| `timeoutSeconds` / `TIMEOUT_SECONDS` | Explicit page-wait timeout. | `15` | Integer usable by the framework. | `-DtimeoutSeconds=20` |
+| `screenshotOnFailure` / `SCREENSHOT_ON_FAILURE` | Attempts to attach and persist PNG evidence for failed scenarios. | `true` | `true`, `false`. | `-DscreenshotOnFailure=false` |
+| `cucumber.filter.tags` | Filters scenarios Cucumber executes. | No filter: all. | Valid Cucumber tag expression. | `"-Dcucumber.filter.tags=@example"` |
+| `javaVersion` | Selects Gradle's Java toolchain. | `21` | Only `17` or `21`; every other value fails. | `-PjavaVersion=17` |
+
+## CI/CD execution contract
+
+The standard entry point for a future pipeline is:
+
+```powershell
+.\gradlew.bat clean test
+```
+
+Gradle exits with code `0` when the build and tests succeed; a non-zero code means a build or test failure and must fail the job. For a displayless agent, use `-Dheadless=true`. It can be combined with `-Dbrowser=CHROME` or `-Dbrowser=EDGE`, the configuration properties above, and `"-Dcucumber.filter.tags=@example"`.
+
+When they exist, a pipeline should collect `build/reports/cucumber/cucumber.html`, `build/reports/tests/test/`, `build/test-results/test/`, `build/logs/automation.log`, and `build/evidence/screenshots/`. The log is initialized during execution and records scenario lifecycle, driver activity, and evidence failures. Screenshots exist only when a scenario fails, the option is enabled, and the driver can capture them. This repository does not yet contain a CI/CD workflow.
+
 ## Create and reuse
 
 Create a feature, Page Object and Step Definitions in their respective folders, then run the wrapper. To start a project, clone/copy this template, change `rootProject.name` and `group`, configure `baseUrl`, replace the example and initialize Git. Do not store secrets in files; use environment variables or pipeline secrets.
 
-For architecture, VS Code setup, CI/CD, first test tutorial and troubleshooting, read the Spanish [user guide](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md). No license was added because ownership must define it.
+For architecture, VS Code setup, CI/CD, first test tutorial and troubleshooting, read the Spanish [user guide](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md). This repository is distributed under the [Apache License 2.0](LICENSE).
 
 ## CI/CD, manual generation and temporary files
 
-Run the Gradle Wrapper headlessly in CI/CD and publish `build/reports` and `build/screenshots` as artifacts. The guide provides an example that needs corporate-infrastructure adaptation; it contains no internal runners, URLs or secrets.
+Run the Gradle Wrapper headlessly in CI/CD and publish `build/reports`, `build/evidence` and `build/logs` as artifacts. The guide documents the contract a future pipeline must adopt; it contains no workflow, internal runners, URLs, or secrets.
 
 `scripts/create_manual.py` generates the PDF manual with ReportLab. It requires Python with `reportlab`; run `python scripts/create_manual.py` from the project root. It generates `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf` and retains an external project-directory copy.
 
 `work/` contains temporary documentation/PDF-generation and validation files. It is ignored by Git, is not part of the final product, must not be versioned, and can be deleted without affecting the framework.
 
+## Governance and release documentation
+
+For the versioning policy and repeatable release procedure, see [Versioning](docs/VERSIONING.md) and the [Release process](docs/RELEASE_PROCESS.md). Before contributing, read [Contributing](CONTRIBUTING.md), the [Security policy](SECURITY.md), the [Code of Conduct](CODE_OF_CONDUCT.md), and the [Changelog](CHANGELOG.md).
+
 ## Release history
+
+### v1.0.1 - In preparation
+
+**Hardening + CI/CD Readiness.** Native console/file logging, uniquely named persisted failure evidence, Cucumber screenshot attachment and documented artifact locations. This version has not been published or tagged yet.
 
 ### v1.0.0 - September 17, 2026
 

@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.automation.template'
-version = '1.0'
+version = '1.0.1'
 
 // ES: Java 21 es el valor predeterminado. Puede seleccionarse una toolchain LTS compatible
 // mediante -PjavaVersion=17 o -PjavaVersion=21.
@@ -11,8 +11,8 @@ version = '1.0'
 // -PjavaVersion=17 or -PjavaVersion=21.
 def targetJavaVersion = (findProperty('javaVersion') ?: '21').toString().toInteger()
 
-if (targetJavaVersion < 17) {
-    throw new GradleException('Java 17 is the minimum supported version. Use -PjavaVersion=17 or -PjavaVersion=21.')
+if (targetJavaVersion !in [17, 21]) {
+    throw new GradleException('Unsupported Java version. Use -PjavaVersion=17 or -PjavaVersion=21.')
 }
 
 java {
@@ -42,20 +42,29 @@ tasks.withType(JavaCompile).configureEach {
     options.release = targetJavaVersion
 }
 
+def testSystemPropertyKeys = [
+    'browser',
+    'headless',
+    'baseUrl',
+    'timeoutSeconds',
+    'screenshotOnFailure',
+    'cucumber.filter.tags'
+]
+
 tasks.named('test') {
     useJUnitPlatform()
+
+    // ES: Propaga el contrato de ejecución de -D al proceso de pruebas.
+    // EN: Propagates the -D execution contract to the test process.
     systemProperties System.properties.findAll { key, value ->
-        key in ['browser', 'headless', 'baseUrl', 'timeoutSeconds', 'screenshotOnFailure']
+        key in testSystemPropertyKeys
     }
 }
 
-tasks.register('cucumber', Test) {
+tasks.register('cucumber') {
     group = 'verification'
-    description = 'Ejecuta los escenarios de Cucumber mediante JUnit Platform.'
-
-    useJUnitPlatform()
-
-    systemProperty 'cucumber.junit-platform.naming-strategy', 'long'
+    description = 'Alias de la tarea test para ejecutar los escenarios de Cucumber mediante JUnit Platform.'
+    dependsOn(tasks.named('test'))
 }
 
 

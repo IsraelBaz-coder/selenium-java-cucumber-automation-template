@@ -1,6 +1,9 @@
 package com.automation.template.support;
 
 import com.automation.template.driver.DriverFactory;
+import com.automation.template.logging.FrameworkLogger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -12,6 +15,7 @@ import org.openqa.selenium.WebDriver;
  */
 public final class DriverManager {
     private static final ThreadLocal<WebDriver> DRIVERS = new ThreadLocal<>();
+    private static final Logger LOGGER = FrameworkLogger.getLogger(DriverManager.class);
     private DriverManager() { }
     /** ES: Crea el driver del escenario. EN: Creates the scenario driver. */
     public static void startDriver() { DRIVERS.set(DriverFactory.createDriver()); }
@@ -26,7 +30,15 @@ public final class DriverManager {
     /** ES: Cierra y elimina el driver del hilo. EN: Quits and removes the thread driver. */
     public static void quitDriver() {
         WebDriver driver = DRIVERS.get();
-        try { if (driver != null) driver.quit(); } finally { DRIVERS.remove(); }
+        try {
+            if (driver != null) {
+                LOGGER.info("Closing WebDriver.");
+                driver.quit();
+                LOGGER.info("WebDriver closed.");
+            }
+        } catch (RuntimeException exception) {
+            LOGGER.log(Level.SEVERE, "Failed to close WebDriver; preserving the scenario result.", exception);
+        } finally { DRIVERS.remove(); }
     }
 }
 
