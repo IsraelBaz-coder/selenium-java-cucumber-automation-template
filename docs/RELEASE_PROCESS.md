@@ -55,10 +55,10 @@ Merge only after the required review and validations have been completed.
 
 ## 8. Create a tag
 
-After the merge, create the release tag. For example, the following is documentation only:
+After the merge, create the release tag. For example, the following is documentation only and uses a future placeholder version:
 
 ```powershell
-git tag -a v1.0.1 -m "Release v1.0.1"
+git tag -a vX.Y.Z -m "Release vX.Y.Z"
 ```
 
 ## 9. Publish the GitHub Release
