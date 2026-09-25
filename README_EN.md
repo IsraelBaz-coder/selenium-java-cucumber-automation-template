@@ -26,15 +26,15 @@ The template was validated and can be used as a baseline for new projects. Confi
 
 ## Java version selection
 
-Java 21 is the v1.0.1 default. The framework can compile with Java 17 or Java 21 through the Gradle `javaVersion` property:
+Java 21 is the v1.0.1 default. The only supported toolchains are Java 17 and Java 21, selected through the Gradle `javaVersion` property:
 
 | Purpose | PowerShell |
 |---|---|
-| Default Java (21) | `.\gradlew.bat test` |
-| Use Java 17 | `.\gradlew.bat test -PjavaVersion=17` |
-| Return to Java 21 | Omit `-PjavaVersion` or use `-PjavaVersion=21` |
+| Default Java (21) | `.\gradlew.bat clean test` |
+| Use Java 17 | `.\gradlew.bat clean test -PjavaVersion=17` |
+| Explicit Java 21 | `.\gradlew.bat clean test -PjavaVersion=21` |
 
-Java 17 is the minimum supported version. Java 8 and Java 11 are not supported by the current code. Gradle itself must run with JDK 17 or later, and the selected toolchain must be installed or available to Gradle.
+Java 17 is the only supported alternative. `-PjavaVersion=18`, `19`, `20`, `22`, and every value other than `17` or `21` are rejected with a `GradleException`. Gradle itself must run with JDK 17 or later, and the selected toolchain must be installed or available to Gradle.
 
 For the installation, `JAVA_HOME`, VS Code, validation and Java 21 rollback steps, read [Java version selection](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md#selección-de-versión-de-java).
 
@@ -57,11 +57,13 @@ Features express Gherkin behavior; Steps translate intent; Page Objects encapsul
 | Clean | `.\gradlew.bat clean` |
 | Run | `.\gradlew.bat test` |
 | Clean and run | `.\gradlew.bat clean test` |
-| Headless | `.\gradlew.bat test -Dheadless=true` |
-| Chrome | `.\gradlew.bat test -Dbrowser=CHROME` |
-| Edge | `.\gradlew.bat test -Dbrowser=EDGE` |
-| URL | `.\gradlew.bat test -DbaseUrl=https://example.com` |
-| Cucumber tags | `.\gradlew.bat test -Dcucumber.filter.tags=@example` |
+| Headless | `.\gradlew.bat clean test -Dheadless=true` |
+| Chrome | `.\gradlew.bat clean test -Dbrowser=CHROME` |
+| Edge | `.\gradlew.bat clean test -Dbrowser=EDGE` |
+| URL | `.\gradlew.bat clean test -DbaseUrl=https://example.com` |
+| Cucumber tags | `.\gradlew.bat clean test "-Dcucumber.filter.tags=@example"` |
+| Headless Cucumber tags | `.\gradlew.bat clean test -Dheadless=true "-Dcucumber.filter.tags=@example"` |
+| Cucumber alias | `.\gradlew.bat cucumber` |
 
 ## Evidence and reports
 
@@ -93,7 +95,7 @@ For the five framework properties, precedence is JVM `-D` property, environment 
 | `timeoutSeconds` / `TIMEOUT_SECONDS` | Explicit page-wait timeout. | `15` | Integer usable by the framework. | `-DtimeoutSeconds=20` |
 | `screenshotOnFailure` / `SCREENSHOT_ON_FAILURE` | Attempts to attach and persist PNG evidence for failed scenarios. | `true` | `true`, `false`. | `-DscreenshotOnFailure=false` |
 | `cucumber.filter.tags` | Filters scenarios Cucumber executes. | No filter: all. | Valid Cucumber tag expression. | `"-Dcucumber.filter.tags=@example"` |
-| `javaVersion` | Selects Gradle's Java toolchain. | `21` | `17` or `21`; values below 17 fail. | `-PjavaVersion=17` |
+| `javaVersion` | Selects Gradle's Java toolchain. | `21` | Only `17` or `21`; every other value fails. | `-PjavaVersion=17` |
 
 ## CI/CD execution contract
 

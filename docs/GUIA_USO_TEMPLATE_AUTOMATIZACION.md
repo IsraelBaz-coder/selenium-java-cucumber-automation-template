@@ -134,7 +134,7 @@ Si VS Code muestra “Importing Gradle project”, espere a que termine. Si soli
 
 ### Compatibilidad de v1.0.1
 
-Java 21 es la versión predeterminada y recomendada. El build también admite Java 17 porque el código y las dependencias utilizadas son compatibles con esa versión LTS. Java 8 y Java 11 no son compatibles con el código actual: se usan expresiones `switch` modernas y APIs como `String.isBlank()` y `Path.of()`.
+Java 21 es la versión predeterminada y recomendada. El build también admite Java 17 como única compatibilidad alternativa. Java 18, 19, 20, 22 y cualquier otra versión distinta de 17 o 21 no están soportadas: `build.gradle` las rechaza explícitamente.
 
 > Gradle debe ejecutarse con JDK 17 o superior. Además, la toolchain que seleccione debe estar instalada o ser resoluble por Gradle en el equipo o agente CI.
 
@@ -147,7 +147,7 @@ El archivo `build.gradle` define una propiedad llamada `javaVersion`. No cambie 
 | Usar el predeterminado | `.\gradlew.bat test` | Compila y ejecuta con Java 21. |
 | Usar Java 17 | `.\gradlew.bat clean test -PjavaVersion=17` | Compila y ejecuta con Java 17. |
 | Declarar Java 21 explícitamente | `.\gradlew.bat clean test -PjavaVersion=21` | Útil para CI/CD o scripts. |
-| Intentar Java inferior | `.\gradlew.bat test -PjavaVersion=11` | El build se detiene con un mensaje de versión mínima. |
+| Versión no admitida | `.\gradlew.bat clean test -PjavaVersion=18` | El build se detiene: sólo admite Java 17 o Java 21. |
 
 ### Paso a paso: configurar Java 17
 
@@ -162,10 +162,9 @@ java -version
 
 3. **Valide el JDK.** El comando anterior debe indicar Java 17. Si no lo hace, revise la ruta de `JAVA_HOME` antes de continuar.
 4. **Seleccione Java 17 en VS Code.** Abra la Paleta de comandos con `Ctrl+Shift+P`, ejecute `Java: Configure Java Runtime`, seleccione el JDK 17 para el proyecto y espere que Gradle termine de importarse. Si la extensión solicita recargar la ventana, acepte.
-5. **Detenga daemons anteriores y ejecute las pruebas.**
+5. **Ejecute las pruebas.**
 
 ~~~powershell
-.\gradlew.bat --stop
 .\gradlew.bat clean test -PjavaVersion=17
 ~~~
 
@@ -178,7 +177,6 @@ Abra una consola nueva o reemplace `jdk-17` por la ruta de su JDK 21. Después, 
 ~~~powershell
 $env:JAVA_HOME = 'C:\ruta\jdk-21'
 $env:Path = "$env:JAVA_HOME\bin;$env:Path"
-.\gradlew.bat --stop
 .\gradlew.bat clean test -PjavaVersion=21
 ~~~
 
@@ -213,11 +211,13 @@ screenshotOnFailure=true
 | Limpiar | .\gradlew.bat clean |
 | Ejecutar | .\gradlew.bat test |
 | Limpiar y ejecutar | .\gradlew.bat clean test |
-| Headless | .\gradlew.bat test -Dheadless=true |
-| Chrome | .\gradlew.bat test -Dbrowser=CHROME |
-| Edge | .\gradlew.bat test -Dbrowser=EDGE |
-| URL temporal | .\gradlew.bat test -DbaseUrl=https://example.com |
-| Subconjunto por tag | .\gradlew.bat test -Dcucumber.filter.tags=@example |
+| Headless | .\gradlew.bat clean test -Dheadless=true |
+| Chrome | .\gradlew.bat clean test -Dbrowser=CHROME |
+| Edge | .\gradlew.bat clean test -Dbrowser=EDGE |
+| URL temporal | .\gradlew.bat clean test -DbaseUrl=https://example.com |
+| Subconjunto por tag | .\gradlew.bat clean test "-Dcucumber.filter.tags=@example" |
+| Subconjunto headless | .\gradlew.bat clean test -Dheadless=true "-Dcucumber.filter.tags=@example" |
+| Alias Cucumber | .\gradlew.bat cucumber |
 | Dependencias | .\gradlew.bat dependencies |
 | Información Gradle | .\gradlew.bat --version |
 | Estado Git | git status |

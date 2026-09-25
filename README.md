@@ -44,7 +44,7 @@ Las Features describen comportamiento en Gherkin; los Steps traducen intención;
 
 ## Requisitos e instalación
 
-Instale JDK 21 (recomendado) o JDK 17 (compatible), además de Chrome o Edge. Compruebe:
+Instale JDK 21 (recomendado) o JDK 17 (compatible), además de Chrome o Edge. Ejecute siempre el Gradle Wrapper incluido: `./gradlew` en entornos Unix o `./gradlew.bat` en Windows; no se requiere una instalación global de Gradle. Compruebe:
 
 ```powershell
 java -version
@@ -63,15 +63,15 @@ Instale **Extension Pack for Java**, **Gradle for Java**, **Cucumber (Gherkin) F
 
 ## Selección de versión de Java
 
-Java 21 es el valor predeterminado de v1.0.1. El código puede compilarse con Java 17 o Java 21 mediante la propiedad Gradle `javaVersion`:
+Java 21 es el valor predeterminado de v1.0.1. Las únicas toolchains admitidas son Java 17 y Java 21, seleccionadas mediante la propiedad Gradle `javaVersion`:
 
 | Objetivo | PowerShell |
 |---|---|
-| Java predeterminado (21) | `.\gradlew.bat test` |
-| Usar Java 17 | `.\gradlew.bat test -PjavaVersion=17` |
-| Volver a Java 21 | Omita `-PjavaVersion` o use `-PjavaVersion=21` |
+| Java predeterminado (21) | `.\gradlew.bat clean test` |
+| Usar Java 17 | `.\gradlew.bat clean test -PjavaVersion=17` |
+| Declarar Java 21 | `.\gradlew.bat clean test -PjavaVersion=21` |
 
-Java 17 es la versión mínima compatible. Java 8 y Java 11 no están soportados por el código actual. Gradle debe ejecutarse con JDK 17 o superior, y la toolchain seleccionada debe estar instalada o disponible para Gradle.
+Java 17 es la única compatibilidad alternativa. `-PjavaVersion=18`, `19`, `20`, `22` y cualquier valor distinto de `17` o `21` se rechazan con `GradleException`. Gradle debe ejecutarse con JDK 17 o superior, y la toolchain seleccionada debe estar instalada o disponible para Gradle.
 
 Para la instalación, configuración de `JAVA_HOME`, VS Code, validación y regreso a Java 21, siga el paso a paso de [Selección de versión de Java](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md#selección-de-versión-de-java).
 
@@ -84,11 +84,13 @@ Para la instalación, configuración de `JAVA_HOME`, VS Code, validación y regr
 | Limpiar | `.\gradlew.bat clean` |
 | Ejecutar | `.\gradlew.bat test` |
 | Limpiar y ejecutar | `.\gradlew.bat clean test` |
-| Headless | `.\gradlew.bat test -Dheadless=true` |
-| Chrome | `.\gradlew.bat test -Dbrowser=CHROME` |
-| Edge | `.\gradlew.bat test -Dbrowser=EDGE` |
-| URL | `.\gradlew.bat test -DbaseUrl=https://example.com` |
-| Tags Cucumber | `.\gradlew.bat test -Dcucumber.filter.tags=@example` |
+| Headless | `.\gradlew.bat clean test -Dheadless=true` |
+| Chrome | `.\gradlew.bat clean test -Dbrowser=CHROME` |
+| Edge | `.\gradlew.bat clean test -Dbrowser=EDGE` |
+| URL | `.\gradlew.bat clean test -DbaseUrl=https://example.com` |
+| Tags Cucumber | `.\gradlew.bat clean test "-Dcucumber.filter.tags=@example"` |
+| Tags Cucumber en headless | `.\gradlew.bat clean test -Dheadless=true "-Dcucumber.filter.tags=@example"` |
+| Alias Cucumber | `.\gradlew.bat cucumber` |
 | Tareas Gradle | `.\gradlew.bat tasks` |
 | Dependencias | `.\gradlew.bat dependencies` |
 | Estado Git | `git status` |
@@ -123,7 +125,7 @@ La prioridad para las cinco propiedades del framework es: propiedad JVM `-D`, va
 | `timeoutSeconds` / `TIMEOUT_SECONDS` | Tiempo de espera explícita de las páginas. | `15` | Entero positivo utilizable por el framework. | `-DtimeoutSeconds=20` |
 | `screenshotOnFailure` / `SCREENSHOT_ON_FAILURE` | Intenta adjuntar y persistir evidencia PNG ante un escenario fallido. | `true` | `true`, `false`. | `-DscreenshotOnFailure=false` |
 | `cucumber.filter.tags` | Filtra escenarios que Cucumber debe ejecutar. | Sin filtro: todos. | Expresión de tags Cucumber válida. | `"-Dcucumber.filter.tags=@example"` |
-| `javaVersion` | Selecciona la toolchain Java de Gradle. | `21` | `17` o `21`; valores menores de 17 fallan. | `-PjavaVersion=17` |
+| `javaVersion` | Selecciona la toolchain Java de Gradle. | `21` | Exclusivamente `17` o `21`; cualquier otro valor falla. | `-PjavaVersion=17` |
 
 ## Contrato de ejecución para CI/CD
 
