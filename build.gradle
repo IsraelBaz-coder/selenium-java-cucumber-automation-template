@@ -11,8 +11,8 @@ version = '1.0.1'
 // -PjavaVersion=17 or -PjavaVersion=21.
 def targetJavaVersion = (findProperty('javaVersion') ?: '21').toString().toInteger()
 
-if (targetJavaVersion < 17) {
-    throw new GradleException('Java 17 is the minimum supported version. Use -PjavaVersion=17 or -PjavaVersion=21.')
+if (targetJavaVersion !in [17, 21]) {
+    throw new GradleException('Unsupported Java version. Use -PjavaVersion=17 or -PjavaVersion=21.')
 }
 
 java {
