@@ -8,7 +8,7 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 MAJOR.MINOR.PATCH
 ```
 
-For example, `1.0.2` is the documentation-only patch version currently being prepared.
+For example, `1.0.2` is the current documentation-only hotfix version.
 
 - **MAJOR**: incompatible changes that require consumers to adapt.
 - **MINOR**: backward-compatible functionality.
@@ -18,10 +18,10 @@ For example, `1.0.2` is the documentation-only patch version currently being pre
 
 ```text
 v1.0.0 = initial stable baseline
-v1.0.1 = current stable release, Hardening + CI/CD Readiness
-v1.0.2 = documentation-only patch in preparation
+v1.0.1 = Hardening + CI/CD Readiness
+v1.0.2 = Documentation-only Hotfix, Stable / Validated
 ```
 
-`v1.0.1` was published, tagged, and released on 2026-09-25. `v1.0.2` is a PATCH containing documentation-only post-release state corrections; it is not yet published or tagged.
+`v1.0.1` was published, tagged, and released on 2026-09-25. `v1.0.2` is the current Stable / Validated PATCH containing documentation-only post-release state corrections.
 
-Git release tags use the `v` prefix, for example `v1.0.1`. The internal Gradle build version may omit that prefix, for example `1.0.2`.
+Git release tags use the `v` prefix, for example `v1.0.2`. The internal Gradle build version may omit that prefix, for example `1.0.2`.

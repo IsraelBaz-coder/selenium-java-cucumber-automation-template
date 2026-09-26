@@ -4,10 +4,10 @@ Template reutilizable para pruebas Web UI con Java 21, Selenium WebDriver, Cucum
 
 | Release | Valor |
 |---|---|
-| Versión estable actual | **v1.0.1** |
-| Estado | **Stable / Validated / Published** |
-| Tipo | **Hardening + CI/CD Readiness** |
-| Fecha de publicación | **25 de septiembre de 2026** |
+| Versión estable actual | **v1.0.2** |
+| Estado | **Stable / Validated** |
+| Tipo | **Documentation-only Hotfix** |
+| Fecha | **25 de septiembre de 2026** |
 
 | Información del documento | Valor |
 |---|---|
@@ -63,7 +63,7 @@ Instale **Extension Pack for Java**, **Gradle for Java**, **Cucumber (Gherkin) F
 
 ## Selección de versión de Java
 
-Java 21 es el valor predeterminado de v1.0.1. Las únicas toolchains admitidas son Java 17 y Java 21, seleccionadas mediante la propiedad Gradle `javaVersion`:
+Java 21 es el valor predeterminado de v1.0.2. Las únicas toolchains admitidas son Java 17 y Java 21, seleccionadas mediante la propiedad Gradle `javaVersion`:
 
 | Objetivo | PowerShell |
 |---|---|
@@ -162,13 +162,13 @@ Documentación adicional: [guía de uso](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.m
 
 ## Release history
 
+### v1.0.2 - 25 de septiembre de 2026
+
+**Documentation-only Hotfix. Stable / Validated.** Corrección de inconsistencias de estado post-release; no introduce cambios funcionales, dependencias, CI/CD, Docker, Selenium Grid, Healenium ni Playwright.
+
 ### v1.0.1 - 25 de septiembre de 2026
 
 **Hardening + CI/CD Readiness. Stable / Validated / Published.** Logging nativo en consola y archivo, evidencia de fallos persistida con nombres únicos, attachment de screenshots a Cucumber y rutas de artifacts documentadas.
-
-### v1.0.2 - En preparación
-
-**Documentation-only hotfix.** Corrección de inconsistencias de estado post-release; no contiene cambios funcionales y aún no está publicada ni etiquetada.
 
 ### v1.0.0 - 17 de septiembre de 2026
 

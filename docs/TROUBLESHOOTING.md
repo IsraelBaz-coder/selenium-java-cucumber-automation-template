@@ -1,6 +1,6 @@
 # Troubleshooting
 
-**Baseline estable actual:** v1.0.1 (Hardening + CI/CD Readiness, Stable / Validated / Published) · **Hotfix documental en preparación:** v1.0.2
+**Baseline estable actual:** v1.0.2 (Documentation-only Hotfix, Stable / Validated)
 
 | Síntoma | Causa probable | Solución |
 |---|---|---|
