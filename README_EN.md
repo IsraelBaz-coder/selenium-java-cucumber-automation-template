@@ -4,10 +4,10 @@ Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD
 
 | Release | Value |
 |---|---|
-| Current stable version | **v1.0.1** |
-| Status | **Stable / Validated / Published** |
-| Type | **Hardening + CI/CD Readiness** |
-| Publication date | **September 25, 2026** |
+| Current stable version | **v1.0.2** |
+| Status | **Stable / Validated** |
+| Type | **Documentation-only Hotfix** |
+| Date | **September 25, 2026** |
 
 | Document information | Value |
 |---|---|
@@ -26,7 +26,7 @@ The template was validated and can be used as a baseline for new projects. Confi
 
 ## Java version selection
 
-Java 21 is the v1.0.1 default. The only supported toolchains are Java 17 and Java 21, selected through the Gradle `javaVersion` property:
+Java 21 is the v1.0.2 default. The only supported toolchains are Java 17 and Java 21, selected through the Gradle `javaVersion` property:
 
 | Purpose | PowerShell |
 |---|---|
@@ -129,13 +129,13 @@ For the versioning policy and repeatable release procedure, see [Versioning](doc
 
 ## Release history
 
+### v1.0.2 - September 25, 2026
+
+**Documentation-only Hotfix. Stable / Validated.** Corrects post-release state inconsistencies; it introduces no functional changes, dependency changes, CI/CD, Docker, Selenium Grid, Healenium, or Playwright.
+
 ### v1.0.1 - September 25, 2026
 
 **Hardening + CI/CD Readiness. Stable / Validated / Published.** Native console/file logging, uniquely named persisted failure evidence, Cucumber screenshot attachment and documented artifact locations.
-
-### v1.0.2 - In preparation
-
-**Documentation-only hotfix.** Corrects post-release state inconsistencies; it contains no functional changes and has not yet been published or tagged.
 
 ### v1.0.0 - September 17, 2026
 

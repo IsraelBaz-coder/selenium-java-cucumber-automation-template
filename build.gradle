@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.automation.template'
-version = '1.0.1'
+version = '1.0.2'
 
 // ES: Java 21 es el valor predeterminado. Puede seleccionarse una toolchain LTS compatible
 // mediante -PjavaVersion=17 o -PjavaVersion=21.

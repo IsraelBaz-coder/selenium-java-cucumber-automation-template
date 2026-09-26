@@ -6,7 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-Documentation-only post-release state corrections for the future v1.0.2 patch.
+Reserved for future changes.
+
+## [1.0.2] - 2026-09-25
+
+### Changed
+
+- Finalized the documentation-only hotfix that corrects post-release state inconsistencies after v1.0.1.
+- No functional framework changes, dependency changes, CI/CD implementation, Docker, Selenium Grid, Healenium, or Playwright were introduced.
 
 ## [1.0.1] - 2026-09-25
 
