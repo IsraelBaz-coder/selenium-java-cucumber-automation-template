@@ -9,7 +9,7 @@ Template reutilizable para pruebas Web UI con Java 21, Selenium WebDriver, Cucum
 | Tipo | **Documentation-only Hotfix** |
 | Fecha | **25 de septiembre de 2026** |
 
-**Versión en preparación:** v1.1.0 — Hito 3, Bloque 1 (workflow base de GitHub Actions y smoke test con fixture local). Aún no se ha publicado.
+**Versión en preparación:** v1.1.0 — Hito 3, Bloque 2 (CI con publicación de evidencias). Aún no se ha publicado.
 
 | Información del documento | Valor |
 |---|---|
@@ -141,7 +141,7 @@ El workflow de GitHub Actions ejecuta:
 
 El workflow se activa en Pull Requests hacia `main` y en pushes a `main`. Usa Java 21 con Temurin y el Gradle Wrapper. Gradle termina con código `0` cuando el build y las pruebas son exitosos; cualquier otro código hace fallar el job. Para ejecución local sin interfaz, utilice `-Dheadless=true`. Puede combinarlo con `-Dbrowser=CHROME` o `-Dbrowser=EDGE`, las propiedades de configuración anteriores y `"-Dcucumber.filter.tags=@example"`.
 
-El workflow `.github/workflows/ci.yml` se ejecuta en Pull Requests dirigidos a `main` y en pushes a `main`. Configura Java 21 con Temurin y ejecuta `./gradlew clean test -Dheadless=true` usando el Gradle Wrapper. Un fallo de compilación o de pruebas hace fallar el job. Los reportes, logs y screenshots descritos arriba se generan localmente; este bloque todavía no configura su publicación como artifacts de GitHub Actions.
+El workflow `.github/workflows/ci.yml` se ejecuta en Pull Requests dirigidos a `main` y en pushes a `main`. Configura Java 21 con Temurin y ejecuta `./gradlew clean test -Dheadless=true` usando el Gradle Wrapper. Un fallo de compilación o de pruebas hace fallar el job. Cada ejecución intenta publicar el artifact `test-evidence` con los reportes Gradle y Cucumber, resultados JUnit XML, logs y screenshots disponibles. Se conserva 14 días y se descarga desde **Artifacts** en el resumen de la ejecución de GitHub Actions. Las capturas pueden no existir si no hay escenarios fallidos. El artifact aporta evidencia y no cambia el resultado PASS/FAIL del job.
 
 ## Crear y reutilizar
 
@@ -154,7 +154,7 @@ Para un nuevo proyecto, copie/clone el template, cambie `rootProject.name` y `gr
 
 ## CI/CD y documentación
 
-El workflow base ejecuta pruebas con Gradle Wrapper, Java 21 y modo headless en GitHub Actions. La publicación de artifacts y otras integraciones de CI/CD quedan para bloques posteriores.
+El workflow ejecuta pruebas con Gradle Wrapper, Java 21 y modo headless en GitHub Actions, y publica la evidencia disponible como el artifact `test-evidence`.
 
 Documentación adicional: [guía de uso](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md), [arquitectura](docs/ARCHITECTURE.md), [troubleshooting](docs/TROUBLESHOOTING.md), [reporte de migración](docs/TEMPLATE_MIGRATION_REPORT.md), [versionado](docs/VERSIONING.md) y [proceso de release](docs/RELEASE_PROCESS.md). Revise también el [changelog](CHANGELOG.md), la [guía de contribución](CONTRIBUTING.md), la [política de seguridad](SECURITY.md) y el [código de conducta](CODE_OF_CONDUCT.md).
 

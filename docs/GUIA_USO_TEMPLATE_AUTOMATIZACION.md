@@ -1,6 +1,6 @@
 # Guía de Uso del Template de Automatización
 
-<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>v1.1.0 en preparación · Hito 3, Bloque 1 · Sin publicar<br>Baseline estable v1.0.2 · Documentation-only Hotfix · Stable / Validated · 25 de septiembre de 2026<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
+<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>v1.1.0 en preparación · Hito 3, Bloque 2 · Sin publicar<br>Baseline estable v1.0.2 · Documentation-only Hotfix · Stable / Validated · 25 de septiembre de 2026<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
 
 ## Índice
 
@@ -41,11 +41,11 @@ No es necesario conocer este repositorio. Para avanzar con seguridad, basta con 
 
 **Release Status.** La versión v1.0.2 es la baseline estable actual: **Documentation-only Hotfix**, Stable / Validated el 25 de septiembre de 2026. Corrige inconsistencias documentales de estado post-release sin cambios funcionales ni de dependencias. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM.
 
-La v1.1.0 está en preparación en la rama `feature/hito-3-ci-base`. El Bloque 1 incorpora el workflow base de GitHub Actions y sustituye la navegación externa del smoke test por una fixture local. Todavía no hay commit ni publicación de esta versión.
+La v1.1.0 está en preparación en la rama `feature/hito-3-ci-artifacts`. El Hito 3, Bloque 1 incorporó el workflow base de GitHub Actions y un smoke test con fixture local. El Bloque 2 agrega la publicación de reportes, resultados, logs y screenshots disponibles como artifact. La versión aún no está publicada.
 
 | Versión | Fecha | Tipo | Estado | Cambios principales |
 |---|---|---|---|---|
-| v1.1.0 | En preparación | Hito 3 — Bloque 1 | Sin publicar | Workflow base de GitHub Actions y smoke test con fixture HTML local; validación local completada. |
+| v1.1.0 | En preparación | Hito 3 — Bloque 2 | Sin publicar | CI con publicación de evidencias de ejecución como artifact descargable. |
 | v1.0.2 | 25 de septiembre de 2026 | Documentation-only Hotfix | Stable / Validated | Corrección de inconsistencias de estado post-release; no incluye cambios funcionales, dependencias, CI/CD, Docker, Selenium Grid, Healenium ni Playwright. |
 | v1.0.1 | 25 de septiembre de 2026 | Hardening + CI/CD Readiness | Stable / Validated / Published | Logging, screenshots ante fallo, propagación de tags, contrato de artifacts y documentación consolidada para futura integración. No incluye workflow CI/CD. |
 | v1.0.0 | 17 de septiembre de 2026 | First Stable Release | Stable / Validated | Generalización del origen, Selenium + Cucumber + POM, Gradle Wrapper, Chrome/Edge, headless, `baseUrl`, ejemplo funcional, documentación técnica, diagramas, troubleshooting, reporte de migración, CI/CD documentado y manual PDF regenerable. |
@@ -291,7 +291,7 @@ Siga esta secuencia para transformar el template en un proyecto de automatizaci�
 
 Genérico: driver, configuración, hooks, runner, reporting y convenciones. Personalizable: URL, datos, pages, features, steps, tags y pipeline.
 
-## Contrato CI/CD futuro
+## Contrato CI/CD
 
 ~~~mermaid
 flowchart TD
@@ -305,7 +305,7 @@ flowchart TD
 
 El workflow ejecuta `./gradlew clean test -Dheadless=true`; en Windows, el comando equivalente es ` .\gradlew.bat clean test -Dheadless=true`. Un exit code `0` representa éxito y cualquier código distinto de cero debe fallar el job. El contrato permite seleccionar `CHROME` o `EDGE`, aplicar `cucumber.filter.tags` y recolectar `build/reports/cucumber/cucumber.html`, `build/reports/tests/test/`, `build/test-results/test/`, `build/logs/automation.log` y, si un escenario falló, `build/evidence/screenshots/`.
 
-El workflow `.github/workflows/ci.yml` ejecuta `./gradlew clean test -Dheadless=true` con Java 21 de Temurin en Pull Requests dirigidos a `main` y pushes a `main`. Usa el Gradle Wrapper existente y falla si Gradle o las pruebas fallan. La publicación de artifacts, Docker, Grid, runners propios, URLs y secretos no forman parte de este workflow base.
+El workflow `.github/workflows/ci.yml` ejecuta `./gradlew clean test -Dheadless=true` con Java 21 de Temurin en Pull Requests dirigidos a `main` y pushes a `main`. Usa el Gradle Wrapper existente y falla si Gradle o las pruebas fallan. Después intenta subir el artifact `test-evidence` con reportes Gradle/Cucumber, resultados JUnit, logs y screenshots disponibles. Se conserva 14 días y se descarga desde **Artifacts** en el resumen de la ejecución de GitHub Actions. Screenshots pueden no existir cuando no hay escenarios fallidos; una ruta ausente no hace fallar la carga. El artifact no altera el resultado PASS/FAIL.
 
 ## Regeneración del manual
 
