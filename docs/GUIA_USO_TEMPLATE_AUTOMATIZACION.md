@@ -1,6 +1,6 @@
 # Guía de Uso del Template de Automatización
 
-<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>Baseline estable actual v1.0.2 · Documentation-only Hotfix · Stable / Validated · 25 de septiembre de 2026<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
+<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>v1.1.0 en preparación · Hito 3, Bloque 1 · Sin publicar<br>Baseline estable v1.0.2 · Documentation-only Hotfix · Stable / Validated · 25 de septiembre de 2026<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
 
 ## Índice
 
@@ -21,7 +21,7 @@
 
 ## Introducción
 
-Este template entrega una base mantenible para pruebas Web UI. Evita que cada equipo reinvente navegador, configuración, BDD, reportes y evidencia. Úselo cuando la aplicación se consume desde Chrome o Edge y se necesitan flujos de negocio en Gherkin. Requiere conocimientos básicos de Java, terminal, Git y pruebas funcionales. El escenario incluido valida una página pública neutral y no representa una regla de negocio.
+Este template entrega una base mantenible para pruebas Web UI. Evita que cada equipo reinvente navegador, configuración, BDD, reportes y evidencia. Úselo cuando la aplicación se consume desde Chrome o Edge y se necesitan flujos de negocio en Gherkin. Requiere conocimientos básicos de Java, terminal, Git y pruebas funcionales. El escenario incluido valida una fixture HTML local neutral y no representa una regla de negocio.
 
 ### Antes de comenzar
 
@@ -41,8 +41,11 @@ No es necesario conocer este repositorio. Para avanzar con seguridad, basta con 
 
 **Release Status.** La versión v1.0.2 es la baseline estable actual: **Documentation-only Hotfix**, Stable / Validated el 25 de septiembre de 2026. Corrige inconsistencias documentales de estado post-release sin cambios funcionales ni de dependencias. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM.
 
+La v1.1.0 está en preparación en la rama `feature/hito-3-ci-base`. El Bloque 1 incorpora el workflow base de GitHub Actions y sustituye la navegación externa del smoke test por una fixture local. Todavía no hay commit ni publicación de esta versión.
+
 | Versión | Fecha | Tipo | Estado | Cambios principales |
 |---|---|---|---|---|
+| v1.1.0 | En preparación | Hito 3 — Bloque 1 | Sin publicar | Workflow base de GitHub Actions y smoke test con fixture HTML local; validación local completada. |
 | v1.0.2 | 25 de septiembre de 2026 | Documentation-only Hotfix | Stable / Validated | Corrección de inconsistencias de estado post-release; no incluye cambios funcionales, dependencias, CI/CD, Docker, Selenium Grid, Healenium ni Playwright. |
 | v1.0.1 | 25 de septiembre de 2026 | Hardening + CI/CD Readiness | Stable / Validated / Published | Logging, screenshots ante fallo, propagación de tags, contrato de artifacts y documentación consolidada para futura integración. No incluye workflow CI/CD. |
 | v1.0.0 | 17 de septiembre de 2026 | First Stable Release | Stable / Validated | Generalización del origen, Selenium + Cucumber + POM, Gradle Wrapper, Chrome/Edge, headless, `baseUrl`, ejemplo funcional, documentación técnica, diagramas, troubleshooting, reporte de migración, CI/CD documentado y manual PDF regenerable. |
@@ -191,7 +194,7 @@ Siga esta ruta sin modificar código:
 
 1. Abra PowerShell y ejecute el comando `cd` de la sección anterior.
 2. Ejecute `.\gradlew.bat test -Dheadless=true`.
-3. Espere el resultado. El ejemplo abre `https://example.com` y comprueba el texto “Example Domain”.
+3. Espere el resultado. El ejemplo abre la fixture local `src/test/resources/fixtures/example_page.html` y comprueba el encabezado “Example Domain” sin depender de Internet.
 4. Abra el reporte HTML en `build/reports/cucumber/cucumber.html`.
 5. Para ver el navegador durante la ejecución, repita el comando sin `-Dheadless=true`.
 
@@ -207,6 +210,8 @@ timeoutSeconds=15
 screenshotOnFailure=true
 ~~~
 
+El smoke test interno abre la fixture local; `baseUrl` queda disponible para las pruebas de una aplicación real y no modifica este escenario de ejemplo.
+
 | Propósito | Comando compatible |
 |---|---|
 | Limpiar | .\gradlew.bat clean |
@@ -215,7 +220,7 @@ screenshotOnFailure=true
 | Headless | .\gradlew.bat clean test -Dheadless=true |
 | Chrome | .\gradlew.bat clean test -Dbrowser=CHROME |
 | Edge | .\gradlew.bat clean test -Dbrowser=EDGE |
-| URL temporal | .\gradlew.bat clean test -DbaseUrl=https://example.com |
+| URL de su aplicación | .\gradlew.bat clean test -DbaseUrl=https://su-aplicacion |
 | Subconjunto por tag | .\gradlew.bat clean test "-Dcucumber.filter.tags=@example" |
 | Subconjunto headless | .\gradlew.bat clean test -Dheadless=true "-Dcucumber.filter.tags=@example" |
 | Alias Cucumber | .\gradlew.bat cucumber |
@@ -298,9 +303,9 @@ flowchart TD
   TEST --> ART[Reports / Artifacts]
 ~~~
 
-El entry point que deberá usar un pipeline futuro es ` .\gradlew.bat clean test`; para un agente sin interfaz use ` .\gradlew.bat clean test -Dheadless=true`. Un exit code `0` representa éxito y cualquier código distinto de cero debe fallar el job. El contrato permite seleccionar `CHROME` o `EDGE`, aplicar `cucumber.filter.tags` y recolectar `build/reports/cucumber/cucumber.html`, `build/reports/tests/test/`, `build/test-results/test/`, `build/logs/automation.log` y, si un escenario falló, `build/evidence/screenshots/`.
+El workflow ejecuta `./gradlew clean test -Dheadless=true`; en Windows, el comando equivalente es ` .\gradlew.bat clean test -Dheadless=true`. Un exit code `0` representa éxito y cualquier código distinto de cero debe fallar el job. El contrato permite seleccionar `CHROME` o `EDGE`, aplicar `cucumber.filter.tags` y recolectar `build/reports/cucumber/cucumber.html`, `build/reports/tests/test/`, `build/test-results/test/`, `build/logs/automation.log` y, si un escenario falló, `build/evidence/screenshots/`.
 
-No existe todavía un workflow, runner, Docker, Grid ni configuración de CI/CD en este repositorio. Runners, permisos, URLs y secretos se definirán en el hito correspondiente con el equipo de plataforma.
+El workflow `.github/workflows/ci.yml` ejecuta `./gradlew clean test -Dheadless=true` con Java 21 de Temurin en Pull Requests dirigidos a `main` y pushes a `main`. Usa el Gradle Wrapper existente y falla si Gradle o las pruebas fallan. La publicación de artifacts, Docker, Grid, runners propios, URLs y secretos no forman parte de este workflow base.
 
 ## Regeneración del manual
 

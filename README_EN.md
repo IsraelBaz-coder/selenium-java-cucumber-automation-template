@@ -1,6 +1,6 @@
 # Automation Template Selenium Java Cucumber
 
-Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD, JUnit Platform and Gradle. It includes a neutral `https://example.com` test as a reference; replace it with the system under test.
+Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD, JUnit Platform and Gradle. It includes a smoke test using a local HTML page in `src/test/resources/fixtures/`, reproducible in CI without Internet access. Configure your application URL and replace the example when adapting the template.
 
 | Release | Value |
 |---|---|
@@ -8,6 +8,8 @@ Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD
 | Status | **Stable / Validated** |
 | Type | **Documentation-only Hotfix** |
 | Date | **September 25, 2026** |
+
+**Version in preparation:** v1.1.0 — Milestone 3, Block 1 (base GitHub Actions workflow and smoke test with a local fixture). It has not been published.
 
 | Document information | Value |
 |---|---|
@@ -52,6 +54,8 @@ Features express Gherkin behavior; Steps translate intent; Page Objects encapsul
 
 `src/test/resources/config.properties` contains defaults. Priority is `-D`, environment variables (`BASE_URL`, `BROWSER`, `HEADLESS`) then file.
 
+The built-in smoke test uses the local fixture; `baseUrl` remains available for real application Page Objects and does not change this example test.
+
 | Purpose | PowerShell |
 |---|---|
 | Clean | `.\gradlew.bat clean` |
@@ -60,7 +64,7 @@ Features express Gherkin behavior; Steps translate intent; Page Objects encapsul
 | Headless | `.\gradlew.bat clean test -Dheadless=true` |
 | Chrome | `.\gradlew.bat clean test -Dbrowser=CHROME` |
 | Edge | `.\gradlew.bat clean test -Dbrowser=EDGE` |
-| URL | `.\gradlew.bat clean test -DbaseUrl=https://example.com` |
+| Application URL | `.\gradlew.bat clean test -DbaseUrl=https://your-application` |
 | Cucumber tags | `.\gradlew.bat clean test "-Dcucumber.filter.tags=@example"` |
 | Headless Cucumber tags | `.\gradlew.bat clean test -Dheadless=true "-Dcucumber.filter.tags=@example"` |
 | Cucumber alias | `.\gradlew.bat cucumber` |
@@ -99,15 +103,15 @@ For the five framework properties, precedence is JVM `-D` property, environment 
 
 ## CI/CD execution contract
 
-The standard entry point for a future pipeline is:
+The GitHub Actions workflow runs:
 
-```powershell
-.\gradlew.bat clean test
+```bash
+./gradlew clean test -Dheadless=true
 ```
 
-Gradle exits with code `0` when the build and tests succeed; a non-zero code means a build or test failure and must fail the job. For a displayless agent, use `-Dheadless=true`. It can be combined with `-Dbrowser=CHROME` or `-Dbrowser=EDGE`, the configuration properties above, and `"-Dcucumber.filter.tags=@example"`.
+The workflow runs on pull requests targeting `main` and pushes to `main`, using Temurin Java 21 and the Gradle Wrapper. Gradle exits with code `0` when the build and tests succeed; any other code fails the job. For local headless execution, use `-Dheadless=true`. It can be combined with `-Dbrowser=CHROME` or `-Dbrowser=EDGE`, the configuration properties above, and `"-Dcucumber.filter.tags=@example"`.
 
-When they exist, a pipeline should collect `build/reports/cucumber/cucumber.html`, `build/reports/tests/test/`, `build/test-results/test/`, `build/logs/automation.log`, and `build/evidence/screenshots/`. The log is initialized during execution and records scenario lifecycle, driver activity, and evidence failures. Screenshots exist only when a scenario fails, the option is enabled, and the driver can capture them. This repository does not yet contain a CI/CD workflow.
+The `.github/workflows/ci.yml` workflow runs on pull requests targeting `main` and pushes to `main`. It configures Java 21 with Temurin and runs `./gradlew clean test -Dheadless=true` through the repository's Gradle Wrapper. Build or test failures fail the job. Reports, logs, and screenshots described above are generated locally; this block does not configure their publication as GitHub Actions artifacts.
 
 ## Create and reuse
 
@@ -117,7 +121,7 @@ For architecture, VS Code setup, CI/CD, first test tutorial and troubleshooting,
 
 ## CI/CD, manual generation and temporary files
 
-Run the Gradle Wrapper headlessly in CI/CD and publish `build/reports`, `build/evidence` and `build/logs` as artifacts. The guide documents the contract a future pipeline must adopt; it contains no workflow, internal runners, URLs, or secrets.
+The base workflow runs tests with the Gradle Wrapper, Java 21, and headless mode in GitHub Actions. Artifact publication and other CI/CD integrations are reserved for later blocks.
 
 `scripts/create_manual.py` generates the PDF manual with ReportLab. It requires Python with `reportlab`; run `python scripts/create_manual.py` from the project root. It generates `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf` and retains an external project-directory copy.
 

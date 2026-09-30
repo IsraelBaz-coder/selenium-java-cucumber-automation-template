@@ -1,6 +1,6 @@
 # Automation Template Selenium Java Cucumber
 
-Template reutilizable para pruebas Web UI con Java 21, Selenium WebDriver, Cucumber BDD, JUnit Platform y Gradle. Incluye una prueba neutral contra `https://example.com` solo como referencia: reemplácela por la aplicación bajo prueba.
+Template reutilizable para pruebas Web UI con Java 21, Selenium WebDriver, Cucumber BDD, JUnit Platform y Gradle. Incluye un smoke test con una página HTML local en `src/test/resources/fixtures/`, reproducible en CI sin depender de Internet. Para probar una aplicación real, configure su URL y sustituya el ejemplo.
 
 | Release | Valor |
 |---|---|
@@ -8,6 +8,8 @@ Template reutilizable para pruebas Web UI con Java 21, Selenium WebDriver, Cucum
 | Estado | **Stable / Validated** |
 | Tipo | **Documentation-only Hotfix** |
 | Fecha | **25 de septiembre de 2026** |
+
+**Versión en preparación:** v1.1.0 — Hito 3, Bloque 1 (workflow base de GitHub Actions y smoke test con fixture local). Aún no se ha publicado.
 
 | Información del documento | Valor |
 |---|---|
@@ -79,6 +81,8 @@ Para la instalación, configuración de `JAVA_HOME`, VS Code, validación y regr
 
 `src/test/resources/config.properties` contiene valores base. Prioridad: `-D`, variables de entorno (`BASE_URL`, `BROWSER`, `HEADLESS`) y archivo.
 
+El smoke test interno usa la fixture local; `baseUrl` queda disponible para los Page Objects de una aplicación real y no cambia esta prueba de ejemplo.
+
 | Objetivo | PowerShell |
 |---|---|
 | Limpiar | `.\gradlew.bat clean` |
@@ -87,7 +91,7 @@ Para la instalación, configuración de `JAVA_HOME`, VS Code, validación y regr
 | Headless | `.\gradlew.bat clean test -Dheadless=true` |
 | Chrome | `.\gradlew.bat clean test -Dbrowser=CHROME` |
 | Edge | `.\gradlew.bat clean test -Dbrowser=EDGE` |
-| URL | `.\gradlew.bat clean test -DbaseUrl=https://example.com` |
+| URL de su aplicación | `.\gradlew.bat clean test -DbaseUrl=https://su-aplicacion` |
 | Tags Cucumber | `.\gradlew.bat clean test "-Dcucumber.filter.tags=@example"` |
 | Tags Cucumber en headless | `.\gradlew.bat clean test -Dheadless=true "-Dcucumber.filter.tags=@example"` |
 | Alias Cucumber | `.\gradlew.bat cucumber` |
@@ -127,17 +131,17 @@ La prioridad para las cinco propiedades del framework es: propiedad JVM `-D`, va
 | `cucumber.filter.tags` | Filtra escenarios que Cucumber debe ejecutar. | Sin filtro: todos. | Expresión de tags Cucumber válida. | `"-Dcucumber.filter.tags=@example"` |
 | `javaVersion` | Selecciona la toolchain Java de Gradle. | `21` | Exclusivamente `17` o `21`; cualquier otro valor falla. | `-PjavaVersion=17` |
 
-## Contrato de ejecución para CI/CD
+## Ejecución en CI/CD
 
-El entry point estándar para un pipeline futuro es:
+El workflow de GitHub Actions ejecuta:
 
-```powershell
-.\gradlew.bat clean test
+```bash
+./gradlew clean test -Dheadless=true
 ```
 
-Gradle termina con código `0` cuando el build y las pruebas son exitosos; un código distinto de `0` indica fallo de build o de pruebas y debe marcar el job como fallido. Para un agente sin interfaz, utilice `-Dheadless=true`. Puede combinarlo con `-Dbrowser=CHROME` o `-Dbrowser=EDGE`, las propiedades de configuración anteriores y `"-Dcucumber.filter.tags=@example"`.
+El workflow se activa en Pull Requests hacia `main` y en pushes a `main`. Usa Java 21 con Temurin y el Gradle Wrapper. Gradle termina con código `0` cuando el build y las pruebas son exitosos; cualquier otro código hace fallar el job. Para ejecución local sin interfaz, utilice `-Dheadless=true`. Puede combinarlo con `-Dbrowser=CHROME` o `-Dbrowser=EDGE`, las propiedades de configuración anteriores y `"-Dcucumber.filter.tags=@example"`.
 
-Un pipeline debe recolectar, cuando existan, `build/reports/cucumber/cucumber.html`, `build/reports/tests/test/`, `build/test-results/test/`, `build/logs/automation.log` y `build/evidence/screenshots/`. El log se inicializa durante la ejecución y registra ciclo de escenarios, driver y fallos de evidencia. Las screenshots sólo existen cuando un escenario falla, la opción está activada y el driver permite capturarlas. Este repositorio no incluye todavía un workflow CI/CD.
+El workflow `.github/workflows/ci.yml` se ejecuta en Pull Requests dirigidos a `main` y en pushes a `main`. Configura Java 21 con Temurin y ejecuta `./gradlew clean test -Dheadless=true` usando el Gradle Wrapper. Un fallo de compilación o de pruebas hace fallar el job. Los reportes, logs y screenshots descritos arriba se generan localmente; este bloque todavía no configura su publicación como artifacts de GitHub Actions.
 
 ## Crear y reutilizar
 
@@ -150,7 +154,7 @@ Para un nuevo proyecto, copie/clone el template, cambie `rootProject.name` y `gr
 
 ## CI/CD y documentación
 
-Ejecute el Gradle Wrapper en modo headless dentro de CI/CD y publique `build/reports`, `build/evidence` y `build/logs` como artefactos. La guía documenta el contrato que deberá adoptar un pipeline futuro; no incluye workflow, runners, URLs ni secretos internos.
+El workflow base ejecuta pruebas con Gradle Wrapper, Java 21 y modo headless en GitHub Actions. La publicación de artifacts y otras integraciones de CI/CD quedan para bloques posteriores.
 
 Documentación adicional: [guía de uso](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md), [arquitectura](docs/ARCHITECTURE.md), [troubleshooting](docs/TROUBLESHOOTING.md), [reporte de migración](docs/TEMPLATE_MIGRATION_REPORT.md), [versionado](docs/VERSIONING.md) y [proceso de release](docs/RELEASE_PROCESS.md). Revise también el [changelog](CHANGELOG.md), la [guía de contribución](CONTRIBUTING.md), la [política de seguridad](SECURITY.md) y el [código de conducta](CODE_OF_CONDUCT.md).
 
