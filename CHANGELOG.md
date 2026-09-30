@@ -6,7 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-Reserved for future changes.
+### v1.1.0 — Hito 3, Bloque 1 (in preparation; unpublished)
+
+#### Added
+
+- Base GitHub Actions workflow for pull requests and pushes to `main`, using Temurin Java 21 and the Gradle Wrapper in headless mode.
+- Versioned local HTML fixture for the template smoke test.
+
+#### Changed
+
+- The example Page Object opens the local fixture, avoiding dependence on external page content.
+- Updated usage documentation and regenerated the PDF manual to match the smoke test and CI workflow.
 
 ## [1.0.2] - 2026-09-25
 

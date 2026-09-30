@@ -1,6 +1,7 @@
 package com.automation.template.pages;
 
 import com.automation.template.config.TestConfiguration;
+import java.net.URL;
 import java.time.Duration;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -15,6 +16,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * Neutral example Page Object that demonstrates POM. Replace it with pages from the application under test.
  */
 public final class ExampleDomainPage {
+    private static final String FIXTURE_PATH = "fixtures/example_page.html";
     private static final By HEADING = By.cssSelector("h1");
     private final WebDriver driver;
     private final WebDriverWait wait;
@@ -25,9 +27,11 @@ public final class ExampleDomainPage {
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(TestConfiguration.timeoutSeconds()));
     }
 
-    /** ES: Navega a la URL base configurada. EN: Navigates to the configured base URL. */
+    /** ES: Abre la página local de ejemplo. EN: Opens the local example page. */
     public ExampleDomainPage open() {
-        driver.get(TestConfiguration.baseUrl());
+        URL fixture = ExampleDomainPage.class.getClassLoader().getResource(FIXTURE_PATH);
+        if (fixture == null) throw new IllegalStateException("Local test fixture not found: " + FIXTURE_PATH);
+        driver.get(fixture.toExternalForm());
         wait.until(ExpectedConditions.visibilityOfElementLocated(HEADING));
         return this;
     }
