@@ -27,3 +27,17 @@ jobs:
         run: |
           chmod +x ./gradlew
           ./gradlew clean test -Dheadless=true
+
+      - name: Upload test evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-evidence
+          path: |
+            build/reports/tests/test/
+            build/test-results/test/
+            build/reports/cucumber/
+            build/logs/
+            build/evidence/screenshots/
+          if-no-files-found: ignore
+          retention-days: 14

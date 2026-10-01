@@ -6,10 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-### v1.1.0 — Hito 3, Bloque 1 (in preparation; unpublished)
+### v1.1.0 — Hito 3, Bloque 2 (in preparation; unpublished)
 
 #### Added
 
+- GitHub Actions uploads available Gradle/Cucumber reports, JUnit results, logs, and screenshots as the `test-evidence` artifact, retained for 14 days.
 - Base GitHub Actions workflow for pull requests and pushes to `main`, using Temurin Java 21 and the Gradle Wrapper in headless mode.
 - Versioned local HTML fixture for the template smoke test.
 

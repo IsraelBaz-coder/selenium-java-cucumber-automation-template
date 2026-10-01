@@ -9,7 +9,7 @@ Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD
 | Type | **Documentation-only Hotfix** |
 | Date | **September 25, 2026** |
 
-**Version in preparation:** v1.1.0 — Milestone 3, Block 1 (base GitHub Actions workflow and smoke test with a local fixture). It has not been published.
+**Version in preparation:** v1.1.0 — Milestone 3, Block 2 (CI evidence artifact publication). It has not been published.
 
 | Document information | Value |
 |---|---|
@@ -111,7 +111,7 @@ The GitHub Actions workflow runs:
 
 The workflow runs on pull requests targeting `main` and pushes to `main`, using Temurin Java 21 and the Gradle Wrapper. Gradle exits with code `0` when the build and tests succeed; any other code fails the job. For local headless execution, use `-Dheadless=true`. It can be combined with `-Dbrowser=CHROME` or `-Dbrowser=EDGE`, the configuration properties above, and `"-Dcucumber.filter.tags=@example"`.
 
-The `.github/workflows/ci.yml` workflow runs on pull requests targeting `main` and pushes to `main`. It configures Java 21 with Temurin and runs `./gradlew clean test -Dheadless=true` through the repository's Gradle Wrapper. Build or test failures fail the job. Reports, logs, and screenshots described above are generated locally; this block does not configure their publication as GitHub Actions artifacts.
+The `.github/workflows/ci.yml` workflow runs on pull requests targeting `main` and pushes to `main`. It configures Java 21 with Temurin and runs `./gradlew clean test -Dheadless=true` through the repository's Gradle Wrapper. Build or test failures fail the job. Each run attempts to publish a `test-evidence` artifact containing available Gradle and Cucumber reports, JUnit XML results, logs, and screenshots. It is retained for 14 days and can be downloaded from **Artifacts** in the GitHub Actions run summary. Screenshots may be absent when no scenario fails. The artifact provides evidence and does not change the job's PASS/FAIL result.
 
 ## Create and reuse
 
@@ -121,7 +121,7 @@ For architecture, VS Code setup, CI/CD, first test tutorial and troubleshooting,
 
 ## CI/CD, manual generation and temporary files
 
-The base workflow runs tests with the Gradle Wrapper, Java 21, and headless mode in GitHub Actions. Artifact publication and other CI/CD integrations are reserved for later blocks.
+The workflow runs tests with the Gradle Wrapper, Java 21, and headless mode in GitHub Actions, and publishes available execution evidence as the `test-evidence` artifact.
 
 `scripts/create_manual.py` generates the PDF manual with ReportLab. It requires Python with `reportlab`; run `python scripts/create_manual.py` from the project root. It generates `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf` and retains an external project-directory copy.
 
