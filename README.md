@@ -9,7 +9,7 @@ Template reutilizable para pruebas Web UI con Java 21, Selenium WebDriver, Cucum
 | Tipo | **Documentation-only Hotfix** |
 | Fecha | **25 de septiembre de 2026** |
 
-**Versión en preparación:** v1.1.0 — Hito 3, Bloque 2 (CI con publicación de evidencias). Aún no se ha publicado.
+**Versión en preparación:** v1.1.0 — Hito 3, Bloque 3 (CI con caché de Gradle y publicación de evidencias). Aún no se ha publicado.
 
 | Información del documento | Valor |
 |---|---|
@@ -139,7 +139,7 @@ El workflow de GitHub Actions ejecuta:
 ./gradlew clean test -Dheadless=true
 ```
 
-El workflow se activa en Pull Requests hacia `main` y en pushes a `main`. Usa Java 21 con Temurin y el Gradle Wrapper. Gradle termina con código `0` cuando el build y las pruebas son exitosos; cualquier otro código hace fallar el job. Para ejecución local sin interfaz, utilice `-Dheadless=true`. Puede combinarlo con `-Dbrowser=CHROME` o `-Dbrowser=EDGE`, las propiedades de configuración anteriores y `"-Dcucumber.filter.tags=@example"`.
+El workflow se activa en Pull Requests hacia `main` y en pushes a `main`. Usa Java 21 con Temurin, prepara la caché de Gradle mediante `gradle/actions/setup-gradle@v6` y ejecuta el Gradle Wrapper, que sigue siendo el mecanismo oficial (`./gradlew`; `.\gradlew.bat` en Windows). La caché reutiliza dependencias e información de Gradle cuando existe y puede reducir trabajo repetitivo en ejecuciones posteriores. Un cache miss no es un error: Gradle descarga lo necesario y las pruebas continúan. La optimización no cambia Selenium, Cucumber, Page Object Model, features, steps ni el smoke test. Gradle termina con código `0` cuando el build y las pruebas son exitosos; cualquier otro código hace fallar el job. Para ejecución local sin interfaz, utilice `-Dheadless=true`. Puede combinarlo con `-Dbrowser=CHROME` o `-Dbrowser=EDGE`, las propiedades de configuración anteriores y `"-Dcucumber.filter.tags=@example"`.
 
 El workflow `.github/workflows/ci.yml` se ejecuta en Pull Requests dirigidos a `main` y en pushes a `main`. Configura Java 21 con Temurin y ejecuta `./gradlew clean test -Dheadless=true` usando el Gradle Wrapper. Un fallo de compilación o de pruebas hace fallar el job. Cada ejecución intenta publicar el artifact `test-evidence` con los reportes Gradle y Cucumber, resultados JUnit XML, logs y screenshots disponibles. Se conserva 14 días y se descarga desde **Artifacts** en el resumen de la ejecución de GitHub Actions. Las capturas pueden no existir si no hay escenarios fallidos. El artifact aporta evidencia y no cambia el resultado PASS/FAIL del job.
 
@@ -154,7 +154,7 @@ Para un nuevo proyecto, copie/clone el template, cambie `rootProject.name` y `gr
 
 ## CI/CD y documentación
 
-El workflow ejecuta pruebas con Gradle Wrapper, Java 21 y modo headless en GitHub Actions, y publica la evidencia disponible como el artifact `test-evidence`.
+El workflow ejecuta pruebas con Gradle Wrapper, Java 21 y modo headless en GitHub Actions, prepara la caché de Gradle y publica la evidencia disponible como el artifact `test-evidence` durante 14 días, incluso si fallan las pruebas.
 
 Documentación adicional: [guía de uso](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md), [arquitectura](docs/ARCHITECTURE.md), [troubleshooting](docs/TROUBLESHOOTING.md), [reporte de migración](docs/TEMPLATE_MIGRATION_REPORT.md), [versionado](docs/VERSIONING.md) y [proceso de release](docs/RELEASE_PROCESS.md). Revise también el [changelog](CHANGELOG.md), la [guía de contribución](CONTRIBUTING.md), la [política de seguridad](SECURITY.md) y el [código de conducta](CODE_OF_CONDUCT.md).
 
