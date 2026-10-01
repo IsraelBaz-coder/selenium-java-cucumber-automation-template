@@ -1,6 +1,6 @@
 # Guía de Uso del Template de Automatización
 
-<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>v1.1.0 en preparación · Hito 3, Bloque 3 · Sin publicar<br>Baseline estable v1.0.2 · Documentation-only Hotfix · Stable / Validated · 25 de septiembre de 2026<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
+<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>v1.1.0 en preparación · Hito 3, Bloque 4 · Sin publicar<br>Baseline estable v1.0.2 · Documentation-only Hotfix · Stable / Validated · 25 de septiembre de 2026<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
 
 ## Índice
 
@@ -15,17 +15,22 @@
 - [Configuración y comandos](#configuración-y-comandos)
 - [Primera automatización](#primera-automatización)
 - [Reutilizar el template](#reutilizar-el-template)
-- [CI/CD](#cicd)
+- [Contrato CI/CD](#contrato-cicd)
+- [CI/CD con GitHub Actions](#cicd-con-github-actions)
+- [Cómo ejecutar y revisar el CI/CD en GitHub Actions](#cómo-ejecutar-y-revisar-el-cicd-en-github-actions)
+- [¿Qué es un Quality Gate?](#qué-es-un-quality-gate)
+- [Cómo descargar las evidencias de GitHub Actions](#cómo-descargar-las-evidencias-de-github-actions)
+- [Protección de la rama main](#protección-de-la-rama-main)
 - [Regeneración del manual](#regeneración-del-manual)
 - [Glosario](#glosario)
 
 ## Introducción
 
-Este template entrega una base mantenible para pruebas Web UI. Evita que cada equipo reinvente navegador, configuración, BDD, reportes y evidencia. Úselo cuando la aplicación se consume desde Chrome o Edge y se necesitan flujos de negocio en Gherkin. Requiere conocimientos básicos de Java, terminal, Git y pruebas funcionales. El escenario incluido valida una fixture HTML local neutral y no representa una regla de negocio.
+Este template entrega una base mantenible para pruebas Web UI. Evita que cada equipo reinvente navegador, configuración, BDD, reportes y evidencia. Úselo cuando la aplicación se consume desde Chrome o Edge y se necesitan flujos de negocio en Gherkin. Las secciones de CI/CD explican Git y GitHub Actions desde cero; para modificar pruebas se requieren conocimientos básicos de Java y pruebas funcionales. El escenario incluido valida una fixture HTML local neutral y no representa una regla de negocio.
 
 ### Antes de comenzar
 
-No es necesario conocer este repositorio. Para avanzar con seguridad, basta con seguir las secciones en orden y copiar los comandos exactamente. Si un comando termina con `BUILD SUCCESSFUL`, se ejecutó correctamente. Si aparece `BUILD FAILED`, no continúe cambiando archivos al azar: consulte Troubleshooting y conserve el mensaje de error.
+No es necesario conocer este repositorio. Para avanzar con seguridad, siga las secciones en orden. Los comandos deben ejecutarse desde la raíz del proyecto; sustituya las rutas y nombres marcados como ejemplos. Si Gradle termina con `BUILD SUCCESSFUL`, la ejecución fue correcta. Si aparece `BUILD FAILED`, conserve el mensaje y consulte [Troubleshooting](TROUBLESHOOTING.md).
 
 **Resultado esperado al terminar:** podrá abrir el proyecto en VS Code, ejecutar el ejemplo, cambiar la URL por la de su ambiente y crear una Feature, un Page Object y sus Steps.
 
@@ -41,11 +46,11 @@ No es necesario conocer este repositorio. Para avanzar con seguridad, basta con 
 
 **Release Status.** La versión v1.0.2 es la baseline estable actual: **Documentation-only Hotfix**, Stable / Validated el 25 de septiembre de 2026. Corrige inconsistencias documentales de estado post-release sin cambios funcionales ni de dependencias. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM.
 
-La v1.1.0 está en preparación en la rama `feature/hito-3-ci-gradle-cache`. El Hito 3, Bloque 1 incorporó el workflow base de GitHub Actions y un smoke test con fixture local. El Bloque 2 agregó la publicación de reportes, resultados, logs y screenshots disponibles como artifact. El Bloque 3 incorpora caché de Gradle al pipeline. La versión aún no está publicada.
+La v1.1.0 está en preparación en la rama `feature/hito-3-ci-quality-gate`. El Hito 3, Bloque 1 incorporó el workflow base de GitHub Actions y un smoke test con fixture local. El Bloque 2 agregó la publicación de reportes, resultados, logs y screenshots disponibles como artifact. El Bloque 3 incorporó caché de Gradle. El Bloque 4 prepara el Quality Gate y documenta el flujo operativo. La versión aún no está publicada; el cierre requiere validación real en GitHub.
 
 | Versión | Fecha | Tipo | Estado | Cambios principales |
 |---|---|---|---|---|
-| v1.1.0 | En preparación | Hito 3 — Bloque 3 | Sin publicar | CI con publicación de evidencias y caché de Gradle. |
+| v1.1.0 | En preparación | Hito 3 — Bloque 4 | Sin publicar | Quality Gate, preparación para Branch Protection y documentación operativa CI/CD. |
 | v1.0.2 | 25 de septiembre de 2026 | Documentation-only Hotfix | Stable / Validated | Corrección de inconsistencias de estado post-release; no incluye cambios funcionales, dependencias, CI/CD, Docker, Selenium Grid, Healenium ni Playwright. |
 | v1.0.1 | 25 de septiembre de 2026 | Hardening + CI/CD Readiness | Stable / Validated / Published | Logging, screenshots ante fallo, propagación de tags, contrato de artifacts y documentación consolidada para futura integración. No incluye workflow CI/CD. |
 | v1.0.0 | 17 de septiembre de 2026 | First Stable Release | Stable / Validated | Generalización del origen, Selenium + Cucumber + POM, Gradle Wrapper, Chrome/Edge, headless, `baseUrl`, ejemplo funcional, documentación técnica, diagramas, troubleshooting, reporte de migración, CI/CD documentado y manual PDF regenerable. |
@@ -194,9 +199,9 @@ Siga esta ruta sin modificar código:
 
 1. Abra PowerShell y ejecute el comando `cd` de la sección anterior.
 2. Ejecute `.\gradlew.bat test -Dheadless=true`.
-3. Espere el resultado. El ejemplo abre la fixture local `src/test/resources/fixtures/example_page.html` y comprueba el encabezado “Example Domain” sin depender de Internet.
+3. Espere el resultado. El ejemplo abre la fixture local `src/test/resources/fixtures/example_page.html` y comprueba el encabezado “Example Domain” sin consultar una web externa. La preparación inicial de dependencias y del navegador puede requerir conexión.
 4. Abra el reporte HTML en `build/reports/cucumber/cucumber.html`.
-5. Para ver el navegador durante la ejecución, repita el comando sin `-Dheadless=true`.
+5. Para ver el navegador durante la ejecución, ejecute `.\gradlew.bat clean test` sin `-Dheadless=true`.
 
 Si estos cinco pasos funcionan, el template está listo para su primera automatización. No cambie `gradlew`, `gradle/wrapper`, Hooks, Runner o DriverFactory durante los primeros ejercicios: son componentes compartidos del framework.
 
@@ -285,7 +290,7 @@ Siga esta secuencia para transformar el template en un proyecto de automatizaci�
 5. **Sustituya el ejemplo.** Cuando su smoke funcione, elimine `example_domain.feature`, `ExampleDomainPage` y `ExampleDomainSteps` o consérvelos temporalmente solo como referencia.
 6. **Cree el primer flujo de negocio.** Agregue una Feature, su Page Object y sus Steps siguiendo la separación descrita en esta guía.
 7. **Organice la ejecución.** Añada tags como `@smoke` y `@regression`; ejecute subconjuntos con `-Dcucumber.filter.tags`.
-8. **Prepare el repositorio y CI/CD.** Inicialice Git, valide `.gitignore`, cree una rama, abra Pull Request y conecte el pipeline con ejecución headless y publicación de reportes.
+8. **Prepare el repositorio y CI/CD.** Si creó un repositorio nuevo, inicialice Git y configure su remoto. Revise `.gitignore` y el workflow incluido en `.github/workflows/ci.yml`; cree una rama y abra un Pull Request. El workflow ya ejecuta pruebas headless y publica las evidencias disponibles.
 
 **Criterio de salida:** el equipo puede clonar el repositorio, configurar una URL por variable o `-D`, ejecutar una prueba y consultar el reporte sin editar componentes compartidos del framework.
 
@@ -306,11 +311,78 @@ flowchart TD
   REPORTS --> ART[test-evidence]
 ~~~
 
-El workflow ejecuta `./gradlew clean test -Dheadless=true`; en Windows, el comando equivalente es ` .\gradlew.bat clean test -Dheadless=true`. Un exit code `0` representa éxito y cualquier código distinto de cero debe fallar el job. El contrato permite seleccionar `CHROME` o `EDGE`, aplicar `cucumber.filter.tags` y recolectar `build/reports/cucumber/cucumber.html`, `build/reports/tests/test/`, `build/test-results/test/`, `build/logs/automation.log` y, si un escenario falló, `build/evidence/screenshots/`.
+El workflow ejecuta `./gradlew clean test -Dheadless=true`; en Windows, el comando equivalente es `.\gradlew.bat clean test "-Dheadless=true"`. Un exit code `0` representa éxito y cualquier código distinto de cero falla el job. El contrato permite seleccionar `CHROME` o `EDGE`, aplicar `cucumber.filter.tags` y recolectar `build/reports/cucumber/cucumber.html`, `build/reports/tests/test/`, `build/test-results/test/`, `build/logs/automation.log` y, si un escenario falló, `build/evidence/screenshots/`.
 
 El workflow `.github/workflows/ci.yml` ejecuta `./gradlew clean test -Dheadless=true` con Java 21 de Temurin en Pull Requests dirigidos a `main` y pushes a `main`. Usa el Gradle Wrapper existente y falla si Gradle o las pruebas fallan. Después intenta subir el artifact `test-evidence` con reportes Gradle/Cucumber, resultados JUnit, logs y screenshots disponibles. Se conserva 14 días y se descarga desde **Artifacts** en el resumen de la ejecución de GitHub Actions. Screenshots pueden no existir cuando no hay escenarios fallidos; una ruta ausente no hace fallar la carga. El artifact no altera el resultado PASS/FAIL.
 
 Después de configurar Java, `gradle/actions/setup-gradle@v6` prepara la caché básica de Gradle. Reutiliza dependencias y otros datos del directorio de usuario de Gradle cuando hay una entrada disponible, lo que evita trabajo repetitivo y puede reducir el tiempo de preparación en ejecuciones posteriores. Si no existe caché (cache miss), Gradle descarga lo necesario y las pruebas continúan normalmente; la caché no es requisito para el pipeline. `./gradlew` sigue siendo el mecanismo oficial de CI y `.\gradlew.bat` su equivalente en Windows. Esta optimización no cambia la lógica de Selenium, Cucumber, Page Object Model, features, steps ni del smoke test con fixture local.
+
+## CI/CD con GitHub Actions
+
+**CI** (integración continua) valida automáticamente cambios antes de integrarlos. Permite detectar pronto errores de compilación y pruebas, y da al equipo un resultado compartido. **CD** puede ser entrega continua (dejar una versión lista) o despliegue continuo (publicarla automáticamente). Este proyecto utiliza principalmente CI; no despliega una aplicación.
+
+GitHub Actions es el servicio que ejecuta las instrucciones de `.github/workflows/ci.yml`. Aquí el workflow se inicia automáticamente al abrir o actualizar un Pull Request (PR) hacia `main`, y también con un push a `main`. Un PR es una propuesta de unir una rama de trabajo con otra. Un runner temporal `ubuntu-latest` obtiene el código (checkout), prepara Java 21 Temurin y la caché de Gradle, y usa el Wrapper para ejecutar Selenium y Cucumber sin ventana de navegador.
+
+```text
+Developer → feature branch → commit → push → Pull Request hacia main
+→ GitHub Actions → quality-gate → Gradle → Selenium + Cucumber
+→ PASS/FAIL → evidencias → revisión → merge a main
+```
+
+## Cómo ejecutar y revisar el CI/CD en GitHub Actions
+
+Necesita Git instalado, una copia del repositorio conectada a GitHub y permiso para enviar ramas. Ejecute los comandos desde la raíz del proyecto.
+
+1. **Cree una rama:** `git switch -c feature/mi-cambio` (si ya existe: `git switch feature/mi-cambio`). Una rama separa su trabajo de `main`, la línea compartida, para revisarlo antes de integrarlo.
+2. **Modifique los archivos** necesarios, por ejemplo un Page Object y sus pruebas.
+3. **Revise los cambios:** `git status` muestra archivos cambiados y `git diff` muestra líneas. Compruebe que no incluyó credenciales ni archivos generados.
+4. **Ejecute pruebas locales:** Windows PowerShell: `.\gradlew.bat clean test "-Dheadless=true"`; Linux/macOS: `./gradlew clean test -Dheadless=true`. Espere `BUILD SUCCESSFUL`; si ve `BUILD FAILED`, corrija el error.
+5. **Guarde el cambio:** `git add ruta/del/archivo` y `git commit -m "Describe mi cambio"`. Un commit es una instantánea del trabajo.
+6. **Envíe la rama:** la primera vez use `git push -u origin feature/mi-cambio`; después, `git push`. Push copia los commits a GitHub.
+7. **Cree el PR:** en GitHub abra repositorio → **Pull requests** → **New pull request**. Elija `main` como *base* y `feature/mi-cambio` como *compare*. Revise el resumen, escriba título y descripción y pulse **Create pull request**. No haga merge todavía.
+8. **Espere Actions:** GitHub detecta el PR y ejecuta `.github/workflows/ci.yml` automáticamente. Cada nuevo commit seguido de push a esa rama actualiza el PR y lanza otra ejecución.
+9. **Revise desde el PR:** repositorio → **Pull requests** → su PR → **Checks** (o bloque de checks en **Conversation**). Busque `quality-gate`, pulse **Details** y examine checkout, Java, caché Gradle, pruebas, carga de evidencias y resultado. Expanda el paso fallido para leer su log.
+10. **Revise desde Actions:** repositorio → **Actions** → workflow **CI** → ejecución. Identifique rama, PR, commit, fecha, estado y duración; abra la ejecución y el job `quality-gate`. El texto del estado importa además del color: **Success** (verde) = terminó bien; **Failure** (rojo) = falló; **In progress** (amarillo/progreso) = sigue ejecutándose; **Cancelled** = cancelado; **Skipped** = un paso no se ejecutó por una condición.
+
+## ¿Qué es un Quality Gate?
+
+Es una puerta de control: la verificación automática debe terminar bien antes de considerar listo un cambio. El check estable de este proyecto se llama `quality-gate`. Gradle devuelve exit code `0` si compilación y pruebas pasan, y un código distinto de cero si fallan. GitHub muestra **PASS/Success** para continuar a revisión o **FAIL/Failure** para corregir. La carga de artifacts no convierte FAIL en PASS. Hasta que el propietario active Branch Protection, GitHub puede permitir un merge aunque el check falle.
+
+### ¿Qué hacer si el Quality Gate falla?
+
+1. Abra el PR → **Checks** → `quality-gate` → **Details**.
+2. Localice el step **Failure**, expándalo y lea el error y el resumen final.
+3. Descargue `test-evidence` si existe. Revise reportes, resultados XML, `automation.log` y screenshots. Si Gradle falló antes de producir archivos, algunos faltarán.
+4. Corrija el problema en su rama y repita `.\gradlew.bat clean test "-Dheadless=true"` (Linux/macOS: `./gradlew clean test -Dheadless=true`).
+5. Revise `git diff`, haga otro `git add` y `git commit`, y ejecute `git push`. El PR se actualiza automáticamente y Actions vuelve a ejecutar el check. Espere el nuevo resultado.
+
+### Reportes locales
+
+| Ruta | Contenido |
+|---|---|
+| `build/reports/cucumber/cucumber.html` | Escenarios y pasos funcionales Cucumber. |
+| `build/reports/tests/test/` | Reporte HTML Gradle/JUnit. |
+| `build/test-results/test/` | Resultados XML estructurados. |
+| `build/logs/automation.log` | Log cronológico de ejecución. |
+| `build/evidence/screenshots/` | Capturas de fallos cuando corresponden. |
+
+## Cómo descargar las evidencias de GitHub Actions
+
+Un **artifact** es un archivo descargable producido por una ejecución, separado del código. Abra **Repository → Actions → CI → ejecución del PR → Artifacts → test-evidence**. Descargue y extraiga el ZIP para ver reportes Cucumber, Gradle/JUnit, XML, logs y, si se produjeron, screenshots. Se conserva 14 días. El workflow intenta publicarlo en PASS y FAIL; aparece sólo si hay archivos en las rutas configuradas. Si no aparece, revise el step **Upload test evidence** y si Gradle llegó a generar archivos. Las capturas normalmente faltan cuando ninguna prueba falla.
+
+## Protección de la rama main
+
+Branch Protection es una regla de GitHub que limita cómo se integra código en `main`. Protege la línea compartida ante cambios sin revisión o pruebas fallidas. El flujo recomendado es **feature branch → Pull Request → quality-gate → code review → merge**. Un status check es el resultado visible del job; un Required Status Check bloquea el merge hasta que ese resultado pase.
+
+Tras validar este bloque con ejecuciones reales, el propietario podrá configurar manualmente **Repository → Settings → Rules / Branch protection → main** (la ruta exacta depende de la interfaz y sus permisos). Debe considerar **Require a pull request before merging** y **Require status checks to pass before merging**, seleccionando `quality-gate`. El workflow por sí solo no activa esas reglas; este bloque no cambia ajustes de GitHub.
+
+### Ejemplo y validación controlada posterior
+
+Ana crea `feature/ajuste-page`, modifica un Page Object, prueba localmente, hace commit y push y abre un PR. Actions inicia `quality-gate`. Con Success, otra persona revisa y podrá hacer merge cuando se cumplan las reglas del repositorio. Si una prueba falla, Ana abre Details, descarga `test-evidence`, corrige, vuelve a probar, hace un nuevo commit y push. El PR y el check se actualizan.
+
+Más adelante se puede comprobar FAIL/PASS en una rama temporal: introducir un fallo de prueba controlado, hacer commit y push, verificar el check Failure y los artifacts; revertir el fallo, volver a probar, hacer commit y push, y verificar Success. No deje código roto ni integre el fallo. Esta prueba no se ejecuta en este bloque.
+
+**Hito 3 / v1.1.0:** Bloque 1: CI base; Bloque 2: evidencias; Bloque 3: caché Gradle; Bloque 4: Quality Gate, preparación para Branch Protection y documentación operativa. El hito sigue en preparación hasta validación real en GitHub.
 
 ## Regeneración del manual
 
@@ -328,7 +400,7 @@ El manual y los ejemplos usan branding neutral para que puedan reutilizarse en c
 
 ## Troubleshooting y buenas prácticas
 
-Consulte TROUBLESHOOTING.md. Chequeos iniciales: JDK 21, Wrapper desde raíz, navegador instalado, Maven Central accesible, URL alcanzable y coincidencia Gherkin/Steps.
+Consulte [Troubleshooting](TROUBLESHOOTING.md). Chequeos iniciales: JDK 21, Wrapper desde raíz, navegador instalado, Maven Central accesible, URL alcanzable y coincidencia Gherkin/Steps.
 
 - Un Page Object por pantalla/componente; locators privados y nombres descriptivos.
 - Configuración externa; secretos solo en ambiente/secret store.
@@ -354,3 +426,23 @@ Consulte TROUBLESHOOTING.md. Chequeos iniciales: JDK 21, Wrapper desde raíz, na
 | Locator / XPath / CSS Selector | Estrategias para identificar elementos. |
 | Assertions / Test Data | Verificaciones e información de prueba. |
 | Environment Variable | Valor externo del proceso. |
+| CI | Integración continua: pruebas automáticas para cambios propuestos. |
+| CD | Entrega o despliegue continuo; aquí no hay despliegue automático. |
+| GitHub Actions | Servicio de GitHub que ejecuta workflows. |
+| Workflow | Archivo de instrucciones automáticas, como `ci.yml`. |
+| Pipeline | Secuencia de verificaciones automáticas. |
+| Job | Grupo de pasos ejecutado en un runner. |
+| Step | Instrucción individual de un job. |
+| Runner / ubuntu-latest | Equipo temporal; `ubuntu-latest` indica Linux Ubuntu. |
+| Pull Request | Propuesta para integrar una rama tras revisión. |
+| Branch / Feature Branch | Línea de trabajo separada; la feature branch contiene un cambio. |
+| main | Rama principal compartida. |
+| Quality Gate | Verificación que debe pasar antes de considerar listo un cambio. |
+| Status Check / Required Status Check | Resultado de un job; si es requerido, bloquea el merge al fallar. |
+| Branch Protection | Reglas que protegen una rama frente a integraciones indebidas. |
+| Artifact | Archivo descargable de una ejecución de Actions. |
+| Log / Report | Registro de eventos / resumen legible de resultados. |
+| Exit Code | Número de salida: `0` éxito, distinto de `0` fallo. |
+| PASS / FAIL | Verificación correcta / fallida. |
+| Commit / Push / Merge | Guardar una instantánea / enviarla a GitHub / unir ramas. |
+| Checkout | Descargar el código de una revisión en el runner. |

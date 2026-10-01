@@ -10,8 +10,8 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    name: Build and test
+  quality-gate:
+    name: quality-gate
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository

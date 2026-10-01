@@ -1,6 +1,6 @@
 # Automation Template Selenium Java Cucumber
 
-Template reutilizable para pruebas Web UI con Java 21, Selenium WebDriver, Cucumber BDD, JUnit Platform y Gradle. Incluye un smoke test con una página HTML local en `src/test/resources/fixtures/`, reproducible en CI sin depender de Internet. Para probar una aplicación real, configure su URL y sustituya el ejemplo.
+Template reutilizable para pruebas Web UI con Java 21, Selenium WebDriver, Cucumber BDD, JUnit Platform y Gradle. Incluye un smoke test con una página HTML local en `src/test/resources/fixtures/`; el escenario no depende del contenido de una web externa. La primera preparación de dependencias y del navegador puede requerir conexión. Para probar una aplicación real, configure su URL y sustituya el ejemplo.
 
 | Release | Valor |
 |---|---|
@@ -9,7 +9,7 @@ Template reutilizable para pruebas Web UI con Java 21, Selenium WebDriver, Cucum
 | Tipo | **Documentation-only Hotfix** |
 | Fecha | **25 de septiembre de 2026** |
 
-**Versión en preparación:** v1.1.0 — Hito 3, Bloque 3 (CI con caché de Gradle y publicación de evidencias). Aún no se ha publicado.
+**Versión en preparación:** v1.1.0 — Hito 3, Bloque 4 (Quality Gate, preparación para Branch Protection y documentación operativa de CI/CD). Aún no se ha publicado; el cierre requiere validación real en GitHub.
 
 | Información del documento | Valor |
 |---|---|
@@ -133,15 +133,15 @@ La prioridad para las cinco propiedades del framework es: propiedad JVM `-D`, va
 
 ## Ejecución en CI/CD
 
+GitHub Actions valida automáticamente los Pull Requests hacia `main` antes del merge y los pushes a `main`. El job/check estable `quality-gate` ejecuta las pruebas; si Gradle falla, el check falla. El propietario podrá configurarlo después como Required Status Check de `main`. El workflow intenta subir el artifact `test-evidence` incluso ante fallo, sin cambiar el resultado, y lo conserva 14 días cuando hay archivos. Consulte el paso a paso para principiantes en la [guía de CI/CD](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md#cicd-con-github-actions) y el [manual PDF](docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf).
+
 El workflow de GitHub Actions ejecuta:
 
 ```bash
 ./gradlew clean test -Dheadless=true
 ```
 
-El workflow se activa en Pull Requests hacia `main` y en pushes a `main`. Usa Java 21 con Temurin, prepara la caché de Gradle mediante `gradle/actions/setup-gradle@v6` y ejecuta el Gradle Wrapper, que sigue siendo el mecanismo oficial (`./gradlew`; `.\gradlew.bat` en Windows). La caché reutiliza dependencias e información de Gradle cuando existe y puede reducir trabajo repetitivo en ejecuciones posteriores. Un cache miss no es un error: Gradle descarga lo necesario y las pruebas continúan. La optimización no cambia Selenium, Cucumber, Page Object Model, features, steps ni el smoke test. Gradle termina con código `0` cuando el build y las pruebas son exitosos; cualquier otro código hace fallar el job. Para ejecución local sin interfaz, utilice `-Dheadless=true`. Puede combinarlo con `-Dbrowser=CHROME` o `-Dbrowser=EDGE`, las propiedades de configuración anteriores y `"-Dcucumber.filter.tags=@example"`.
-
-El workflow `.github/workflows/ci.yml` se ejecuta en Pull Requests dirigidos a `main` y en pushes a `main`. Configura Java 21 con Temurin y ejecuta `./gradlew clean test -Dheadless=true` usando el Gradle Wrapper. Un fallo de compilación o de pruebas hace fallar el job. Cada ejecución intenta publicar el artifact `test-evidence` con los reportes Gradle y Cucumber, resultados JUnit XML, logs y screenshots disponibles. Se conserva 14 días y se descarga desde **Artifacts** en el resumen de la ejecución de GitHub Actions. Las capturas pueden no existir si no hay escenarios fallidos. El artifact aporta evidencia y no cambia el resultado PASS/FAIL del job.
+El workflow usa Java 21 con Temurin y prepara la caché mediante `gradle/actions/setup-gradle@v6`. Un cache miss no es un error: Gradle descarga lo necesario y continúa. El Wrapper sigue siendo el mecanismo oficial (`./gradlew`; `.\gradlew.bat` en Windows). Gradle devuelve código `0` cuando el build y las pruebas pasan; otro código hace fallar el check. Las evidencias disponibles incluyen reportes Gradle y Cucumber, resultados XML, logs y capturas cuando corresponden. Para una ejecución local sin interfaz, use `-Dheadless=true`.
 
 ## Crear y reutilizar
 
@@ -152,9 +152,7 @@ El workflow `.github/workflows/ci.yml` se ejecuta en Pull Requests dirigidos a `
 
 Para un nuevo proyecto, copie/clone el template, cambie `rootProject.name` y `group`, configure `baseUrl`, sustituya el ejemplo y cree su repositorio Git. Nunca almacene secretos en configuración; use ambiente o secretos del pipeline. El repositorio se distribuye bajo [Apache License 2.0](LICENSE).
 
-## CI/CD y documentación
-
-El workflow ejecuta pruebas con Gradle Wrapper, Java 21 y modo headless en GitHub Actions, prepara la caché de Gradle y publica la evidencia disponible como el artifact `test-evidence` durante 14 días, incluso si fallan las pruebas.
+## Documentación adicional
 
 Documentación adicional: [guía de uso](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md), [arquitectura](docs/ARCHITECTURE.md), [troubleshooting](docs/TROUBLESHOOTING.md), [reporte de migración](docs/TEMPLATE_MIGRATION_REPORT.md), [versionado](docs/VERSIONING.md) y [proceso de release](docs/RELEASE_PROCESS.md). Revise también el [changelog](CHANGELOG.md), la [guía de contribución](CONTRIBUTING.md), la [política de seguridad](SECURITY.md) y el [código de conducta](CODE_OF_CONDUCT.md).
 

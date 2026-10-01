@@ -1,6 +1,6 @@
 # Automation Template Selenium Java Cucumber
 
-Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD, JUnit Platform and Gradle. It includes a smoke test using a local HTML page in `src/test/resources/fixtures/`, reproducible in CI without Internet access. Configure your application URL and replace the example when adapting the template.
+Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD, JUnit Platform and Gradle. It includes a smoke test using a local HTML page in `src/test/resources/fixtures/`; the scenario does not depend on external website content. Initial dependency and browser setup may still require network access. Configure your application URL and replace the example when adapting the template.
 
 | Release | Value |
 |---|---|
@@ -9,7 +9,7 @@ Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD
 | Type | **Documentation-only Hotfix** |
 | Date | **September 25, 2026** |
 
-**Version in preparation:** v1.1.0 — Milestone 3, Block 3 (Gradle caching and CI evidence publication). It has not been published.
+**Version in preparation:** v1.1.0 — Milestone 3, Block 4 (Quality Gate, branch protection readiness, and operational CI/CD documentation). It is unpublished; milestone closure requires a real GitHub run.
 
 | Document information | Value |
 |---|---|
@@ -103,15 +103,15 @@ For the five framework properties, precedence is JVM `-D` property, environment 
 
 ## CI/CD execution contract
 
+GitHub Actions automatically validates pull requests targeting `main` before merge and pushes to `main`. The stable job/check is named `quality-gate`. A Gradle failure fails the check. A repository owner can later configure it as a required status check for `main`; that rule has not been enabled by this work. The workflow attempts to upload `test-evidence` even when tests fail, without changing the check result. See the [step-by-step CI/CD guide](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md#cicd-con-github-actions) and [PDF manual](docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf).
+
 The GitHub Actions workflow runs:
 
 ```bash
 ./gradlew clean test -Dheadless=true
 ```
 
-The workflow runs on pull requests targeting `main` and pushes to `main`, using Temurin Java 21. `gradle/actions/setup-gradle@v6` prepares a Gradle cache, while the Gradle Wrapper remains the official execution method (`./gradlew`; `.\gradlew.bat` on Windows). Available cached dependencies and Gradle data can avoid repeated work on later runs. A cache miss is not an error: Gradle downloads what it needs and tests continue. This optimization does not change Selenium, Cucumber, Page Object Model, features, steps, or the local fixture smoke test. Gradle exits with code `0` when the build and tests succeed; any other code fails the job. For local headless execution, use `-Dheadless=true`. It can be combined with `-Dbrowser=CHROME` or `-Dbrowser=EDGE`, the configuration properties above, and `"-Dcucumber.filter.tags=@example"`.
-
-The `.github/workflows/ci.yml` workflow runs on pull requests targeting `main` and pushes to `main`. It configures Java 21 with Temurin and runs `./gradlew clean test -Dheadless=true` through the repository's Gradle Wrapper. Build or test failures fail the job. Each run attempts to publish a `test-evidence` artifact containing available Gradle and Cucumber reports, JUnit XML results, logs, and screenshots. It is retained for 14 days and can be downloaded from **Artifacts** in the GitHub Actions run summary. Screenshots may be absent when no scenario fails. The artifact provides evidence and does not change the job's PASS/FAIL result.
+The workflow uses Temurin Java 21 and `gradle/actions/setup-gradle@v6` for caching. A cache miss is not an error: Gradle downloads the required dependencies and continues. The repository's Gradle Wrapper remains the execution method (`./gradlew`; `.\gradlew.bat` on Windows). Gradle exits with code `0` when the build and tests pass; any other code fails the check. Available evidence includes Gradle and Cucumber reports, JUnit XML results, logs, and screenshots when applicable. Use `-Dheadless=true` for local headless execution.
 
 ## Create and reuse
 
@@ -119,9 +119,7 @@ Create a feature, Page Object and Step Definitions in their respective folders, 
 
 For architecture, VS Code setup, CI/CD, first test tutorial and troubleshooting, read the Spanish [user guide](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md). This repository is distributed under the [Apache License 2.0](LICENSE).
 
-## CI/CD, manual generation and temporary files
-
-The workflow runs tests with the Gradle Wrapper, Java 21, and headless mode in GitHub Actions, prepares a Gradle cache, and publishes available execution evidence as the `test-evidence` artifact for 14 days, even if tests fail.
+## Manual generation and temporary files
 
 `scripts/create_manual.py` generates the PDF manual with ReportLab. It requires Python with `reportlab`; run `python scripts/create_manual.py` from the project root. It generates `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf` and retains an external project-directory copy.
 

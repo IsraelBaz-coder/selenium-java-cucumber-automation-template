@@ -20,11 +20,11 @@ For example, `1.0.2` is the current documentation-only hotfix version.
 v1.0.0 = initial stable baseline
 v1.0.1 = Hardening + CI/CD Readiness
 v1.0.2 = Documentation-only Hotfix, Stable / Validated
-v1.1.0 = Milestone 3 in preparation; Block 2 adds CI evidence artifacts, unpublished
+v1.1.0 = Milestone 3 in preparation; Block 4 adds a stable quality-gate check and operational CI/CD documentation, unpublished
 ```
 
 `v1.0.1` was published, tagged, and released on 2026-09-25. `v1.0.2` is the current Stable / Validated PATCH containing documentation-only post-release state corrections.
 
-`v1.1.0` is being prepared on `feature/hito-3-ci-artifacts`. Milestone 3, Block 1 added the base GitHub Actions workflow and a local HTML fixture for the template smoke test. Block 2 publishes available test reports, results, logs, and screenshots as GitHub Actions artifacts. The version remains unpublished; the stable baseline is `v1.0.2`.
+`v1.1.0` is being prepared on `feature/hito-3-ci-quality-gate`. Milestone 3, Block 1 added the base GitHub Actions workflow and a local HTML fixture for the template smoke test. Block 2 publishes available test reports, results, logs, and screenshots as GitHub Actions artifacts. Block 3 added Gradle caching. Block 4 prepares the `quality-gate` status check for later manual branch protection setup and documents the CI/CD workflow. Final milestone closure requires real validation on GitHub. The version remains unpublished; the stable baseline is `v1.0.2`.
 
 Git release tags use the `v` prefix, for example `v1.0.2`. The internal Gradle build version may omit that prefix, for example `1.0.2`.

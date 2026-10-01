@@ -49,9 +49,11 @@ Confirm that no secrets, local files, generated artifacts, or unintended changes
 
 The PR must include its purpose, changes made, tests executed, results, and relevant evidence.
 
+For a PR targeting `main`, wait for the GitHub Actions `quality-gate` check. A failed check requires a fix and another push before merge. Inspect **Checks → quality-gate → Details** and download `test-evidence` from **Actions** when available. The check can be made mandatory later through a repository owner's manual branch protection configuration; this document does not assume that setting is active.
+
 ## 7. Merge
 
-Merge only after the required review and validations have been completed.
+Merge only after the review and validations have been completed, including a successful `quality-gate` check for a PR targeting `main`.
 
 ## 8. Create a tag
 
