@@ -1,6 +1,6 @@
 # Troubleshooting
 
-**Baseline estable actual:** v1.0.2 (Documentation-only Hotfix, Stable / Validated)
+**Versión actual:** v1.1.0 — Stable / Validated; Hito 3 — Completed / Validated. Fecha de publicación: 1 de octubre de 2026.
 
 | Síntoma | Causa probable | Solución |
 |---|---|---|

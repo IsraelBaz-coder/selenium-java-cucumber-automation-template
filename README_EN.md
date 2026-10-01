@@ -4,12 +4,12 @@ Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD
 
 | Release | Value |
 |---|---|
-| Current stable version | **v1.0.2** |
-| Status | **Stable / Validated** |
-| Type | **Documentation-only Hotfix** |
-| Date | **September 25, 2026** |
+| Current version in closeout | **v1.1.0** |
+| Technical status | **Stable / Validated** |
+| Milestone 3 | **Completed / Validated** |
+| Publication date | **October 1, 2026** |
 
-**Version in preparation:** v1.1.0 — Milestone 3, Block 4 (Quality Gate, branch protection readiness, and operational CI/CD documentation). It is unpublished; milestone closure requires a real GitHub run.
+Technical and documentation validation of v1.1.0 is complete. The official date is set in the documentation; publication is a separate event. Add **Published** to the history when the v1.1.0 tag and GitHub Release exist. See the history for the latest published version.
 
 | Document information | Value |
 |---|---|
@@ -28,7 +28,7 @@ The template was validated and can be used as a baseline for new projects. Confi
 
 ## Java version selection
 
-Java 21 is the v1.0.2 default. The only supported toolchains are Java 17 and Java 21, selected through the Gradle `javaVersion` property:
+Java 21 is the default in the current configuration. The only supported toolchains are Java 17 and Java 21, selected through the Gradle `javaVersion` property:
 
 | Purpose | PowerShell |
 |---|---|
@@ -103,7 +103,7 @@ For the five framework properties, precedence is JVM `-D` property, environment 
 
 ## CI/CD execution contract
 
-GitHub Actions automatically validates pull requests targeting `main` before merge and pushes to `main`. The stable job/check is named `quality-gate`. A Gradle failure fails the check. A repository owner can later configure it as a required status check for `main`; that rule has not been enabled by this work. The workflow attempts to upload `test-evidence` even when tests fail, without changing the check result. See the [step-by-step CI/CD guide](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md#cicd-con-github-actions) and [PDF manual](docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf).
+GitHub Actions automatically validates pull requests targeting `main` before merge and pushes to `main`. The stable job/check is named `quality-gate`. A Gradle failure fails the check. The `main` ruleset requires a pull request and the `quality-gate` status check before merge. PASS, controlled FAIL, evidence in both outcomes, recovery to PASS, and a successful post-merge run on `main` have been validated. The workflow attempts to upload `test-evidence` even when tests fail, without changing the check result. See the [step-by-step CI/CD guide](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md#cicd-con-github-actions) and [PDF manual](docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf).
 
 The GitHub Actions workflow runs:
 
@@ -131,9 +131,13 @@ For the versioning policy and repeatable release procedure, see [Versioning](doc
 
 ## Release history
 
+### v1.1.0 - October 1, 2026
+
+**Milestone 3 Completed / Validated. Stable / Validated.** Base CI, evidence artifacts, Gradle cache, and Quality Gate have been validated. Published will be recorded after the tag and GitHub Release are created.
+
 ### v1.0.2 - September 25, 2026
 
-**Documentation-only Hotfix. Stable / Validated.** Corrects post-release state inconsistencies; it introduces no functional changes, dependency changes, CI/CD, Docker, Selenium Grid, Healenium, or Playwright.
+**Documentation-only Hotfix. Stable / Validated / Published.** This is the latest published release. It corrects post-release state inconsistencies; it introduces no functional changes, dependency changes, CI/CD, Docker, Selenium Grid, Healenium, or Playwright.
 
 ### v1.0.1 - September 25, 2026
 

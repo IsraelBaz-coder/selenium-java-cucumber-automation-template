@@ -49,20 +49,30 @@ Confirm that no secrets, local files, generated artifacts, or unintended changes
 
 The PR must include its purpose, changes made, tests executed, results, and relevant evidence.
 
-For a PR targeting `main`, wait for the GitHub Actions `quality-gate` check. A failed check requires a fix and another push before merge. Inspect **Checks → quality-gate → Details** and download `test-evidence` from **Actions** when available. The check can be made mandatory later through a repository owner's manual branch protection configuration; this document does not assume that setting is active.
+For a PR targeting `main`, wait for the GitHub Actions `quality-gate` check. A failed check requires a fix and another push before merge. Inspect **Checks → quality-gate → Details** and download `test-evidence` from **Actions** when available. The active `main` ruleset requires a pull request, an up-to-date branch, and a passing `quality-gate` check; it also blocks force pushes and branch deletion.
 
 ## 7. Merge
 
 Merge only after the review and validations have been completed, including a successful `quality-gate` check for a PR targeting `main`.
 
-## 8. Create a tag
+## 8. Complete the documentation closeout and version audit
 
-After the merge, create the release tag. For example, the following is documentation only and uses a future placeholder version:
+Begin the documentation audit before closing the final technical block. After technical completion and a successful post-merge CI run on `main`, perform the mandatory version audit. Define the official publication date, then update the cover, version history, changelog, both README files, guide, versioning policy, release process, manual source, and PDF with the same calendar date. Regenerate the PDF and review it visually. Check the current version, technical and milestone states, publication state, latest published release, and cross references. Validate links and formatting, review the diff, and submit the documentation PR. Merge it only with a passing required check, then verify the final CI result. In the final cover, version history, final-state tables, and manual summary, show **Stable / Validated**, **Completed / Validated**, and the official publication date without transitional release states. During operational preparation, the version may be Ready for Release or Pending Publication; those terms do not mean **Published**. See [VERSIONING.md](VERSIONING.md#version-documentation-closeout-gate).
+
+**Publication date completeness rule:** Do not formally close a milestone when its date is missing, `TBD`, `Pending`, or `Unreleased`, or when the cover, history, changelog, README files, guide, and PDF disagree. For v1.1.0, the official date recorded in documentation is **October 1, 2026**. Defining this date does not create the tag or GitHub Release.
+
+## 9. Create a tag
+
+After the documentation merge and final CI, create the release tag. For example, the following is documentation only and uses a future placeholder version:
 
 ```powershell
 git tag -a vX.Y.Z -m "Release vX.Y.Z"
 ```
 
-## 9. Publish the GitHub Release
+## 10. Publish the GitHub Release
 
-Create the GitHub Release only after the tag exists. Derive release notes from `CHANGELOG.md`, verify links and artifacts, and never include secrets in release notes or attachments.
+Create the GitHub Release only after the tag exists. Derive release notes from `CHANGELOG.md`, verify links and artifacts, and never include secrets in release notes or attachments. Mark the version **Published** only after the GitHub Release exists.
+
+## 11. Record formal milestone closure
+
+After publication and final validation, record formal milestone closure. The sequence is technical completion → post-merge CI → documentation closeout → version audit → official publication date → documentation update and PDF visual review → documentation PR and merge → final CI → tag → GitHub Release → Published → formal milestone closure.

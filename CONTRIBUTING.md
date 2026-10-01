@@ -66,7 +66,7 @@ Where the change affects scenario selection, validate the relevant tag, for exam
 
 In the PR, describe the purpose, changes made, commands executed, results, and any relevant evidence. Update documentation whenever behavior, configuration, generated artifacts, or supported execution commands change.
 
-GitHub Actions runs the `quality-gate` check automatically for pull requests targeting `main`. Open **Checks → quality-gate → Details** to inspect a failure, and download `test-evidence` from the run's **Actions → Artifacts** section when available. Fix failing tests on your branch and push another commit before requesting merge. Repository branch protection is a separate owner-managed setting; the workflow does not enable it. See the [CI/CD guide](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md#cicd-con-github-actions) for the complete walkthrough.
+GitHub Actions runs the `quality-gate` check automatically for pull requests targeting `main`. Open **Checks → quality-gate → Details** to inspect a failure, and download `test-evidence` from the run's **Actions → Artifacts** section when available. Fix failing tests on your branch and push another commit before requesting merge. The active, owner-managed `main` ruleset requires a pull request, an up-to-date branch, and a passing `quality-gate` check; it blocks force pushes and branch deletion. See the [CI/CD guide](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md#cicd-con-github-actions) for the complete walkthrough.
 
 ## Repository hygiene and security
 
