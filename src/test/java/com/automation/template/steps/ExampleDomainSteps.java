@@ -35,6 +35,9 @@ public final class ExampleDomainSteps {
      */
     @Entonces("se muestra el encabezado {string}")
     public void verifyHeading(String heading) {
-        assertTrue(false, "Controlled failure for quality-gate validation");
+        assertTrue(
+            page.hasHeading(heading),
+            () -> "Expected heading was not displayed / No se mostró el encabezado esperado: " + heading
+        );
     }
 }
