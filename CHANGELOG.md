@@ -4,9 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.1.0] - 2026-10-01
 
-### v1.1.0 — Hito 3, Bloque 4 (in preparation; unpublished)
+Hito 3 — Completed / Validated. Technical status: Stable / Validated. The official publication date is October 1, 2026; Published is recorded only after the tag and GitHub Release exist.
 
 #### Added
 
@@ -15,14 +15,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Versioned local HTML fixture for the template smoke test.
 - Basic Gradle cache setup for GitHub Actions.
 - Stable `quality-gate` job/check for pull requests targeting `main`.
+- Operational CI/CD documentation covering pull requests, check results, artifacts, and protected merges.
 
 #### Changed
 
 - The example Page Object opens the local fixture, avoiding dependence on external page content.
 - Updated usage documentation and regenerated the PDF manual to match the smoke test and CI workflow.
-- Documented the beginner workflow for creating a pull request, reading the Quality Gate, downloading evidence, and preparing branch protection. The milestone remains open until validated on GitHub.
+- Aligned the documentation with the validated Hito 3 technical state and the official publication date.
+- Documented the beginner workflow for creating a pull request, reading the Quality Gate, downloading evidence, and following the active `main` ruleset.
+- Completed and validated the technical work for Hito 3 and Blocks 1–4 after real GitHub validation; formal documentation closeout remains in progress.
 
-## [1.0.2] - 2026-09-25
+#### Validated
+
+- Confirmed a successful `quality-gate`, a controlled failing test with `test-evidence`, the required check blocking merge, restoration followed by another successful check, and a successful post-merge run on `main`.
+- Confirmed evidence artifacts in both successful and failing runs and an active `main` ruleset requiring a pull request, an up-to-date branch, and the `quality-gate` check while blocking force pushes and branch deletion.
+- v1.1.0 is Stable / Validated, and Hito 3 is Completed / Validated. Publication remains a separate event: add Published only after the v1.1.0 tag and GitHub Release exist. v1.0.2 remains the latest published version.
+
+## [1.0.2] - 2026-09-25 (Stable / Validated / Published)
 
 ### Changed
 
@@ -42,7 +51,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Consolidated the configuration inventory, artifact collection contract, logging, screenshot behavior, and bilingual execution guidance.
 - Aligned the Gradle root project name with the official repository name.
 
-> Historical note: `1.0.1` was the stable, validated, and published release at the time of this entry. The current stable baseline is `v1.0.2`.
+> Historical note: `1.0.1` was the stable, validated, and published release at the time of this entry. The latest published release is `v1.0.2`.
 
 ## [1.0.0] - 2026-09-17
 

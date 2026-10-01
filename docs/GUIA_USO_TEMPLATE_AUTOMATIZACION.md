@@ -1,6 +1,6 @@
 # Guía de Uso del Template de Automatización
 
-<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>v1.1.0 en preparación · Hito 3, Bloque 4 · Sin publicar<br>Baseline estable v1.0.2 · Documentation-only Hotfix · Stable / Validated · 25 de septiembre de 2026<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
+<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>v1.1.0 · Stable / Validated · Hito 3 Completed / Validated<br>Fecha de publicación: 1 de octubre de 2026<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
 
 ## Índice
 
@@ -44,14 +44,14 @@ No es necesario conocer este repositorio. Para avanzar con seguridad, siga las s
 
 ## Estado e historial de la release
 
-**Release Status.** La versión v1.0.2 es la baseline estable actual: **Documentation-only Hotfix**, Stable / Validated el 25 de septiembre de 2026. Corrige inconsistencias documentales de estado post-release sin cambios funcionales ni de dependencias. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM.
+**Estado técnico y documental.** La v1.1.0 completó y validó el Hito 3: Bloque 1, CI base y smoke test con fixture local; Bloque 2, publicación de evidencias; Bloque 3, caché de Gradle; Bloque 4, Quality Gate, protección de `main` y documentación operativa. v1.1.0 está **Stable / Validated** y el Hito 3 **Completed / Validated**. La fecha oficial de publicación es el **1 de octubre de 2026**; el estado Published se registrará por separado cuando existan el tag y el GitHub Release v1.1.0.
 
-La v1.1.0 está en preparación en la rama `feature/hito-3-ci-quality-gate`. El Hito 3, Bloque 1 incorporó el workflow base de GitHub Actions y un smoke test con fixture local. El Bloque 2 agregó la publicación de reportes, resultados, logs y screenshots disponibles como artifact. El Bloque 3 incorporó caché de Gradle. El Bloque 4 prepara el Quality Gate y documenta el flujo operativo. La versión aún no está publicada; el cierre requiere validación real en GitHub.
+En el historial, v1.0.2 es la última release publicada: **Documentation-only Hotfix**, Stable / Validated / Published el 25 de septiembre de 2026. Corrige inconsistencias documentales de estado post-release sin cambios funcionales ni de dependencias. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM.
 
-| Versión | Fecha | Tipo | Estado | Cambios principales |
+| Versión | Fecha / publicación | Tipo | Estado | Cambios principales |
 |---|---|---|---|---|
-| v1.1.0 | En preparación | Hito 3 — Bloque 4 | Sin publicar | Quality Gate, preparación para Branch Protection y documentación operativa CI/CD. |
-| v1.0.2 | 25 de septiembre de 2026 | Documentation-only Hotfix | Stable / Validated | Corrección de inconsistencias de estado post-release; no incluye cambios funcionales, dependencias, CI/CD, Docker, Selenium Grid, Healenium ni Playwright. |
+| v1.1.0 | 1 de octubre de 2026 | Hito 3 — Completed / Validated | Stable / Validated | CI, evidencias, caché Gradle, Quality Gate, Branch Protection y documentación operativa validados. |
+| v1.0.2 | 25 de septiembre de 2026 | Documentation-only Hotfix | Stable / Validated / Published | Última release publicada. Corrección de inconsistencias de estado post-release; no incluye cambios funcionales, dependencias, CI/CD, Docker, Selenium Grid, Healenium ni Playwright. |
 | v1.0.1 | 25 de septiembre de 2026 | Hardening + CI/CD Readiness | Stable / Validated / Published | Logging, screenshots ante fallo, propagación de tags, contrato de artifacts y documentación consolidada para futura integración. No incluye workflow CI/CD. |
 | v1.0.0 | 17 de septiembre de 2026 | First Stable Release | Stable / Validated | Generalización del origen, Selenium + Cucumber + POM, Gradle Wrapper, Chrome/Edge, headless, `baseUrl`, ejemplo funcional, documentación técnica, diagramas, troubleshooting, reporte de migración, CI/CD documentado y manual PDF regenerable. |
 
@@ -141,7 +141,7 @@ Si VS Code muestra “Importing Gradle project”, espere a que termine. Si soli
 
 ## Selección de versión de Java
 
-### Compatibilidad de v1.0.2
+### Compatibilidad de Java
 
 Java 21 es la versión predeterminada y recomendada. El build también admite Java 17 como única compatibilidad alternativa. Java 18, 19, 20, 22 y cualquier otra versión distinta de 17 o 21 no están soportadas: `build.gradle` las rechaza explícitamente.
 
@@ -346,7 +346,7 @@ Necesita Git instalado, una copia del repositorio conectada a GitHub y permiso p
 
 ## ¿Qué es un Quality Gate?
 
-Es una puerta de control: la verificación automática debe terminar bien antes de considerar listo un cambio. El check estable de este proyecto se llama `quality-gate`. Gradle devuelve exit code `0` si compilación y pruebas pasan, y un código distinto de cero si fallan. GitHub muestra **PASS/Success** para continuar a revisión o **FAIL/Failure** para corregir. La carga de artifacts no convierte FAIL en PASS. Hasta que el propietario active Branch Protection, GitHub puede permitir un merge aunque el check falle.
+Es una puerta de control: la verificación automática debe terminar bien antes de considerar listo un cambio. El check estable de este proyecto se llama `quality-gate`. Gradle devuelve exit code `0` si compilación y pruebas pasan, y un código distinto de cero si fallan. GitHub muestra **PASS/Success** para continuar a revisión o **FAIL/Failure** para corregir. La carga de artifacts no convierte FAIL en PASS. El ruleset activo de `main` requiere este check y un Pull Request antes del merge.
 
 ### ¿Qué hacer si el Quality Gate falla?
 
@@ -374,15 +374,15 @@ Un **artifact** es un archivo descargable producido por una ejecución, separado
 
 Branch Protection es una regla de GitHub que limita cómo se integra código en `main`. Protege la línea compartida ante cambios sin revisión o pruebas fallidas. El flujo recomendado es **feature branch → Pull Request → quality-gate → code review → merge**. Un status check es el resultado visible del job; un Required Status Check bloquea el merge hasta que ese resultado pase.
 
-Tras validar este bloque con ejecuciones reales, el propietario podrá configurar manualmente **Repository → Settings → Rules / Branch protection → main** (la ruta exacta depende de la interfaz y sus permisos). Debe considerar **Require a pull request before merging** y **Require status checks to pass before merging**, seleccionando `quality-gate`. El workflow por sí solo no activa esas reglas; este bloque no cambia ajustes de GitHub.
+En este repositorio, `main` ya está protegida mediante un ruleset: exige Pull Request, el status check `quality-gate` y que la rama esté actualizada antes del merge; bloquea force push y restringe la eliminación de `main`. Un administrador puede consultar la regla en **Repository → Settings → Rules → Rulesets** (según la interfaz y sus permisos). El workflow no crea esta regla: es una configuración administrativa ya validada.
 
-### Ejemplo y validación controlada posterior
+### Ejemplo y validación real del Quality Gate
 
 Ana crea `feature/ajuste-page`, modifica un Page Object, prueba localmente, hace commit y push y abre un PR. Actions inicia `quality-gate`. Con Success, otra persona revisa y podrá hacer merge cuando se cumplan las reglas del repositorio. Si una prueba falla, Ana abre Details, descarga `test-evidence`, corrige, vuelve a probar, hace un nuevo commit y push. El PR y el check se actualizan.
 
-Más adelante se puede comprobar FAIL/PASS en una rama temporal: introducir un fallo de prueba controlado, hacer commit y push, verificar el check Failure y los artifacts; revertir el fallo, volver a probar, hacer commit y push, y verificar Success. No deje código roto ni integre el fallo. Esta prueba no se ejecuta en este bloque.
+La validación del Hito 3 ya comprobó la secuencia **PASS inicial → FAIL controlado → bloqueo del merge por `quality-gate` → `test-evidence` disponible → restauración → PASS → merge → PASS post-merge en `main`**. Las evidencias se publicaron tanto en PASS como en FAIL. No quedó el fallo controlado en `main`.
 
-**Hito 3 / v1.1.0:** Bloque 1: CI base; Bloque 2: evidencias; Bloque 3: caché Gradle; Bloque 4: Quality Gate, preparación para Branch Protection y documentación operativa. El hito sigue en preparación hasta validación real en GitHub.
+**Hito 3 / v1.1.0:** Bloques 1–4 **Completed / Validated**: CI base, evidencias, caché Gradle, Quality Gate, Branch Protection y documentación operativa. Estado técnico: **Stable / Validated**. Fecha de publicación: **1 de octubre de 2026**. La publicación se registrará por separado; la última release publicada continúa siendo **v1.0.2**.
 
 ## Regeneración del manual
 
