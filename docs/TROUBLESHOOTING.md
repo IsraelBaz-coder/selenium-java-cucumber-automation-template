@@ -7,7 +7,7 @@
 | `java` no reconocido | JDK/Path incorrecto | Instale JDK 21 o 17, reinicie PowerShell y valide `java -version`. |
 | Java incorrecto | VS Code/Gradle usa otro JDK | Configure `JAVA_HOME` al JDK elegido y revise `./gradlew.bat --version`; sólo se admiten `-PjavaVersion=17` o `-PjavaVersion=21`. |
 | Wrapper no ejecuta | Ruta/permisos | Ejecute desde raíz: `.\gradlew.bat test`; preserve `gradle/wrapper`. |
-| Dependencias no descargan | Red, proxy o Maven bloqueado | Revise red/proxy y ejecute `dependencies --refresh-dependencies`. |
+| Dependencias no descargan | Red, proxy o Maven Central bloqueado | Revise red/proxy y ejecute desde la raíz `.\gradlew.bat dependencies --refresh-dependencies`. |
 | Chrome/Edge no inicia | Navegador/driver | Actualice navegador y revise salida Selenium Manager. |
 | Error WebDriver | Driver no creado/cerrado | Revise Hooks y `browser`; no use driver fuera del escenario. |
 | Headless falla | Entorno restringido | Use `-Dheadless=true`; revise permisos y tamaño de ventana. |
@@ -17,6 +17,8 @@
 | No se ejecuta el tag esperado | Expresión o propagación incorrecta | Verifique el tag en la feature y ejecute `"-Dcucumber.filter.tags=@example"`; el tag incluido actualmente es `@example`. |
 | No encuentro un reporte | Se busca una ruta incorrecta o el build falló antes de reportar | Revise `build/reports/cucumber/cucumber.html`, `build/reports/tests/test/` y `build/test-results/test/`. |
 | No hay screenshot | No ocurrió fallo, la opción está desactivada o el driver no puede capturar | Revise `screenshotOnFailure`, `build/evidence/screenshots/` y `build/logs/automation.log`. |
+| `quality-gate` falla en un PR | Compilación, pruebas o preparación del runner fallaron | Abra el PR → **Checks** → `quality-gate` → **Details**; identifique el step fallido y consulte los logs. Descargue `test-evidence` desde **Actions** si existe. Corrija en su rama, pruebe localmente y envíe un nuevo commit para repetir el check. |
+| No aparece `test-evidence` | Gradle no generó archivos o la carga no llegó a ejecutarse | Abra la ejecución en **Actions**, revise **Upload test evidence** y las rutas `build/` indicadas en la [guía](GUIA_USO_TEMPLATE_AUTOMATIZACION.md#cómo-descargar-las-evidencias-de-github-actions). Las capturas pueden faltar sin escenarios fallidos. |
 
 ## Diagnóstico de Gradle y dependencias
 

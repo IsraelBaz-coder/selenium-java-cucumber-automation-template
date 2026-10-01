@@ -6,18 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-### v1.1.0 — Hito 3, Bloque 2 (in preparation; unpublished)
+### v1.1.0 — Hito 3, Bloque 4 (in preparation; unpublished)
 
 #### Added
 
 - GitHub Actions uploads available Gradle/Cucumber reports, JUnit results, logs, and screenshots as the `test-evidence` artifact, retained for 14 days.
 - Base GitHub Actions workflow for pull requests and pushes to `main`, using Temurin Java 21 and the Gradle Wrapper in headless mode.
 - Versioned local HTML fixture for the template smoke test.
+- Basic Gradle cache setup for GitHub Actions.
+- Stable `quality-gate` job/check for pull requests targeting `main`.
 
 #### Changed
 
 - The example Page Object opens the local fixture, avoiding dependence on external page content.
 - Updated usage documentation and regenerated the PDF manual to match the smoke test and CI workflow.
+- Documented the beginner workflow for creating a pull request, reading the Quality Gate, downloading evidence, and preparing branch protection. The milestone remains open until validated on GitHub.
 
 ## [1.0.2] - 2026-09-25
 
@@ -39,7 +42,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Consolidated the configuration inventory, artifact collection contract, logging, screenshot behavior, and bilingual execution guidance.
 - Aligned the Gradle root project name with the official repository name.
 
-> `1.0.1` is the current stable, validated, and published release.
+> Historical note: `1.0.1` was the stable, validated, and published release at the time of this entry. The current stable baseline is `v1.0.2`.
 
 ## [1.0.0] - 2026-09-17
 
