@@ -4,12 +4,13 @@ Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD
 
 | Release | Value |
 |---|---|
-| Current version in closeout | **v1.1.0** |
-| Technical status | **Stable / Validated** |
+| Published stable version | **v1.1.0** |
+| Version in development | **v1.2.0 — Milestone 4, Block 1** |
+| Technical status | **Milestone 4 in development; Block 1: base logging** |
 | Milestone 3 | **Completed / Validated** |
-| Publication date | **October 1, 2026** |
+| v1.2.0 publication date | **Not set** |
 
-Technical and documentation validation of v1.1.0 is complete. The official date is set in the documentation; publication is a separate event. Add **Published** to the history when the v1.1.0 tag and GitHub Release exist. See the history for the latest published version.
+v1.1.0 is the published stable version. The `feature/hito-4-logging-observability-base` branch adds Block 1 — Logging base / Observability foundation of Milestone 4 — Reporting + Logging / Observability. v1.2.0 remains in development and has no publication date.
 
 | Document information | Value |
 |---|---|
@@ -24,7 +25,7 @@ The template was validated and can be used as a baseline for new projects. Confi
 - Java 21 by default, Java 17 compatible, Gradle Wrapper and UTF-8 source encoding.
 - Page Object Model, Steps and Hooks kept separate.
 - Chrome/Edge, headless mode and URL configured by file, environment or `-D`.
-- Explicit waits, execution logging, failure screenshots and Cucumber HTML reporting.
+- Explicit waits, execution logging, failure screenshots and Cucumber HTML reporting. The Milestone 4 branch uses SLF4J and Logback for logging.
 
 ## Java version selection
 
@@ -49,6 +50,8 @@ src/test/resources/{features,config.properties}
 ```
 
 Features express Gherkin behavior; Steps translate intent; Page Objects encapsulate Selenium, locators and waits. Hooks manage browser lifecycle and the Runner connects Cucumber to JUnit Platform.
+
+See [architecture](docs/ARCHITECTURE.md), the [usage guide](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md), [logging and its diagrams](docs/LOGGING.md), and [troubleshooting](docs/TROUBLESHOOTING.md).
 
 ## Configuration and execution
 
@@ -81,7 +84,7 @@ Each execution creates regenerable Git-ignored artifacts under `build/`:
 | Failure screenshots | `build/evidence/screenshots/` |
 | Execution log | `build/logs/automation.log` |
 
-Hooks log every scenario start and finish, browser, headless mode and driver lifecycle. If a scenario fails and `screenshotOnFailure=true`, they attempt to attach a PNG to the Cucumber scenario and persist it physically. The file name combines a sanitized scenario name, timestamp and UUID to prevent overwrites. If capturing, attaching or persisting evidence fails, the log records the failure and exception while preserving the original scenario failure.
+Hooks log each scenario's start, finish and status, along with the effective browser and headless mode. `DriverFactory` and `DriverManager` log driver initialization and shutdown. Logging is configured in `src/test/resources/logback-test.xml`; see [Logging](docs/LOGGING.md) for levels, excluded data, CI/CD and troubleshooting. If a scenario fails and `screenshotOnFailure=true`, the existing Hooks attempt to attach a PNG to the Cucumber scenario and persist it physically. The file name combines a sanitized scenario name, timestamp and UUID to prevent overwrites. If capturing, attaching or persisting evidence fails, the log records the failure and exception while preserving the original scenario failure.
 
 ## Browsers, URL and Cucumber
 
@@ -133,11 +136,11 @@ For the versioning policy and repeatable release procedure, see [Versioning](doc
 
 ### v1.1.0 - October 1, 2026
 
-**Milestone 3 Completed / Validated. Stable / Validated.** Base CI, evidence artifacts, Gradle cache, and Quality Gate have been validated. Published will be recorded after the tag and GitHub Release are created.
+**Milestone 3 Completed / Validated. Stable / Validated / Published.** Base CI, evidence artifacts, Gradle cache, and Quality Gate have been validated.
 
 ### v1.0.2 - September 25, 2026
 
-**Documentation-only Hotfix. Stable / Validated / Published.** This is the latest published release. It corrects post-release state inconsistencies; it introduces no functional changes, dependency changes, CI/CD, Docker, Selenium Grid, Healenium, or Playwright.
+**Documentation-only Hotfix. Stable / Validated / Published.** It corrects post-release state inconsistencies; it introduces no functional changes, dependency changes, CI/CD, Docker, Selenium Grid, Healenium, or Playwright.
 
 ### v1.0.1 - September 25, 2026
 

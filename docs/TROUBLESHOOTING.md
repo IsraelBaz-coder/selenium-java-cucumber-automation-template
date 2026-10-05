@@ -1,6 +1,6 @@
 # Troubleshooting
 
-**Versión actual:** v1.1.0 — Stable / Validated; Hito 3 — Completed / Validated. Fecha de publicación: 1 de octubre de 2026.
+**Versión estable publicada:** v1.1.0. **En desarrollo:** v1.2.0, Hito 4 — Bloque 1. Sin fecha de publicación de v1.2.0.
 
 | Síntoma | Causa probable | Solución |
 |---|---|---|
@@ -16,6 +16,7 @@
 | CI falla, local no | Configuración diferente | Compare `-D`, variables de entorno y navegador; ejecute `-Dheadless=true` y recolecte los artifacts documentados. |
 | No se ejecuta el tag esperado | Expresión o propagación incorrecta | Verifique el tag en la feature y ejecute `"-Dcucumber.filter.tags=@example"`; el tag incluido actualmente es `@example`. |
 | No encuentro un reporte | Se busca una ruta incorrecta o el build falló antes de reportar | Revise `build/reports/cucumber/cucumber.html`, `build/reports/tests/test/` y `build/test-results/test/`. |
+| No aparece el log | La tarea `test` no llegó a ejecutar escenarios, o se consultó una ruta anterior a `clean` | Revise la consola, `build/logs/automation.log` y la [guía de logging](LOGGING.md). |
 | No hay screenshot | No ocurrió fallo, la opción está desactivada o el driver no puede capturar | Revise `screenshotOnFailure`, `build/evidence/screenshots/` y `build/logs/automation.log`. |
 | `quality-gate` falla en un PR | Compilación, pruebas o preparación del runner fallaron | Abra el PR → **Checks** → `quality-gate` → **Details**; identifique el step fallido y consulte los logs. Descargue `test-evidence` desde **Actions** si existe. Corrija en su rama, pruebe localmente y envíe un nuevo commit para repetir el check. |
 | No aparece `test-evidence` | Gradle no generó archivos o la carga no llegó a ejecutarse | Abra la ejecución en **Actions**, revise **Upload test evidence** y las rutas `build/` indicadas en la [guía](GUIA_USO_TEMPLATE_AUTOMATIZACION.md#cómo-descargar-las-evidencias-de-github-actions). Las capturas pueden faltar sin escenarios fallidos. |

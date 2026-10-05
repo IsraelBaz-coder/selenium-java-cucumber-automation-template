@@ -4,8 +4,11 @@
 
 | Version | Supported |
 | --- | --- |
+| 1.1.x | Yes — current published stable line |
 | 1.0.x | Yes |
 | < 1.0.0 | No |
+
+`v1.2.0` remains in development (Milestone 4, Block 1) and is not a published supported release.
 
 ## Reporting a vulnerability
 

@@ -4,9 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] — v1.2.0 in development, Milestone 4 / Block 1
+
+- Replaced the framework's custom JUL logging setup with SLF4J and test-scoped Logback configuration for console and `build/logs/automation.log` output.
+- Logged scenario start, effective browser and headless mode, final Cucumber status, and WebDriver lifecycle without logging arbitrary URLs or secrets.
+- Documented logging levels, CI/CD behavior and basic troubleshooting in `docs/LOGGING.md`.
+
+No publication date is assigned to v1.2.0.
+
 ## [1.1.0] - 2026-10-01
 
-Hito 3 — Completed / Validated. Technical status: Stable / Validated. The official publication date is October 1, 2026; Published is recorded only after the tag and GitHub Release exist.
+Hito 3 — Completed / Validated. Technical status: Stable / Validated / Published.
 
 #### Added
 
@@ -29,7 +37,7 @@ Hito 3 — Completed / Validated. Technical status: Stable / Validated. The offi
 
 - Confirmed a successful `quality-gate`, a controlled failing test with `test-evidence`, the required check blocking merge, restoration followed by another successful check, and a successful post-merge run on `main`.
 - Confirmed evidence artifacts in both successful and failing runs and an active `main` ruleset requiring a pull request, an up-to-date branch, and the `quality-gate` check while blocking force pushes and branch deletion.
-- v1.1.0 is Stable / Validated, and Hito 3 is Completed / Validated. Publication remains a separate event: add Published only after the v1.1.0 tag and GitHub Release exist. v1.0.2 remains the latest published version.
+- v1.1.0 is Stable / Validated / Published, and Hito 3 is Completed / Validated.
 
 ## [1.0.2] - 2026-09-25 (Stable / Validated / Published)
 
@@ -51,7 +59,7 @@ Hito 3 — Completed / Validated. Technical status: Stable / Validated. The offi
 - Consolidated the configuration inventory, artifact collection contract, logging, screenshot behavior, and bilingual execution guidance.
 - Aligned the Gradle root project name with the official repository name.
 
-> Historical note: `1.0.1` was the stable, validated, and published release at the time of this entry. The latest published release is `v1.0.2`.
+> Historical note: `1.0.1` was the stable, validated, and published release at the time of this entry. `v1.0.2` was published later; `v1.1.0` is the current published stable release.
 
 ## [1.0.0] - 2026-09-17
 

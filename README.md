@@ -4,12 +4,13 @@ Template reutilizable para pruebas Web UI con Java 21, Selenium WebDriver, Cucum
 
 | Release | Valor |
 |---|---|
-| Versión actual en cierre | **v1.1.0** |
-| Estado técnico | **Stable / Validated** |
+| Versión estable publicada | **v1.1.0** |
+| Versión en desarrollo | **v1.2.0 — Hito 4, Bloque 1** |
+| Estado técnico | **Hito 4 en desarrollo; Bloque 1: logging base** |
 | Hito 3 | **Completed / Validated** |
-| Fecha de publicación | **1 de octubre de 2026** |
+| Fecha de publicación de v1.2.0 | **Sin definir** |
 
-La validación técnica y documental de v1.1.0 terminó. La fecha oficial está fijada para la documentación; la publicación es un evento separado. El estado **Published** se añadirá al historial cuando existan el tag y el GitHub Release v1.1.0. Consulte el historial para la última versión publicada.
+v1.1.0 es la versión estable publicada. La rama `feature/hito-4-logging-observability-base` incorpora el Bloque 1 — Logging base / Observability foundation del Hito 4 — Reporting + Logging / Observability. v1.2.0 sigue en desarrollo; no tiene fecha de publicación.
 
 | Información del documento | Valor |
 |---|---|
@@ -24,7 +25,7 @@ El template fue validado y puede utilizarse como baseline para nuevos proyectos.
 - Java 21 predeterminado, Java 17 compatible, Gradle Wrapper y codificación UTF-8.
 - Page Object Model, Steps y Hooks separados.
 - Chrome/Edge, modo headless y URL configurables por archivo, variable de entorno o `-D`.
-- Esperas explícitas, logging de ejecución, screenshots al fallar y reporte HTML Cucumber.
+- Esperas explícitas, logging de ejecución, screenshots al fallar y reporte HTML Cucumber. En la rama del Hito 4, el logging usa SLF4J y Logback.
 
 ## Arquitectura y estructura
 
@@ -34,7 +35,7 @@ Feature -> Step Definitions -> Page Objects -> WebDriver -> Browser
              Hooks/Reports     config.properties
 ```
 
-Consulte [Architecture](docs/ARCHITECTURE.md), la [guía completa](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md) y [Troubleshooting](docs/TROUBLESHOOTING.md).
+Consulte [Architecture](docs/ARCHITECTURE.md), la [guía completa](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md), [logging](docs/LOGGING.md) y [Troubleshooting](docs/TROUBLESHOOTING.md).
 
 ```text
 src/main/java/com/automation/template/{config,driver,pages}
@@ -111,7 +112,7 @@ Cada ejecución genera artifacts bajo `build/`, excluidos por Git y regenerables
 | Screenshots de fallos | `build/evidence/screenshots/` |
 | Log de ejecución | `build/logs/automation.log` |
 
-Los Hooks registran el inicio y fin de cada escenario, navegador, modo headless y ciclo de vida del driver. Si un escenario falla y `screenshotOnFailure=true`, intentan adjuntar una imagen PNG al escenario Cucumber y guardarla físicamente. El archivo usa un nombre saneado del escenario, fecha/hora y UUID para evitar sobrescrituras. Si capturar, adjuntar o persistir evidencia falla, el detalle y la excepción quedan en el log; el error original del escenario se conserva.
+Los Hooks registran el inicio, fin y estado de cada escenario, además del navegador y modo headless efectivos. `DriverFactory` y `DriverManager` registran la inicialización y cierre del driver. La configuración del logging está en `src/test/resources/logback-test.xml`; [logging](docs/LOGGING.md) explica niveles, datos omitidos, CI/CD y diagnóstico. Si un escenario falla y `screenshotOnFailure=true`, los Hooks existentes intentan adjuntar una imagen PNG al escenario Cucumber y guardarla físicamente. El archivo usa un nombre saneado del escenario, fecha/hora y UUID para evitar sobrescrituras. Si capturar, adjuntar o persistir evidencia falla, el detalle y la excepción quedan en el log; el error original del escenario se conserva.
 
 ## Navegadores, URL y Cucumber
 
@@ -154,7 +155,7 @@ Para un nuevo proyecto, copie/clone el template, cambie `rootProject.name` y `gr
 
 ## Documentación adicional
 
-Documentación adicional: [guía de uso](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md), [arquitectura](docs/ARCHITECTURE.md), [troubleshooting](docs/TROUBLESHOOTING.md), [reporte de migración](docs/TEMPLATE_MIGRATION_REPORT.md), [versionado](docs/VERSIONING.md) y [proceso de release](docs/RELEASE_PROCESS.md). Revise también el [changelog](CHANGELOG.md), la [guía de contribución](CONTRIBUTING.md), la [política de seguridad](SECURITY.md) y el [código de conducta](CODE_OF_CONDUCT.md).
+Documentación adicional: [guía de uso](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md), [arquitectura](docs/ARCHITECTURE.md), [logging](docs/LOGGING.md), [troubleshooting](docs/TROUBLESHOOTING.md), [reporte de migración](docs/TEMPLATE_MIGRATION_REPORT.md), [versionado](docs/VERSIONING.md) y [proceso de release](docs/RELEASE_PROCESS.md). Revise también el [changelog](CHANGELOG.md), la [guía de contribución](CONTRIBUTING.md), la [política de seguridad](SECURITY.md) y el [código de conducta](CODE_OF_CONDUCT.md).
 
 ## Regeneración del manual y archivos temporales
 
@@ -166,11 +167,11 @@ Documentación adicional: [guía de uso](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.m
 
 ### v1.1.0 - 1 de octubre de 2026
 
-**Hito 3 Completed / Validated. Stable / Validated.** CI base, publicación de evidencias, caché Gradle y Quality Gate validados. El estado Published se registrará después de crear el tag y el GitHub Release.
+**Hito 3 Completed / Validated. Stable / Validated / Published.** CI base, publicación de evidencias, caché Gradle y Quality Gate validados.
 
 ### v1.0.2 - 25 de septiembre de 2026
 
-**Documentation-only Hotfix. Stable / Validated / Published.** Es la última release publicada. Corrige inconsistencias de estado post-release; no introduce cambios funcionales, dependencias, CI/CD, Docker, Selenium Grid, Healenium ni Playwright.
+**Documentation-only Hotfix. Stable / Validated / Published.** Corrige inconsistencias de estado post-release; no introduce cambios funcionales, dependencias, CI/CD, Docker, Selenium Grid, Healenium ni Playwright.
 
 ### v1.0.1 - 25 de septiembre de 2026
 

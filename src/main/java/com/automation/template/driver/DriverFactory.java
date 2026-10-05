@@ -2,8 +2,8 @@ package com.automation.template.driver;
 
 import com.automation.template.config.BrowserType;
 import com.automation.template.config.TestConfiguration;
-import com.automation.template.logging.FrameworkLogger;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -19,7 +19,7 @@ import org.openqa.selenium.edge.EdgeOptions;
  * Creates WebDriver with consistent options for supported browsers.
  */
 public final class DriverFactory {
-    private static final Logger LOGGER = FrameworkLogger.getLogger(DriverFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DriverFactory.class);
     private DriverFactory() { }
 
     /**
@@ -28,13 +28,14 @@ public final class DriverFactory {
      * @return ES: driver listo para la prueba. EN: driver ready for the test.
      */
     public static WebDriver createDriver() {
-        LOGGER.info(() -> "Initializing WebDriver: browser=" + TestConfiguration.browser()
-                + ", headless=" + TestConfiguration.headless());
-        WebDriver driver = switch (TestConfiguration.browser()) {
-            case CHROME -> createChrome(TestConfiguration.headless());
-            case EDGE -> createEdge(TestConfiguration.headless());
+        BrowserType browser = TestConfiguration.browser();
+        boolean headless = TestConfiguration.headless();
+        LOGGER.debug("Creating {} WebDriver with headless={}", browser, headless);
+        WebDriver driver = switch (browser) {
+            case CHROME -> createChrome(headless);
+            case EDGE -> createEdge(headless);
         };
-        if (!TestConfiguration.headless()) driver.manage().window().maximize();
+        if (!headless) driver.manage().window().maximize();
         LOGGER.info("WebDriver initialized successfully.");
         return driver;
     }

@@ -8,7 +8,7 @@ This project follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.
 MAJOR.MINOR.PATCH
 ```
 
-For example, `1.0.2` is the latest published documentation-only hotfix version.
+For example, `1.0.2` was the published documentation-only hotfix version before v1.1.0.
 
 - **MAJOR**: incompatible changes that require consumers to adapt.
 - **MINOR**: backward-compatible functionality.
@@ -19,13 +19,14 @@ For example, `1.0.2` is the latest published documentation-only hotfix version.
 ```text
 v1.0.0 = initial stable baseline
 v1.0.1 = Hardening + CI/CD Readiness
-v1.0.2 = Documentation-only Hotfix, Stable / Validated / Published; latest published release
-v1.1.0 = Stable / Validated; Milestone 3 and Blocks 1–4 Completed / Validated; official publication date October 1, 2026
+v1.0.2 = Documentation-only Hotfix, Stable / Validated / Published
+v1.1.0 = latest published stable release; Milestone 3 and Blocks 1–4 Completed / Validated
+v1.2.0 = in development; Milestone 4, Block 1 (logging base); no publication date
 ```
 
-`v1.0.1` was published, tagged, and released on 2026-09-25. `v1.0.2` is the latest published Stable / Validated PATCH containing documentation-only post-release state corrections.
+`v1.0.1` was published, tagged, and released on 2026-09-25. `v1.0.2` is a published Stable / Validated PATCH containing documentation-only post-release state corrections. `v1.1.0` is the current published stable version.
 
-`v1.1.0` completed the technical work and validation for Milestone 3: Block 1 added the base GitHub Actions workflow and a local HTML fixture for the smoke test; Block 2 publishes available reports, results, logs, and screenshots as artifacts; Block 3 added Gradle caching; Block 4 added the stable `quality-gate` check and operational CI/CD documentation. Real GitHub validation covered PASS, controlled FAIL, evidence in both cases, a required check blocking merge, restoration, final PASS, merge, and post-merge PASS on `main`. The active `main` ruleset requires a pull request, an up-to-date branch, and `quality-gate`; it blocks force pushes and deletion. Milestone 3 and Blocks 1–4 are **Completed / Validated**. The current version is **Stable / Validated** with the official publication date **October 1, 2026**. Publication is a separate event: there is no `v1.1.0` tag or GitHub Release yet, so **Published** does not apply. `v1.0.2` remains the latest published release.
+`v1.1.0` completed the technical work and validation for Milestone 3: Block 1 added the base GitHub Actions workflow and a local HTML fixture for the smoke test; Block 2 publishes available reports, results, logs, and screenshots as artifacts; Block 3 added Gradle caching; Block 4 added the stable `quality-gate` check and operational CI/CD documentation. Real GitHub validation covered PASS, controlled FAIL, evidence in both cases, a required check blocking merge, restoration, final PASS, merge, and post-merge PASS on `main`. The active `main` ruleset requires a pull request, an up-to-date branch, and `quality-gate`; it blocks force pushes and deletion. Milestone 3 and Blocks 1–4 are **Completed / Validated**. `v1.1.0` is **Stable / Validated / Published**. The next version, `v1.2.0`, remains in development at Milestone 4, Block 1 and has no publication date.
 
 ## Version documentation closeout gate
 
