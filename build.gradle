@@ -30,11 +30,13 @@ repositories {
 dependencies {
     implementation 'org.seleniumhq.selenium:selenium-java:4.48.0'
     implementation 'io.cucumber:cucumber-java:7.34.7'
+    implementation 'org.slf4j:slf4j-api:2.0.20'
 
     testImplementation platform('org.junit:junit-bom:5.13.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'org.junit.platform:junit-platform-suite'
     testImplementation 'io.cucumber:cucumber-junit-platform-engine:7.34.7'
+    testRuntimeOnly 'ch.qos.logback:logback-classic:1.6.5'
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -53,6 +55,7 @@ def testSystemPropertyKeys = [
 
 tasks.named('test') {
     useJUnitPlatform()
+    testLogging.showStandardStreams = true
 
     // ES: Propaga el contrato de ejecución de -D al proceso de pruebas.
     // EN: Propagates the -D execution contract to the test process.

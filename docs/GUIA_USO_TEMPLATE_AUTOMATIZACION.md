@@ -1,6 +1,6 @@
 # Guía de Uso del Template de Automatización
 
-<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>v1.1.0 · Stable / Validated · Hito 3 Completed / Validated<br>Fecha de publicación: 1 de octubre de 2026<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
+<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>Estable publicada: v1.1.0 · Hito 3 Completed / Validated<br>En desarrollo: v1.2.0 · Hito 4, Bloque 1 · Sin fecha de publicación<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
 
 ## Índice
 
@@ -44,14 +44,14 @@ No es necesario conocer este repositorio. Para avanzar con seguridad, siga las s
 
 ## Estado e historial de la release
 
-**Estado técnico y documental.** La v1.1.0 completó y validó el Hito 3: Bloque 1, CI base y smoke test con fixture local; Bloque 2, publicación de evidencias; Bloque 3, caché de Gradle; Bloque 4, Quality Gate, protección de `main` y documentación operativa. v1.1.0 está **Stable / Validated** y el Hito 3 **Completed / Validated**. La fecha oficial de publicación es el **1 de octubre de 2026**; el estado Published se registrará por separado cuando existan el tag y el GitHub Release v1.1.0.
+**Estado técnico y documental.** La v1.1.0 completó y validó el Hito 3: Bloque 1, CI base y smoke test con fixture local; Bloque 2, publicación de evidencias; Bloque 3, caché de Gradle; Bloque 4, Quality Gate, protección de `main` y documentación operativa. v1.1.0 es la versión estable publicada y el Hito 3 está **Completed / Validated**. El Hito 4 desarrolla v1.2.0; esta rama trabaja únicamente el Bloque 1 de logging, descrito en la [guía de logging](LOGGING.md). v1.2.0 no tiene fecha de publicación.
 
-En el historial, v1.0.2 es la última release publicada: **Documentation-only Hotfix**, Stable / Validated / Published el 25 de septiembre de 2026. Corrige inconsistencias documentales de estado post-release sin cambios funcionales ni de dependencias. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM.
+En el historial, v1.0.2 fue una release publicada: **Documentation-only Hotfix**, Stable / Validated / Published el 25 de septiembre de 2026. Corrige inconsistencias documentales de estado post-release sin cambios funcionales ni de dependencias. La versión estable publicada actualmente es v1.1.0. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM.
 
 | Versión | Fecha / publicación | Tipo | Estado | Cambios principales |
 |---|---|---|---|---|
-| v1.1.0 | 1 de octubre de 2026 | Hito 3 — Completed / Validated | Stable / Validated | CI, evidencias, caché Gradle, Quality Gate, Branch Protection y documentación operativa validados. |
-| v1.0.2 | 25 de septiembre de 2026 | Documentation-only Hotfix | Stable / Validated / Published | Última release publicada. Corrección de inconsistencias de estado post-release; no incluye cambios funcionales, dependencias, CI/CD, Docker, Selenium Grid, Healenium ni Playwright. |
+| v1.1.0 | 1 de octubre de 2026 | Hito 3 — Completed / Validated | Stable / Validated / Published | Versión estable publicada. CI, evidencias, caché Gradle, Quality Gate, Branch Protection y documentación operativa validados. |
+| v1.0.2 | 25 de septiembre de 2026 | Documentation-only Hotfix | Stable / Validated / Published | Corrección de inconsistencias de estado post-release; no incluye cambios funcionales, dependencias, CI/CD, Docker, Selenium Grid, Healenium ni Playwright. |
 | v1.0.1 | 25 de septiembre de 2026 | Hardening + CI/CD Readiness | Stable / Validated / Published | Logging, screenshots ante fallo, propagación de tags, contrato de artifacts y documentación consolidada para futura integración. No incluye workflow CI/CD. |
 | v1.0.0 | 17 de septiembre de 2026 | First Stable Release | Stable / Validated | Generalización del origen, Selenium + Cucumber + POM, Gradle Wrapper, Chrome/Edge, headless, `baseUrl`, ejemplo funcional, documentación técnica, diagramas, troubleshooting, reporte de migración, CI/CD documentado y manual PDF regenerable. |
 
@@ -382,7 +382,7 @@ Ana crea `feature/ajuste-page`, modifica un Page Object, prueba localmente, hace
 
 La validación del Hito 3 ya comprobó la secuencia **PASS inicial → FAIL controlado → bloqueo del merge por `quality-gate` → `test-evidence` disponible → restauración → PASS → merge → PASS post-merge en `main`**. Las evidencias se publicaron tanto en PASS como en FAIL. No quedó el fallo controlado en `main`.
 
-**Hito 3 / v1.1.0:** Bloques 1–4 **Completed / Validated**: CI base, evidencias, caché Gradle, Quality Gate, Branch Protection y documentación operativa. Estado técnico: **Stable / Validated**. Fecha de publicación: **1 de octubre de 2026**. La publicación se registrará por separado; la última release publicada continúa siendo **v1.0.2**.
+**Hito 3 / v1.1.0:** Bloques 1–4 **Completed / Validated**: CI base, evidencias, caché Gradle, Quality Gate, Branch Protection y documentación operativa. Estado técnico: **Stable / Validated / Published**. El Hito 4 / v1.2.0 sigue en desarrollo, Bloque 1, sin fecha de publicación.
 
 ## Regeneración del manual
 

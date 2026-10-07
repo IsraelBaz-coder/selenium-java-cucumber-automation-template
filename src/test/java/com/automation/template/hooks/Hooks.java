@@ -1,7 +1,6 @@
 package com.automation.template.hooks;
 
 import com.automation.template.config.TestConfiguration;
-import com.automation.template.logging.FrameworkLogger;
 import com.automation.template.support.DriverManager;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -13,8 +12,8 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 
@@ -26,20 +25,21 @@ import org.openqa.selenium.TakesScreenshot;
  * Manages browser lifecycle and attaches screenshots to failed scenarios.
  */
 public final class Hooks {
-    private static final Logger LOGGER = FrameworkLogger.getLogger(Hooks.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Hooks.class);
     private static final DateTimeFormatter EVIDENCE_TIMESTAMP = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss_SSS");
 
     /** ES: Inicia el navegador antes del escenario. EN: Starts the browser before the scenario. */
     @Before public void startBrowser(Scenario scenario) {
-        LOGGER.info("Starting scenario: " + scenarioName(scenario));
+        LOGGER.info("Starting scenario: {}", scenarioName(scenario));
+        LOGGER.info("Scenario configuration: browser={}, headless={}",
+                TestConfiguration.browser(), TestConfiguration.headless());
         DriverManager.startDriver();
     }
 
     /** ES: Guarda evidencia si falla y cierra el navegador. EN: Saves evidence on failure and closes the browser. */
     @After public void finishScenario(Scenario scenario) {
         try {
-            String state = scenario.isFailed() ? "FAIL" : "PASS";
-            LOGGER.info(() -> "Finished scenario: " + scenarioName(scenario) + ", status=" + state);
+            LOGGER.info("Finished scenario: {}, status={}", scenarioName(scenario), scenario.getStatus());
             if (scenario.isFailed() && TestConfiguration.screenshotOnFailure()) capture(scenario);
         } finally { DriverManager.quitDriver(); }
     }
@@ -47,19 +47,19 @@ public final class Hooks {
     private void capture(Scenario scenario) {
         String name = scenarioName(scenario);
         if (!DriverManager.hasDriver()) {
-            LOGGER.severe("Cannot capture failure screenshot because WebDriver is unavailable for scenario '" + name + "'.");
+            LOGGER.warn("Cannot capture failure screenshot because WebDriver is unavailable for scenario '{}'.", name);
             return;
         }
         byte[] image;
         try {
             if (!(DriverManager.getDriver() instanceof TakesScreenshot screenshotDriver)) {
-                LOGGER.severe("WebDriver does not support screenshots for failed scenario '" + name + "'.");
+                LOGGER.warn("WebDriver does not support screenshots for failed scenario '{}'.", name);
                 return;
             }
-            LOGGER.info("Capturing failure screenshot for scenario '" + name + "'.");
+            LOGGER.info("Capturing failure screenshot for scenario '{}'.", name);
             image = screenshotDriver.getScreenshotAs(OutputType.BYTES);
         } catch (RuntimeException exception) {
-            LOGGER.log(Level.SEVERE, "Failed to capture screenshot for scenario '" + name + "'.", exception);
+            LOGGER.error("Failed to capture screenshot for scenario '{}'.", name, exception);
             return;
         }
         attachScreenshot(scenario, name, image);
@@ -69,9 +69,9 @@ public final class Hooks {
     private void attachScreenshot(Scenario scenario, String name, byte[] image) {
         try {
             scenario.attach(image, "image/png", "failure-screenshot");
-            LOGGER.info("Attached failure screenshot to Cucumber scenario '" + name + "'.");
+            LOGGER.info("Attached failure screenshot to Cucumber scenario '{}'.", name);
         } catch (RuntimeException exception) {
-            LOGGER.log(Level.SEVERE, "Failed to attach screenshot to Cucumber scenario '" + name + "'.", exception);
+            LOGGER.error("Failed to attach screenshot to Cucumber scenario '{}'.", name, exception);
         }
     }
 
@@ -83,9 +83,9 @@ public final class Hooks {
                     + "_" + UUID.randomUUID() + ".png";
             Path evidence = folder.resolve(filename);
             Files.write(evidence, image, StandardOpenOption.CREATE_NEW);
-            LOGGER.info("Failure screenshot persisted at " + evidence.toAbsolutePath());
+            LOGGER.info("Failure screenshot persisted at {}", evidence.toAbsolutePath());
         } catch (IOException | SecurityException exception) {
-            LOGGER.log(Level.SEVERE, "Failed to persist screenshot for scenario '" + name + "'.", exception);
+            LOGGER.error("Failed to persist screenshot for scenario '{}'.", name, exception);
         }
     }
 
