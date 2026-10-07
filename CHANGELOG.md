@@ -6,7 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased] — v1.2.0 in development, Milestone 4
 
-Milestone 4 remains in development. Blocks 1 and 2 are **Completed / Validated**; later blocks are pending. v1.2.0 is not published and has no publication date. v1.1.0 remains **Stable / Validated / Published** (October 1, 2026), with Milestone 3 **Completed / Validated**.
+Milestone 4 remains in development. Blocks 1, 2 and 3 are **Completed / Validated**; later blocks are **Pending**. v1.2.0 is not published and has no publication date. v1.1.0 remains **Stable / Validated / Published** (October 1, 2026), with Milestone 3 **Completed / Validated**.
+
+### Block 3 — reporting and observability consolidation (Completed / Validated)
+
+- Added Cucumber JSON beside the existing HTML report using the JUnit Platform runner and paths under `build/`.
+- Validated headless, visible-browser and `@example` PASS runs, plus a controlled fixture FAIL with JSON/HTML reports, JUnit XML, Logback events, screenshot and Cucumber attachment. Restored the fixture and finished in PASS.
+- Documented the output contract in `docs/REPORTING.md` and regenerated the manual. No reporting dependency or CI workflow change was required.
 
 ### Block 2 — automatic failure evidence (Completed / Validated)
 

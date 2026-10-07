@@ -1,6 +1,6 @@
 # Arquitectura del Template
 
-**Versión estable publicada:** v1.1.0 (1 de octubre de 2026); Hito 3 Completed / Validated. **En desarrollo y no publicada:** v1.2.0; Hito 4 en desarrollo, Bloques 1 y 2 Completed / Validated, bloques posteriores pendientes. Sin fecha de publicación de v1.2.0.
+**Versión estable publicada:** v1.1.0 (1 de octubre de 2026); Hito 3 Completed / Validated. **En desarrollo y no publicada:** v1.2.0; Hito 4 en desarrollo, Bloques 1, 2 y 3 Completed / Validated, bloques posteriores Pending. Sin fecha de publicación de v1.2.0.
 
 ## Capas y responsabilidades
 
@@ -31,3 +31,5 @@ flowchart TD
 El Runner descubre features; Cucumber ejecuta `@Before`; `DriverManager` crea un driver por hilo; Steps invocan Pages; `@After` adjunta captura ante fallo y libera el navegador. Steps no contienen selectores, Pages no contienen aserciones de escenario y Hooks no contienen lógica de negocio. La configuración prioriza propiedades `-D`, variables de entorno y `config.properties`. Los Hooks y el ciclo del driver usan SLF4J; Logback escribe en consola y en `build/logs/automation.log`. La [guía de logging](LOGGING.md) contiene los diagramas de arquitectura y flujo, los niveles y los datos registrados. Las capturas existentes sólo se persisten bajo `build/evidence/screenshots/` ante un fallo elegible.
 
 Docker y Healenium no forman parte de la release v1.0.0 y, por tanto, no intervienen en este flujo.
+
+Consulte [Reporting](REPORTING.md) para el contrato validado de Cucumber HTML/JSON, Gradle HTML, JUnit XML, logs y screenshots.
