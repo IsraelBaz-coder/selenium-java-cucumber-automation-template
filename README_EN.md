@@ -5,12 +5,12 @@ Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD
 | Release | Value |
 |---|---|
 | Published stable version | **v1.1.0** |
-| Version in development | **v1.2.0 — Milestone 4, Block 1** |
-| Technical status | **Milestone 4 in development; Block 1: base logging** |
+| Version in development | **v1.2.0 — Milestone 4, Block 2** |
+| Technical status | **Milestone 4 in development; Blocks 1 and 2 Completed / Validated; later blocks pending** |
 | Milestone 3 | **Completed / Validated** |
 | v1.2.0 publication date | **Not set** |
 
-v1.1.0 is the published stable version. The `feature/hito-4-logging-observability-base` branch adds Block 1 — Logging base / Observability foundation of Milestone 4 — Reporting + Logging / Observability. v1.2.0 remains in development and has no publication date.
+v1.1.0 has been the published stable version since October 1, 2026; Milestone 3 is Completed / Validated. In Milestone 4, Block 1 (SLF4J/Logback logging) and Block 2 (automatic failure evidence) are Completed / Validated. Later blocks remain pending. v1.2.0 is still in development, unpublished, and has no publication date.
 
 | Document information | Value |
 |---|---|
@@ -84,7 +84,7 @@ Each execution creates regenerable Git-ignored artifacts under `build/`:
 | Failure screenshots | `build/evidence/screenshots/` |
 | Execution log | `build/logs/automation.log` |
 
-Hooks log each scenario's start, finish and status, along with the effective browser and headless mode. `DriverFactory` and `DriverManager` log driver initialization and shutdown. Logging is configured in `src/test/resources/logback-test.xml`; see [Logging](docs/LOGGING.md) for levels, excluded data, CI/CD and troubleshooting. If a scenario fails and `screenshotOnFailure=true`, the existing Hooks attempt to attach a PNG to the Cucumber scenario and persist it physically. The file name combines a sanitized scenario name, timestamp and UUID to prevent overwrites. If capturing, attaching or persisting evidence fails, the log records the failure and exception while preserving the original scenario failure.
+Hooks log scenario start, finish and status; `DriverFactory` and `DriverManager` log the driver lifecycle. On failure with `screenshotOnFailure=true`, the Hook delegates to `EvidenceManager` before quitting the browser. The manager saves a PNG with a sanitized name, timestamp and UUID, and attaches it to Cucumber as `image/png`. A missing driver or capture failure produces a warning without replacing the original failure. See [Evidence](docs/EVIDENCE.md) for the flow, location and manual validation, and [Logging](docs/LOGGING.md) for SLF4J/Logback events.
 
 ## Browsers, URL and Cucumber
 
@@ -124,7 +124,7 @@ For architecture, VS Code setup, CI/CD, first test tutorial and troubleshooting,
 
 ## Manual generation and temporary files
 
-`scripts/create_manual.py` generates the PDF manual with ReportLab. It requires Python with `reportlab`; run `python scripts/create_manual.py` from the project root. It generates `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf` and retains an external project-directory copy.
+`scripts/create_manual.py` generates the PDF manual with ReportLab. It requires Python with `reportlab`; run `python scripts/create_manual.py` from the project root. It generates `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf` and updates the external copy in the repository's parent directory.
 
 `work/` contains temporary documentation/PDF-generation and validation files. It is ignored by Git, is not part of the final product, must not be versioned, and can be deleted without affecting the framework.
 

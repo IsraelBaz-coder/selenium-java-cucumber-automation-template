@@ -4,13 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] — v1.2.0 in development, Milestone 4 / Block 1
+## [Unreleased] — v1.2.0 in development, Milestone 4
+
+Milestone 4 remains in development. Blocks 1 and 2 are **Completed / Validated**; later blocks are pending. v1.2.0 is not published and has no publication date. v1.1.0 remains **Stable / Validated / Published** (October 1, 2026), with Milestone 3 **Completed / Validated**.
+
+### Block 2 — automatic failure evidence (Completed / Validated)
+
+- Moved failure screenshot capture, safe naming, local persistence and Cucumber attachment into `EvidenceManager`; Hooks now orchestrate it before WebDriver shutdown.
+- Added controlled handling for absent/closed drivers and capture errors, with SLF4J/Logback events and focused tests.
+- Documented the evidence flow in `docs/EVIDENCE.md` and the manual. v1.1.0 remains the published stable version.
+
+### Block 1 — logging foundation (Completed / Validated)
 
 - Replaced the framework's custom JUL logging setup with SLF4J and test-scoped Logback configuration for console and `build/logs/automation.log` output.
 - Logged scenario start, effective browser and headless mode, final Cucumber status, and WebDriver lifecycle without logging arbitrary URLs or secrets.
 - Documented logging levels, CI/CD behavior and basic troubleshooting in `docs/LOGGING.md`.
-
-No publication date is assigned to v1.2.0.
 
 ## [1.1.0] - 2026-10-01
 

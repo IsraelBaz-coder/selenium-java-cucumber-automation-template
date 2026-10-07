@@ -26,6 +26,8 @@ public final class DriverManager {
     }
     /** ES: Indica si el escenario alcanzó a crear un driver. EN: Indicates whether the scenario created a driver. */
     public static boolean hasDriver() { return DRIVERS.get() != null; }
+    /** ES: Consulta sin exigir un driver. EN: Looks up the current driver without requiring one. */
+    public static WebDriver currentDriver() { return DRIVERS.get(); }
     /** ES: Cierra y elimina el driver del hilo. EN: Quits and removes the thread driver. */
     public static void quitDriver() {
         WebDriver driver = DRIVERS.get();

@@ -1,6 +1,6 @@
 # Arquitectura del Template
 
-**Versión estable publicada:** v1.1.0. **En desarrollo:** v1.2.0, Hito 4 — Bloque 1. Sin fecha de publicación de v1.2.0.
+**Versión estable publicada:** v1.1.0 (1 de octubre de 2026); Hito 3 Completed / Validated. **En desarrollo y no publicada:** v1.2.0; Hito 4 en desarrollo, Bloques 1 y 2 Completed / Validated, bloques posteriores pendientes. Sin fecha de publicación de v1.2.0.
 
 ## Capas y responsabilidades
 
@@ -10,8 +10,8 @@
 | Driver | `src/main/java/com/automation/template/driver` | Crea Chrome/Edge y configura headless. |
 | Logging | SLF4J en código; `src/test/resources/logback-test.xml` | Envía eventos a consola y `build/logs/automation.log` con Logback. |
 | Pages | `src/main/java/com/automation/template/pages` | Encapsula locators, esperas e interacciones. |
-| Support | `src/test/java/com/automation/template/support` | Conserva un WebDriver por hilo. |
-| Hooks | `src/test/java/com/automation/template/hooks` | Inicia/cierra driver y captura evidencia. |
+| Support | `src/test/java/com/automation/template/support` | Conserva un WebDriver por hilo; `EvidenceManager` captura, guarda y adjunta evidencia. |
+| Hooks | `src/test/java/com/automation/template/hooks` | Inicia/cierra driver y delega la evidencia antes del cierre. |
 | Steps | `src/test/java/com/automation/template/steps` | Traduce Gherkin a intención. |
 | Runner | `src/test/java/com/automation/template/runners` | Descubre Cucumber mediante JUnit Platform. |
 | Features | `src/test/resources/features` | Especifica comportamiento en Gherkin. |
