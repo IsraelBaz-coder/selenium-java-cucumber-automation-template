@@ -1,6 +1,6 @@
 # Troubleshooting
 
-**Versión estable publicada:** v1.1.0. **En desarrollo:** v1.2.0, Hito 4 — Bloque 1. Sin fecha de publicación de v1.2.0.
+**Versión estable publicada:** v1.1.0 (1 de octubre de 2026); Hito 3 Completed / Validated. **En desarrollo y no publicada:** v1.2.0; Hito 4 en desarrollo, Bloques 1 y 2 Completed / Validated, bloques posteriores pendientes. Sin fecha de publicación de v1.2.0.
 
 | Síntoma | Causa probable | Solución |
 |---|---|---|

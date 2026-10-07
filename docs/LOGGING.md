@@ -1,6 +1,6 @@
 # Logging y observabilidad básica
 
-**Versión estable publicada:** v1.1.0. **Versión en desarrollo:** v1.2.0. **Hito 4:** Reporting + Logging / Observability, en desarrollo. **Bloque 1:** Logging base / Observability foundation. No hay fecha de publicación de v1.2.0.
+**Versión estable publicada:** v1.1.0 (1 de octubre de 2026); Hito 3 Completed / Validated. **Versión en desarrollo y no publicada:** v1.2.0, sin fecha de publicación. **Hito 4:** en desarrollo; Bloque 1 (logging base) y Bloque 2 (evidencias automáticas) Completed / Validated. Los bloques posteriores siguen pendientes.
 
 ## Propósito y arquitectura
 
@@ -41,7 +41,7 @@ flowchart TD
 1. `@Before` registra el inicio y nombre del escenario, navegador y modo headless efectivos, obtenidos de `TestConfiguration`.
 2. `DriverFactory` crea el navegador; registra detalles de creación en DEBUG y la inicialización completada en INFO.
 3. `@After` registra nombre y estado final que devuelve Cucumber. `DriverManager` registra el cierre del WebDriver.
-4. Las rutas de captura de fallo que ya existían conservan sus logs y su comportamiento.
+4. En un fallo, `EvidenceManager` registra intento de captura, ruta PNG, attachment o warning controlado antes del cierre. Consulte [Evidencias](EVIDENCE.md).
 
 La `baseUrl` no se registra: la configuración permite una URL arbitraria que podría contener credenciales o parámetros sensibles. Tampoco se deben registrar secretos, tokens, contraseñas, cookies, headers confidenciales ni propiedades de configuración indiscriminadamente. Las rutas de error existentes registran excepciones completas para diagnóstico; algunas excepciones externas podrían incluir datos de la aplicación. Revise esas trazas antes de compartir logs o artifacts y evite añadir mensajes que incluyan datos sensibles.
 
@@ -81,4 +81,4 @@ El timestamp y nombre del hilo cambian en cada ejecución; Logback puede abrevia
 
 ## Alcance y siguientes bloques
 
-Este Bloque 1 incorpora únicamente la infraestructura y los eventos básicos de logging. El reporte HTML Cucumber, la carga actual de `test-evidence` en CI y las capturas configurables por fallo ya existían antes de este bloque y se conservan; no se ampliaron. Reporting avanzado, nuevas capturas automáticas integradas al reporting, artifacts avanzados y su publicación específica en CI/CD quedan para bloques posteriores. Los Bloques 2 y 3 y la release v1.2.0 siguen pendientes.
+El Bloque 1 (Completed / Validated) estableció SLF4J y Logback. El Bloque 2 (Completed / Validated) separó la captura de evidencia en `EvidenceManager` y registra intento, ruta, attachment y fallos controlados. El reporte HTML Cucumber y la carga actual de `test-evidence` en CI se conservan. Reporting y artifacts avanzados quedan fuera de este bloque; v1.2.0 sigue en desarrollo y no publicada.

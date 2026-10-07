@@ -2,100 +2,34 @@ package com.automation.template.hooks;
 
 import com.automation.template.config.TestConfiguration;
 import com.automation.template.support.DriverManager;
+import com.automation.template.support.EvidenceManager;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 
-/**
- * ES:
- * Gestiona el ciclo de vida del navegador y adjunta capturas a escenarios fallidos.
- *
- * EN:
- * Manages browser lifecycle and attaches screenshots to failed scenarios.
- */
+/** ES: Gestiona el ciclo del escenario. EN: Manages the scenario lifecycle. */
 public final class Hooks {
     private static final Logger LOGGER = LoggerFactory.getLogger(Hooks.class);
-    private static final DateTimeFormatter EVIDENCE_TIMESTAMP = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss_SSS");
+    private final EvidenceManager evidence = new EvidenceManager();
 
-    /** ES: Inicia el navegador antes del escenario. EN: Starts the browser before the scenario. */
     @Before public void startBrowser(Scenario scenario) {
-        LOGGER.info("Starting scenario: {}", scenarioName(scenario));
+        LOGGER.info("Starting scenario: {}", scenario.getName());
         LOGGER.info("Scenario configuration: browser={}, headless={}",
                 TestConfiguration.browser(), TestConfiguration.headless());
         DriverManager.startDriver();
     }
 
-    /** ES: Guarda evidencia si falla y cierra el navegador. EN: Saves evidence on failure and closes the browser. */
     @After public void finishScenario(Scenario scenario) {
         try {
-            LOGGER.info("Finished scenario: {}, status={}", scenarioName(scenario), scenario.getStatus());
-            if (scenario.isFailed() && TestConfiguration.screenshotOnFailure()) capture(scenario);
-        } finally { DriverManager.quitDriver(); }
-    }
-
-    private void capture(Scenario scenario) {
-        String name = scenarioName(scenario);
-        if (!DriverManager.hasDriver()) {
-            LOGGER.warn("Cannot capture failure screenshot because WebDriver is unavailable for scenario '{}'.", name);
-            return;
-        }
-        byte[] image;
-        try {
-            if (!(DriverManager.getDriver() instanceof TakesScreenshot screenshotDriver)) {
-                LOGGER.warn("WebDriver does not support screenshots for failed scenario '{}'.", name);
-                return;
+            LOGGER.info("Finished scenario: {}, status={}", scenario.getName(), scenario.getStatus());
+            if (scenario.isFailed()) {
+                LOGGER.info("Failure detected for scenario '{}'.", scenario.getName());
+                if (TestConfiguration.screenshotOnFailure()) evidence.captureFailure(scenario, DriverManager.currentDriver());
             }
-            LOGGER.info("Capturing failure screenshot for scenario '{}'.", name);
-            image = screenshotDriver.getScreenshotAs(OutputType.BYTES);
-        } catch (RuntimeException exception) {
-            LOGGER.error("Failed to capture screenshot for scenario '{}'.", name, exception);
-            return;
+        } finally {
+            DriverManager.quitDriver();
         }
-        attachScreenshot(scenario, name, image);
-        persistScreenshot(name, image);
-    }
-
-    private void attachScreenshot(Scenario scenario, String name, byte[] image) {
-        try {
-            scenario.attach(image, "image/png", "failure-screenshot");
-            LOGGER.info("Attached failure screenshot to Cucumber scenario '{}'.", name);
-        } catch (RuntimeException exception) {
-            LOGGER.error("Failed to attach screenshot to Cucumber scenario '{}'.", name, exception);
-        }
-    }
-
-    private void persistScreenshot(String name, byte[] image) {
-        try {
-            Path folder = Path.of("build", "evidence", "screenshots");
-            Files.createDirectories(folder);
-            String filename = safeFileName(name) + "_" + EVIDENCE_TIMESTAMP.format(LocalDateTime.now())
-                    + "_" + UUID.randomUUID() + ".png";
-            Path evidence = folder.resolve(filename);
-            Files.write(evidence, image, StandardOpenOption.CREATE_NEW);
-            LOGGER.info("Failure screenshot persisted at {}", evidence.toAbsolutePath());
-        } catch (IOException | SecurityException exception) {
-            LOGGER.error("Failed to persist screenshot for scenario '{}'.", name, exception);
-        }
-    }
-
-    private String scenarioName(Scenario scenario) {
-        return scenario.getName();
-    }
-
-    private String safeFileName(String name) {
-        String sanitized = name.replaceAll("[^a-zA-Z0-9._-]+", "_").replaceAll("^_+|_+$", "");
-        return sanitized.isBlank() ? "failed_scenario" : sanitized;
     }
 }
-

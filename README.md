@@ -5,12 +5,12 @@ Template reutilizable para pruebas Web UI con Java 21, Selenium WebDriver, Cucum
 | Release | Valor |
 |---|---|
 | Versión estable publicada | **v1.1.0** |
-| Versión en desarrollo | **v1.2.0 — Hito 4, Bloque 1** |
-| Estado técnico | **Hito 4 en desarrollo; Bloque 1: logging base** |
+| Versión en desarrollo | **v1.2.0 — Hito 4, Bloque 2** |
+| Estado técnico | **Hito 4 en desarrollo; Bloques 1 y 2 Completed / Validated; bloques posteriores pendientes** |
 | Hito 3 | **Completed / Validated** |
 | Fecha de publicación de v1.2.0 | **Sin definir** |
 
-v1.1.0 es la versión estable publicada. La rama `feature/hito-4-logging-observability-base` incorpora el Bloque 1 — Logging base / Observability foundation del Hito 4 — Reporting + Logging / Observability. v1.2.0 sigue en desarrollo; no tiene fecha de publicación.
+v1.1.0 es la versión estable publicada desde el 1 de octubre de 2026; el Hito 3 está Completed / Validated. En el Hito 4, Bloque 1 (logging con SLF4J/Logback) y Bloque 2 (evidencias automáticas ante fallos) están Completed / Validated. Los bloques posteriores siguen pendientes. v1.2.0 continúa en desarrollo, no está publicada y no tiene fecha de publicación.
 
 | Información del documento | Valor |
 |---|---|
@@ -112,7 +112,7 @@ Cada ejecución genera artifacts bajo `build/`, excluidos por Git y regenerables
 | Screenshots de fallos | `build/evidence/screenshots/` |
 | Log de ejecución | `build/logs/automation.log` |
 
-Los Hooks registran el inicio, fin y estado de cada escenario, además del navegador y modo headless efectivos. `DriverFactory` y `DriverManager` registran la inicialización y cierre del driver. La configuración del logging está en `src/test/resources/logback-test.xml`; [logging](docs/LOGGING.md) explica niveles, datos omitidos, CI/CD y diagnóstico. Si un escenario falla y `screenshotOnFailure=true`, los Hooks existentes intentan adjuntar una imagen PNG al escenario Cucumber y guardarla físicamente. El archivo usa un nombre saneado del escenario, fecha/hora y UUID para evitar sobrescrituras. Si capturar, adjuntar o persistir evidencia falla, el detalle y la excepción quedan en el log; el error original del escenario se conserva.
+Los Hooks registran inicio, fin y estado; `DriverFactory` y `DriverManager` registran el ciclo del driver. Si un escenario falla y `screenshotOnFailure=true`, el Hook delega a `EvidenceManager` antes de cerrar el navegador. El gestor guarda un PNG con nombre saneado, fecha/hora y UUID, y lo adjunta a Cucumber como `image/png`. La ausencia de WebDriver o un fallo de captura producen warnings sin sustituir el error original. Consulte [Evidencias](docs/EVIDENCE.md) para el flujo, ubicación y validación manual, y [Logging](docs/LOGGING.md) para los eventos de SLF4J/Logback.
 
 ## Navegadores, URL y Cucumber
 
@@ -159,7 +159,7 @@ Documentación adicional: [guía de uso](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.m
 
 ## Regeneración del manual y archivos temporales
 
-`scripts/create_manual.py` genera el manual PDF con ReportLab. Requiere Python con `reportlab`, se ejecuta desde la raíz con `python scripts/create_manual.py` y genera `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf`; también conserva una copia externa en el directorio padre de proyectos.
+`scripts/create_manual.py` genera el manual PDF con ReportLab. Requiere Python con `reportlab`, se ejecuta desde la raíz con `python scripts/create_manual.py`, genera `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf` y actualiza la copia externa en el directorio padre del repositorio.
 
 `work/` contiene archivos temporales de generación y validación documental. Está excluida por `.gitignore`, no forma parte del producto final, no debe versionarse y puede eliminarse sin afectar el framework; se recrea al regenerar o validar documentación.
 
