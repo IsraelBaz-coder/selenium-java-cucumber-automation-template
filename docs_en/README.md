@@ -7,7 +7,8 @@ Published release: **v1.2.0**, October 8, 2026, 06:19:01 UTC ([GitHub Release](h
 | Topic | Document |
 |---|---|
 | Docker image and usage | [Docker](DOCKER.md) |
-| Pending warnings | [Technical debt TECH-001/002](TECHNICAL_DEBT.md) |
+| Technical debt: TECH-001 OPEN, TECH-002 CLOSED | [Register](TECHNICAL_DEBT.md) |
+| Block 3 diagnosis and validation | [Local audit](HITO5_BLOCK3_AUDIT.md) |
 | User guide and Java/Gradle/Cucumber/Selenium/POM | [Guide](GUIA_USO_TEMPLATE_AUTOMATIZACION.md) |
 | Layers and flow | [Architecture](ARCHITECTURE.md) |
 | Logging and diagrams | [Logging](LOGGING.md) |

@@ -1,4 +1,5 @@
-FROM eclipse-temurin:21.0.12.1_1-jdk-jammy
+# Pin the exact Temurin manifest used by the validated Linux amd64 build.
+FROM eclipse-temurin:21.0.12.1_1-jdk-jammy@sha256:e0c60c487345d1dc9d0fc7b6f0496f3cc941e5132e09296cc17a6decc71b902b
 
 # Pin Chrome and ChromeDriver to the same published version.
 ARG TARGETARCH

@@ -42,7 +42,7 @@ Abra los HTML en un navegador y use JSON/XML para procesamiento estructurado. `c
 
 ## CI/CD y troubleshooting
 
-`.github/workflows/ci.yml` ejecuta el `quality-gate` headless con Java 21. `Upload test evidence` usa `if: always()` e incluye `build/reports/cucumber/`, por lo que HTML y JSON entran automáticamente en `test-evidence` junto con Gradle HTML, JUnit XML, logs y screenshots disponibles. No se cambió el workflow. Si falta HTML/JSON, compruebe que Gradle alcanzó `test`, el filtro de tags y los plugins del runner. Si falta el log, revise Logback; si falta un PNG, compruebe fallo de escenario, `screenshotOnFailure=true` y WebDriver activo. Un fallo de compilación anterior a `test` puede dejar artifacts incompletos.
+`.github/workflows/ci.yml` ejecuta el `quality-gate` headless con Java 21. `Upload test evidence` usa `if: always()` e incluye `build/reports/cucumber/`, por lo que HTML y JSON entran en `test-evidence` junto con Gradle HTML, JUnit XML, logs y screenshots disponibles. Excluye `build/test-results/test/binary/`, que contiene datos internos de Gradle. El job `docker-tests` copia sólo estas salidas y `container.log`, también sin `binary/`. Si falta HTML/JSON, compruebe que Gradle alcanzó `test`, el filtro de tags y los plugins del runner. Si falta el log, revise Logback; si falta un PNG, compruebe fallo de escenario, `screenshotOnFailure=true` y WebDriver activo. Un fallo de compilación anterior a `test` puede dejar artifacts incompletos.
 
 
 ## Seguridad y límites

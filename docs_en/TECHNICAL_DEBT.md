@@ -1,31 +1,15 @@
-# Open technical debt
+# Technical debt — Milestone 5, Block 3
 
 [Español](../docs/TECHNICAL_DEBT.md) · [Index](README.md)
 
-Warnings observed while running the development v1.3.0 Docker image. The local suite ended with BUILD SUCCESSFUL and the Example Domain scenario PASSED; the warnings did not fail the suite. Both entries remain OPEN during Block 2. A later block must address them; dependencies and the runner stay unchanged here.
-
 ## TECH-001 — Selenium CDP compatibility
 
-| Field | Record |
-|---|---|
-| Status / priority | **OPEN / MEDIUM** |
-| Description | Chrome 155 starts, but Selenium 4.48.0 selects a nearby CDP module instead of an exact match for this browser version. |
-| Evidence | Stderr: “Unable to find an exact match for CDP version 155, returning the closest version; found: 152”. Reproduced by Codex in the Docker bind-mount run; the user also reported it. WebDriver initialized and the scenario passed. |
-| Probable cause | A gap between Chrome 155 and the CDP modules bundled with the current Selenium version. Confirm during dependency evaluation. |
-| Potential impact | DevTools/CDP-dependent features may behave differently or fail; the current smoke test does not prove compatibility of all such features. |
-| Candidate solution | Evaluate a compatible Selenium version and matching CDP module without changing versions in this block. |
-| Regression checks | Run the smoke and full suite with aligned Chrome/ChromeDriver; verify WebDriver startup, local and Docker headless tests, reports/evidence, and any actual CDP use. Confirm the warning disappears without new failures. |
-| Proposed later block | A later dependency-compatibility block, subject to authorization and tests; not Block 1. |
+**Status: OPEN.** `build.gradle` pins Selenium 4.48.0; Docker pins Chrome and ChromeDriver 155.0.8059.39. The observed local run uses Chrome/CDP 153; Selenium Manager resolves the local driver. In both environments Selenium selects CDP 152 and emits a warning. There are no explicit DevTools, `executeCdpCommand`, or CDP API calls in `src/`; the smoke scenario uses standard WebDriver and passes.
+
+**Impact:** the warning does not block the current scenario, but does not validate future CDP-dependent features. **Decision:** retain the current versions; do not add an arbitrary CDP module or blindly update the browser or Selenium. In a dedicated compatibility task, identify the CDP version supported by a candidate Selenium release, align browser and driver, test any actual DevTools use, and rerun the local and Docker suites until the warning disappears without regression. Do not hide the warning from logs.
 
 ## TECH-002 — Cucumber discovery selector
 
-| Field | Record |
-|---|---|
-| Status / priority | **OPEN / LOW** |
-| Description | The runner selects the `features` classpath resource; Cucumber/JUnit recommends a package selector for this case. |
-| Evidence | Stderr: “The classpath resource selector 'features' should not be used to select features in a package.” Reported twice during discovery in Codex's Docker run; the user also reported it. The scenario was discovered and passed. |
-| Probable cause | `@SelectClasspathResource("features")` in `RunCucumberTest` does not match the current engine's recommendation. |
-| Impact | Non-critical warning; possible fragility in future Feature discovery. The current scenario did not fail. |
-| Candidate solution | Review runner configuration and the selector recommended by Cucumber/JUnit; do not change the runner in this block. |
-| Regression checks | Confirm discovery and count of all Features, tag filters, local and Docker Gradle/JUnit runs, Cucumber HTML/JSON reports, and CI result. |
-| Proposed later block | A later runner-maintenance block, subject to authorization and tests; not Block 1. |
+**Status: CLOSED after Block 3 local and Docker validation.** The warning came from `@SelectClasspathResource("features")` in `RunCucumberTest`: Cucumber/JUnit Platform requested a package selector. It was replaced by `@SelectPackages("features")`, retaining `@IncludeEngines("cucumber")`, glue, plugins, and the `src/test/resources/features/` layout.
+
+**Evidence:** before the change, the local run showed two discovery warnings. Afterwards, the local headless, visible, and `@example` filtered suites ran 6/6 tests (one scenario) without that warning. The subsequent Docker run confirmed the same count and no warning. HTML/JSON and XML reports remained available. A GitHub Actions run for this branch awaits a PR.
