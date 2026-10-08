@@ -2,7 +2,7 @@
 
 [Español](../docs/DOCKER.md) · [Index](README.md) · [Technical debt](TECHNICAL_DEBT.md)
 
-**Status:** Docker is a development capability for v1.3.0; v1.2.0 remains the latest official release. Block 1 is integrated into `main`. Block 2 adds `docker-tests` to GitHub Actions on this working branch; it still needs validation in a real workflow run.
+**Status:** Docker is a development capability for v1.3.0; v1.2.0 remains the latest official release. Block 3 is validated locally on `feature/hito-5-docker-hardening`; the modified workflow still needs a real GitHub Actions run in a PR.
 
 ## Download the project from GitHub
 
@@ -21,7 +21,7 @@
    git branch -r
    ~~~
 
-3. Select a Docker-enabled ref such as `main`. To review Block 2 before integration, select `feature/hito-5-docker-ci` when available on the remote. Check the chosen ref for all three files before proceeding:
+3. Select a Docker-enabled ref such as `main`. To review Block 3 before integration, select `feature/hito-5-docker-hardening` when available on the remote. Check the chosen ref for all three files before proceeding:
 
    ~~~powershell
    Test-Path .\Dockerfile
@@ -30,7 +30,7 @@
    git check-attr eol -- gradlew
    ~~~
 
-   All three `Test-Path` commands must return `True`, and Git must show `gradlew: eol: lf`. The correction since `d173e7d` is part of `main`. To review Block 2 before integration, use `feature/hito-5-docker-ci` when it is available on the remote.
+   All three `Test-Path` commands must return `True`, and Git must show `gradlew: eol: lf`. The correction since `d173e7d` is part of `main`. To review Block 3 before integration, use `feature/hito-5-docker-hardening` when it is available on the remote.
 
 4. With Docker Desktop running, **build the image locally** using `docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .`. Then **run the tests** and retain results on Windows:
 
@@ -141,7 +141,7 @@ docker run --rm selenium-java-cucumber-template:1.3.0-dev
 - **Explanation:** without extra arguments, the image runs ./gradlew --no-daemon test. --rm removes the container on exit; without a mount, its build/ files disappear with it.
 - **Expected result:** WebDriver initialized successfully, Example Domain PASSED, and BUILD SUCCESSFUL. The user reported this and Codex reproduced it during mount validation.
 - **Recognize an error:** BUILD FAILED, a red Cucumber step, WebDriver exception, or nonzero exit code. WARN alone does not mean failure.
-- **Resolution:** inspect the first actual error and Gradle summary. Chrome and ChromeDriver should match. The current CDP and Cucumber selector warnings did not fail the validated smoke test; they remain open as [TECH-001 and TECH-002](TECHNICAL_DEBT.md), with no Selenium or runner change in this block.
+- **Resolution:** inspect the first actual error and Gradle summary. Chrome and ChromeDriver should match. The CDP warning remains [TECH-001 OPEN](TECHNICAL_DEBT.md); the selector warning was removed with `@SelectPackages("features")` and [TECH-002 is CLOSED](TECHNICAL_DEBT.md).
 
 ## 6. Keep reports, logs, and evidence
 
@@ -174,14 +174,14 @@ Test-Path .\build\logs\automation.log
 | Different Chrome/ChromeDriver versions | Run both --version commands, rebuild, and confirm CHROME_VERSION=155.0.8059.39. |
 | `./gradlew: not found` on Linux although it exists | Check `git check-attr eol -- gradlew`: it must report `lf`. A CRLF checkout turns `#!/bin/sh` into `#!/bin/sh\r`, so Linux cannot find the interpreter. Use a revision containing `.gitattributes` with `gradlew text eol=lf` and clone again; `chmod +x` alone does not fix line endings. |
 | CDP 155 → 152 WARN | See [TECH-001](TECHNICAL_DEBT.md); the smoke test passed, but DevTools features need later regression checks. |
-| features selector WARN | See [TECH-002](TECHNICAL_DEBT.md); the current scenario was discovered and passed. |
+| features selector WARN | It should not appear with the Block 3 runner; confirm `@SelectPackages("features")` and rebuild the image. |
 
 ## Docker in GitHub Actions
 
 The `.github/workflows/ci.yml` workflow runs on pull requests targeting `main` and pushes to `main`. `quality-gate` keeps the existing Gradle run on Java 21. The new `docker-tests` job builds the image locally from the existing Dockerfile and runs Selenium/Cucumber tests in headless Chrome. The job has a 35-minute limit and the container run a 15-minute limit. The container gets 2 GiB of shared memory for Chrome. No image is pushed to a registry.
 
-The job saves `docker-artifacts/container.log` and copies `build/` from the stopped container. When generated, `docker-test-evidence` contains Cucumber HTML/JSON, Gradle HTML, JUnit XML, `automation.log`, and screenshots. Upload is attempted with `if: always()` even if the build or tests fail; when there are no files, no artifact appears. The test exit code is preserved, so a failed suite leaves `docker-tests` in Failure. The artifact is retained for 14 days.
+The job saves `docker-artifacts/container.log` and copies only `build/reports/tests/test/`, `build/reports/cucumber/`, `build/test-results/test/`, `build/logs/`, and `build/evidence/screenshots/` when present. Classes, caches, and temporary files are excluded. Screenshots are optional; if a passing suite is missing required evidence, the job fails. `docker-test-evidence` upload is attempted with `if: always()` even when build or tests fail; if no files exist, no artifact appears. A failed suite retains its exit code. The artifact is retained for 14 days. Review reports and logs before sharing: they may contain tested application data.
 
 To inspect results on GitHub, open **Pull requests → your PR → Checks**, select `quality-gate` or `docker-tests`, then **Details**. Expand **Build test image** or **Run headless tests and collect evidence** to read the error and log. Alternatively, open **Actions → CI → run**, confirm branch, commit, and status, then open each job and its steps. Under **Artifacts** in the run summary, download `test-evidence` or `docker-test-evidence` when available. Extract the ZIP to inspect `container.log` and `build/reports/`, `build/test-results/`, `build/logs/`, and `build/evidence/`. A failure before tests may yield only a log or no artifact. The new job still needs a real PR run on GitHub for validation; a local run cannot establish that result.
 
-**Status:** Docker and Docker CI are implemented for development target `v1.3.0`. `v1.2.0` remains the latest published release. [TECH-001/002](TECHNICAL_DEBT.md) remain OPEN for later treatment.
+**Block 3 status:** the local Docker build and run passed with 6/6 tests and one scenario. [TECH-001 remains OPEN and TECH-002 is CLOSED](TECHNICAL_DEBT.md). Removing `--no-sandbox` caused Chrome session creation to fail; the flag was restored. The image runs as UID 10001, but Chrome's internal sandbox is disabled. The Temurin base image is pinned by digest; apt packages are not pinned to a snapshot, so a later uncached build may differ. Current versions are retained to avoid arbitrary changes. `v1.3.0` remains in development and GitHub CI validation awaits a PR.

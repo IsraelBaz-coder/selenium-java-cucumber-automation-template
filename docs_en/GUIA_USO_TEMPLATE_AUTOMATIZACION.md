@@ -142,7 +142,7 @@ docker run --rm selenium-java-cucumber-template:1.3.0-dev chromedriver --version
 docker run --rm selenium-java-cucumber-template:1.3.0-dev
 ~~~
 
-Expect BUILD SUCCESSFUL and Example Domain PASSED. `--progress=plain` displays build steps, `-t` names the image, and `--rm` deletes the temporary container. A WARN does not itself mean failure: [TECH-001/002](TECHNICAL_DEBT.md) track the current CDP and Cucumber discovery warnings. Without a mount, `build/` disappears with the container; the [Docker guide](DOCKER.md) gives a verified bind mount for reports and covers permissions, daemon/WSL2, downloads, and TLS/PKIX. In CI, `docker-tests` uses `docker cp` to retain evidence. v1.2.0 remains the latest published release; v1.3.0 is in development.
+Expect BUILD SUCCESSFUL and Example Domain PASSED. `--progress=plain` displays build steps, `-t` names the image, and `--rm` deletes the temporary container. [TECH-001](TECHNICAL_DEBT.md) tracks the CDP warning that remains OPEN; TECH-002 is CLOSED after correcting the Cucumber selector. Without a mount, `build/` disappears with the container; the [Docker guide](DOCKER.md) covers the bind mount and troubleshooting. In CI, `docker-tests` uses `docker cp` only for reports, XML, logs, and available screenshots. v1.2.0 remains the latest published release; v1.3.0 is in development.
 
 ## First automation and reuse
 

@@ -7,7 +7,8 @@ Versión publicada: **v1.2.0**, 8 de octubre de 2026, 06:19:01 UTC ([GitHub Rele
 | Tema | Documento |
 |---|---|
 | Imagen Docker y uso | [Docker](DOCKER.md) |
-| Advertencias pendientes | [Deuda técnica TECH-001/002](TECHNICAL_DEBT.md) |
+| Deuda técnica: TECH-001 OPEN, TECH-002 CLOSED | [Registro](TECHNICAL_DEBT.md) |
+| Diagnóstico y validación del Bloque 3 | [Auditoría local](HITO5_BLOCK3_AUDIT.md) |
 | Guía de uso y Java/Gradle/Cucumber/Selenium/POM | [Guía](GUIA_USO_TEMPLATE_AUTOMATIZACION.md) |
 | Capas y flujo | [Arquitectura](ARCHITECTURE.md) |
 | Logging y diagramas | [Logging](LOGGING.md) |

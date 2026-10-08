@@ -41,6 +41,7 @@ jobs:
           path: |
             build/reports/tests/test/
             build/test-results/test/
+            !build/test-results/test/binary/**
             build/reports/cucumber/
             build/logs/
             build/evidence/screenshots/
@@ -72,10 +73,27 @@ jobs:
             docker stop "$container_id" || true
           fi
           test_status=$(docker inspect --format '{{.State.ExitCode}}' "$container_id")
-          docker cp "$container_id:/home/automation/app/build/." docker-artifacts/build/
+          # Copy only diagnostic outputs; classes, Gradle caches and temporary files stay out of the artifact.
+          evidence_copy_status=0
+          for evidence_path in reports/tests/test reports/cucumber test-results/test logs evidence/screenshots; do
+            parent_dir=$(dirname "$evidence_path")
+            mkdir -p "docker-artifacts/build/$parent_dir"
+            if ! docker cp "$container_id:/home/automation/app/build/$evidence_path" "docker-artifacts/build/$parent_dir/" 2>docker-artifacts/copy-error.log; then
+              echo "Evidence path unavailable: $evidence_path"
+              cat docker-artifacts/copy-error.log
+              if [ "$evidence_path" != evidence/screenshots ]; then
+                evidence_copy_status=1
+              fi
+            fi
+          done
+          rm -f docker-artifacts/copy-error.log
+          rm -rf docker-artifacts/build/test-results/test/binary
           docker rm -f "$container_id"
           if [ "$start_status" -ne 0 ]; then
             exit "$start_status"
+          fi
+          if [ "$test_status" -eq 0 ] && [ "$evidence_copy_status" -ne 0 ]; then
+            exit "$evidence_copy_status"
           fi
           exit "$test_status"
 

@@ -172,7 +172,7 @@ def docker_manual_section(language):
             'Sin otro comando, se ejecuta ./gradlew --no-daemon test. Sin montaje, build/ desaparece con el contenedor.',
             'WebDriver initialized successfully, Example Domain PASSED y BUILD SUCCESSFUL.',
             'BUILD FAILED o paso rojo; WARN por sí solo no es fallo.',
-            'Lea el primer error real. Las advertencias CDP y selector están registradas en docs/TECHNICAL_DEBT.md.', language)
+            'Lea el primer error real. TECH-001 (CDP) sigue OPEN; TECH-002 (selector) quedó CLOSED.', language)
         items += docker_step('6. Persistir reportes',
             'Guardar build/ en Windows tras --rm.', 'Carpeta compartida y escritura para UID 10001.',
             r'New-Item -ItemType Directory -Force .\build | Out-Null'+'\n'+r'$out = (Resolve-Path .\build).Path'+'\n'+r'$bind = "type=bind,source=$out,target=/home/automation/app/build"'+'\n'+r'docker run --rm --mount $bind selenium-java-cucumber-template:1.3.0-dev',
@@ -214,7 +214,7 @@ def docker_manual_section(language):
             'Without extra arguments, ./gradlew --no-daemon test runs. Without a mount, build/ disappears with the container.',
             'WebDriver initialized successfully, Example Domain PASSED, and BUILD SUCCESSFUL.',
             'BUILD FAILED or a red step; WARN alone does not mean failure.',
-            'Read the first real error. CDP and selector warnings are tracked in docs_en/TECHNICAL_DEBT.md.', language)
+            'Read the first real error. TECH-001 (CDP) remains OPEN; TECH-002 (selector) is CLOSED.', language)
         items += docker_step('6. Retain reports',
             'Keep build/ on Windows after --rm.', 'Shared folder and UID 10001 write access.',
             r'New-Item -ItemType Directory -Force .\build | Out-Null'+'\n'+r'$out = (Resolve-Path .\build).Path'+'\n'+r'$bind = "type=bind,source=$out,target=/home/automation/app/build"'+'\n'+r'docker run --rm --mount $bind selenium-java-cucumber-template:1.3.0-dev',
@@ -224,12 +224,12 @@ def docker_manual_section(language):
             'Check folder, Docker Desktop, and UID 10001 permissions; see docs_en/DOCKER.md.', language)
     items += [
         p('Errores y advertencias' if es else 'Errors and warnings', 'H2x'),
-        p(('Si ./gradlew: not found aunque existe, compruebe git check-attr eol -- gradlew: debe ser lf; chmod +x no corrige CRLF. Use una revisión publicada con la regla LF y vuelva a clonar. Daemon detenido: inicie Docker Desktop. WSL2: wsl --status y wsl --update. Descargas: revise --progress=plain. TLS/PKIX: revise certificados y proxy. Permisos: compruebe UID 10001. WARN CDP y selector: TECH-001/002 siguen OPEN.'
+        p(('Si ./gradlew: not found aunque existe, compruebe git check-attr eol -- gradlew: debe ser lf; chmod +x no corrige CRLF. Daemon detenido: inicie Docker Desktop. WSL2: wsl --status y wsl --update. Descargas: revise --progress=plain. TLS/PKIX: revise certificados y proxy. Permisos: compruebe UID 10001. La advertencia CDP es TECH-001 OPEN; el selector Cucumber es TECH-002 CLOSED. Chrome requiere --no-sandbox en este contenedor; el proceso usa UID 10001. CI conserva sólo reportes, XML, logs y capturas disponibles, más container.log; excluye clases y cachés.'
            if es else
-           'If ./gradlew: not found although it exists, check git check-attr eol -- gradlew: it must report lf; chmod +x cannot fix CRLF. Use a published revision with the LF rule and clone again. Stopped daemon: start Docker Desktop. WSL2: use wsl --status and wsl --update. Downloads: inspect --progress=plain. TLS/PKIX: check certificates and proxy. Permissions: check UID 10001. CDP and selector WARN: TECH-001/002 remain OPEN.')),
-        p(('La regla LF forma parte de main. v1.2.0 sigue siendo la última release oficial; v1.3.0 está en desarrollo. TECH-001/002 siguen OPEN.'
+           'If ./gradlew: not found although it exists, check git check-attr eol -- gradlew: it must report lf; chmod +x cannot fix CRLF. Stopped daemon: start Docker Desktop. WSL2: use wsl --status and wsl --update. Downloads: inspect --progress=plain. TLS/PKIX: check certificates and proxy. Permissions: check UID 10001. The CDP warning is TECH-001 OPEN; the Cucumber selector is TECH-002 CLOSED. Chrome needs --no-sandbox in this container; the process runs as UID 10001. CI retains only reports, XML, logs, available screenshots, and container.log; classes and caches are excluded.')),
+        p(('La regla LF forma parte de main. v1.2.0 sigue siendo la última release oficial; v1.3.0 está en desarrollo. Bloque 3: build y Docker locales, 6/6 pruebas y un escenario. La ejecución del workflow en GitHub sigue pendiente de PR; la imagen base está fijada por digest, pero los paquetes apt pueden variar en builds futuros sin caché.'
            if es else
-           'The LF rule is part of main. v1.2.0 remains the latest official release; v1.3.0 is in development. TECH-001/002 remain OPEN.')),
+           'The LF rule is part of main. v1.2.0 remains the latest official release; v1.3.0 is in development. Block 3: local build and Docker run, 6/6 tests and one scenario. A GitHub workflow run still awaits a PR; the base image is pinned by digest, but apt packages may vary in future uncached builds.')),
     ]
     items.append(PageBreak())
     return items
