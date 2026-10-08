@@ -1,5 +1,7 @@
 # Automation Template Selenium Java Cucumber
 
+[Español](README_ES.md) · [Language selection](README.md)
+
 Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD, JUnit Platform and Gradle. It includes a smoke test using a local HTML page in `src/test/resources/fixtures/`; the scenario does not depend on external website content. Initial dependency and browser setup may still require network access. Configure your application URL and replace the example when adapting the template.
 
 | Release | Value |
@@ -9,7 +11,7 @@ Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD
 | v1.2.0 status | **Stable / Validated / Published** |
 | v1.2.0 publication date | **October 8, 2026** |
 
-v1.2.0 is the latest published release (October 8, 2026). It includes SLF4J/Logback logging, automatic failure evidence and Cucumber HTML/JSON reports. Its status is **Stable / Validated / Published**. See the [audit report](docs/HITO4_RELEASE_AUDIT.md) for validation results.
+v1.2.0 is the latest published release (October 8, 2026). It includes SLF4J/Logback logging, automatic failure evidence and Cucumber HTML/JSON reports. Its status is **Stable / Validated / Published**. See the [audit report](docs_en/HITO4_RELEASE_AUDIT.md) for validation results.
 
 | Document information | Value |
 |---|---|
@@ -38,7 +40,7 @@ Java 21 is the default in the current configuration. The only supported toolchai
 
 Java 17 is the only supported alternative. `-PjavaVersion=18`, `19`, `20`, `22`, and every value other than `17` or `21` are rejected with a `GradleException`. Gradle itself must run with JDK 17 or later, and the selected toolchain must be installed or available to Gradle.
 
-For the installation, `JAVA_HOME`, VS Code, validation and Java 21 rollback steps, read [Java version selection](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md#selección-de-versión-de-java).
+For the installation, `JAVA_HOME`, VS Code, validation and Java 21 rollback steps, read [Java version selection](docs_en/GUIA_USO_TEMPLATE_AUTOMATIZACION.md#java-version-selection).
 
 ## Architecture and structure
 
@@ -50,7 +52,7 @@ src/test/resources/{features,config.properties}
 
 Features express Gherkin behavior; Steps translate intent; Page Objects encapsulate Selenium, locators and waits. Hooks manage browser lifecycle and the Runner connects Cucumber to JUnit Platform.
 
-See [architecture](docs/ARCHITECTURE.md), the [usage guide](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md), [logging and its diagrams](docs/LOGGING.md), and [troubleshooting](docs/TROUBLESHOOTING.md).
+See [architecture](docs_en/ARCHITECTURE.md), the [usage guide](docs_en/GUIA_USO_TEMPLATE_AUTOMATIZACION.md), [logging and its diagrams](docs_en/LOGGING.md), and [troubleshooting](docs_en/TROUBLESHOOTING.md).
 
 ## Configuration and execution
 
@@ -84,9 +86,9 @@ Each execution creates regenerable Git-ignored artifacts under `build/`:
 | Failure screenshots | `build/evidence/screenshots/` |
 | Execution log | `build/logs/automation.log` |
 
-The `build/reports/cucumber/cucumber.json` output is implemented and validated. See the [reporting contract](docs/REPORTING.md) for its relationship to HTML, XML, logs and screenshots.
+The `build/reports/cucumber/cucumber.json` output is implemented and validated. See the [reporting contract](docs_en/REPORTING.md) for its relationship to HTML, XML, logs and screenshots.
 
-Hooks log scenario start, finish and status; `DriverFactory` and `DriverManager` log the driver lifecycle. On failure with `screenshotOnFailure=true`, the Hook delegates to `EvidenceManager` before quitting the browser. The manager saves a PNG with a sanitized name, timestamp and UUID, and attaches it to Cucumber as `image/png`. A missing driver or capture failure produces a warning without replacing the original failure. See [Evidence](docs/EVIDENCE.md) for the flow, location and manual validation, and [Logging](docs/LOGGING.md) for SLF4J/Logback events.
+Hooks log scenario start, finish and status; `DriverFactory` and `DriverManager` log the driver lifecycle. On failure with `screenshotOnFailure=true`, the Hook delegates to `EvidenceManager` before quitting the browser. The manager saves a PNG with a sanitized name, timestamp and UUID, and attaches it to Cucumber as `image/png`. A missing driver or capture failure produces a warning without replacing the original failure. See [Evidence](docs_en/EVIDENCE.md) for the flow, location and manual validation, and [Logging](docs_en/LOGGING.md) for SLF4J/Logback events.
 
 ## Browsers, URL and Cucumber
 
@@ -108,7 +110,7 @@ For the five framework properties, precedence is JVM `-D` property, environment 
 
 ## CI/CD execution contract
 
-GitHub Actions automatically validates pull requests targeting `main` before merge and pushes to `main`. The stable job/check is named `quality-gate`. A Gradle failure fails the check. The `main` ruleset requires a pull request and the `quality-gate` status check before merge. PASS, controlled FAIL, evidence in both outcomes, recovery to PASS, and a successful post-merge run on `main` have been validated. The workflow attempts to upload `test-evidence` even when tests fail, without changing the check result. See the [step-by-step CI/CD guide](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md#cicd-con-github-actions) and [PDF manual](docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf).
+GitHub Actions automatically validates pull requests targeting `main` before merge and pushes to `main`. The stable job/check is named `quality-gate`. A Gradle failure fails the check. The `main` ruleset requires a pull request and the `quality-gate` status check before merge. PASS, controlled FAIL, evidence in both outcomes, recovery to PASS, and a successful post-merge run on `main` have been validated. The workflow attempts to upload `test-evidence` even when tests fail, without changing the check result. See the [step-by-step CI/CD guide](docs_en/GUIA_USO_TEMPLATE_AUTOMATIZACION.md#cicd-and-quality-gate) and [PDF manual](docs_en/Manual_Selenium_Java_Cucumber_Automation_Template.pdf).
 
 The GitHub Actions workflow runs:
 
@@ -122,29 +124,29 @@ The workflow uses Temurin Java 21 and `gradle/actions/setup-gradle@v6` for cachi
 
 Create a feature, Page Object and Step Definitions in their respective folders, then run the wrapper. To start a project, clone/copy this template, change `rootProject.name` and `group`, configure `baseUrl`, replace the example and initialize Git. Do not store secrets in files; use environment variables or pipeline secrets.
 
-For architecture, VS Code setup, CI/CD, first test tutorial and troubleshooting, read the Spanish [user guide](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md). This repository is distributed under the [Apache License 2.0](LICENSE).
+For architecture, VS Code setup, CI/CD, first test tutorial and troubleshooting, read the English [user guide](docs_en/GUIA_USO_TEMPLATE_AUTOMATIZACION.md). This repository is distributed under the [Apache License 2.0](LICENSE).
 
 ## Manual generation and temporary files
 
-`scripts/create_manual.py` generates the PDF manual with ReportLab. It requires Python with `reportlab`; run `python scripts/create_manual.py` from the project root. It updates `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf` and an identical copy in the project's parent folder. The `--output` option writes only to the specified path for temporary validation.
+`scripts/create_manual.py` generates the PDF manual with ReportLab. It requires Python with `reportlab`; run `python scripts/create_manual.py` from the project root. It updates `docs_en/Manual_Selenium_Java_Cucumber_Automation_Template.pdf` and the Spanish manual in `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf`. The `--output` option writes only to the specified path for temporary validation.
 
 `work/` contains temporary documentation/PDF-generation and validation files. It is ignored by Git, is not part of the final product, must not be versioned, and can be deleted without affecting the framework.
 
 ## Governance and release documentation
 
-For the versioning policy and repeatable release procedure, see [Versioning](docs/VERSIONING.md) and the [Release process](docs/RELEASE_PROCESS.md). Before contributing, read [Contributing](CONTRIBUTING.md), the [Security policy](SECURITY.md), the [Code of Conduct](CODE_OF_CONDUCT.md), and the [Changelog](CHANGELOG.md).
+For the versioning policy and repeatable release procedure, see [Versioning](docs_en/VERSIONING.md) and the [Release process](docs_en/RELEASE_PROCESS.md). Before contributing, read [Contributing](CONTRIBUTING.md), the [Security policy](SECURITY.md), the [Code of Conduct](CODE_OF_CONDUCT.md), and the [Changelog](CHANGELOG.md).
 
 ## Release history
 
 ### v1.2.0 - October 8, 2026
 
-**Stable / Validated / Published.** Logging, evidence and reporting are integrated. Validation is recorded in the [release audit](docs/HITO4_RELEASE_AUDIT.md).
+**Stable / Validated / Published.** Logging, evidence and reporting are integrated. Validation is recorded in the [release audit](docs_en/HITO4_RELEASE_AUDIT.md).
 
 ### v1.1.0 - October 1, 2026
 
 **Stable / Validated / Published.** Base CI, evidence artifacts, Gradle cache, and Quality Gate have been validated.
 
-### v1.0.2 - September 25, 2026
+### v1.0.2 - September 26, 2026
 
 **Documentation-only Hotfix. Stable / Validated / Published.** It corrects post-release state inconsistencies; it introduces no functional changes, dependency changes, CI/CD, Docker, Selenium Grid, Healenium, or Playwright.
 
@@ -152,8 +154,8 @@ For the versioning policy and repeatable release procedure, see [Versioning](doc
 
 **Hardening + CI/CD Readiness. Stable / Validated / Published.** Native console/file logging, uniquely named persisted failure evidence, Cucumber screenshot attachment and documented artifact locations.
 
-### v1.0.0 - September 17, 2026
+### v1.0.0 - September 18, 2026
 
-**First Stable Release - Stable / Validated.** Generalized source project; reusable Web UI architecture with Java, Selenium, Cucumber, Gradle Wrapper and Page Object Model; Chrome/Edge, headless and `baseUrl` configuration; working example; bilingual documentation, diagrams, troubleshooting, migration report, documented CI/CD, manual-generation script and PDF. Docker and Healenium are not part of this template.
+**First Stable Release - Stable / Validated / Published.** Generalized source project; reusable Web UI architecture with Java, Selenium, Cucumber, Gradle Wrapper and Page Object Model; Chrome/Edge, headless and `baseUrl` configuration; working example; bilingual documentation, diagrams, troubleshooting, migration report, documented CI/CD, manual-generation script and PDF. Docker and Healenium are not part of this template.
 
 The template uses neutral documentation and examples so any team can adapt it to its Web UI application.

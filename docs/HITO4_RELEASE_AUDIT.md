@@ -1,5 +1,9 @@
 # Hito 4, Bloque 4 — auditoría y preparación de v1.2.0
 
+[English](../docs_en/HITO4_RELEASE_AUDIT.md) · [Índice](README.md)
+
+> **Estado actual confirmado:** el tag `v1.2.0` y el [GitHub Release](https://github.com/IsraelBaz-coder/selenium-java-cucumber-automation-template/releases/tag/v1.2.0) se publicaron el 8 de octubre de 2026 a las 06:19:01 UTC. Estado actual: **Stable / Validated / Published**. Los estados de candidato y pendientes que siguen documentan la auditoría previa a la publicación; no describen el estado vigente.
+
 **Registro histórico de la auditoría local (2026-10-07):** v1.2.0 estaba en Release Candidate / Pending Publication, v1.1.0 era la última versión publicada y aún no se había asignado fecha a v1.2.0. Hito 4 seguía abierto. Entorno: Windows, Java 21.0.12.1.
 
 **Preparación del release:** la documentación definitiva se incorpora al PR y al futuro tag con fecha objetivo UTC 2026-10-08. El estado y la fecha reales de GitHub aún requieren verificación; este informe no declara publicado el release ni cerrado el hito.
