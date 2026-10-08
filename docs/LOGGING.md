@@ -1,12 +1,12 @@
 # Logging y observabilidad básica
 
-**Versión estable publicada:** v1.1.0 (1 de octubre de 2026); Hito 3 Completed / Validated. **Versión en desarrollo y no publicada:** v1.2.0, sin fecha de publicación. **Hito 4:** en desarrollo; Bloque 1 (logging base) y Bloque 2 (evidencias automáticas) Completed / Validated. Los bloques posteriores siguen pendientes.
+**Versión estable publicada:** v1.1.0 (1 de octubre de 2026); Hito 3 Completed / Validated. **Versión en desarrollo y no publicada:** v1.2.0, sin fecha de publicación. **Hito 4:** en desarrollo; Bloques 1 (logging), 2 (evidencias) y 3 (reporting) Completed / Validated. Los bloques posteriores siguen pendientes.
 
 ## Propósito y arquitectura
 
 El logging permite reconstruir qué ocurrió en cada escenario y en el WebDriver cuando una prueba falla o se ejecuta en CI/CD. El código usa la fachada SLF4J 2.0.20 para que Hooks y driver dependan de una API común, sin configurar la salida en cada clase. Logback 1.6.5 es el proveedor de SLF4J durante las pruebas: centraliza niveles, formato y destinos en `src/test/resources/logback-test.xml`, sin configuración programática ni cambios en los Page Objects o Step Definitions.
 
-Logback escribe simultáneamente en consola y en `build/logs/automation.log`. Gradle muestra la salida de los tests en la consola, y el workflow existente incluye `build/logs/` en el artifact `test-evidence`. Los archivos generados bajo `build/` están ignorados por Git y `clean` los elimina. El runner conserva los reportes Cucumber y Gradle actuales.
+Logback escribe simultáneamente en consola y en `build/logs/automation.log`. Gradle muestra la salida de los tests en la consola, y el workflow existente incluye `build/logs/` en el artifact `test-evidence`. Los archivos generados bajo `build/` están ignorados por Git y `clean` los elimina. El runner genera Cucumber HTML y JSON; Gradle conserva sus reportes HTML y JUnit XML.
 
 ## Diagrama A — Arquitectura de logging
 
@@ -81,4 +81,4 @@ El timestamp y nombre del hilo cambian en cada ejecución; Logback puede abrevia
 
 ## Alcance y siguientes bloques
 
-El Bloque 1 (Completed / Validated) estableció SLF4J y Logback. El Bloque 2 (Completed / Validated) separó la captura de evidencia en `EvidenceManager` y registra intento, ruta, attachment y fallos controlados. El reporte HTML Cucumber y la carga actual de `test-evidence` en CI se conservan. Reporting y artifacts avanzados quedan fuera de este bloque; v1.2.0 sigue en desarrollo y no publicada.
+El Bloque 1 (Completed / Validated) estableció SLF4J y Logback. El Bloque 2 (Completed / Validated) separó la captura de evidencia en `EvidenceManager` y registra intento, ruta, attachment y fallos controlados. El reporte HTML Cucumber y la carga actual de `test-evidence` en CI se conservan. El Bloque 3 (Completed / Validated) incorporó JSON Cucumber y consolidó el contrato en [Reporting](REPORTING.md); v1.2.0 sigue en desarrollo y no publicada.

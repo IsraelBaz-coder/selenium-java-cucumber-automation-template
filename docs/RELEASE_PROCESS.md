@@ -34,7 +34,7 @@ When scenario selection is affected, validate the supported filter too:
 .\gradlew.bat clean test -Dheadless=true "-Dcucumber.filter.tags=@example"
 ```
 
-The GitHub Actions workflow at `.github/workflows/ci.yml` executes `./gradlew clean test -Dheadless=true`. On Windows, use `.\gradlew.bat clean test -Dheadless=true` for the equivalent local command. The supported framework properties are `browser`, `headless`, `baseUrl`, `timeoutSeconds`, and `screenshotOnFailure`; Cucumber receives `cucumber.filter.tags`. Use their uppercase environment-variable equivalents where supported. `javaVersion` is selected through Gradle with `-PjavaVersion=17` or `-PjavaVersion=21`. The workflow attempts to upload real generated outputs as `test-evidence`: Gradle test report (`build/reports/tests/test/`), JUnit XML (`build/test-results/test/`), Cucumber HTML (`build/reports/cucumber/cucumber.html`), screenshots (`build/evidence/screenshots/`), and logs (`build/logs/automation.log`). The artifact does not change the job result: a `0` exit code is successful; a non-zero exit code fails the job.
+The GitHub Actions workflow at `.github/workflows/ci.yml` executes `./gradlew clean test -Dheadless=true`. On Windows, use `.\gradlew.bat clean test -Dheadless=true` for the equivalent local command. The supported framework properties are `browser`, `headless`, `baseUrl`, `timeoutSeconds`, and `screenshotOnFailure`; Cucumber receives `cucumber.filter.tags`. Use their uppercase environment-variable equivalents where supported. `javaVersion` is selected through Gradle with `-PjavaVersion=17` or `-PjavaVersion=21`. The workflow attempts to upload real generated outputs as `test-evidence`: Gradle test report (`build/reports/tests/test/`), JUnit XML (`build/test-results/test/`), Cucumber HTML and JSON (`build/reports/cucumber/`), screenshots (`build/evidence/screenshots/`), and logs (`build/logs/automation.log`). The artifact does not change the job result: a `0` exit code is successful; a non-zero exit code fails the job.
 
 ## 5. Review the repository
 
@@ -76,3 +76,5 @@ Create the GitHub Release only after the tag exists. Derive release notes from `
 ## 11. Record formal milestone closure
 
 After publication and final validation, record formal milestone closure. The sequence is technical completion → post-merge CI → documentation closeout → version audit → official publication date → documentation update and PDF visual review → documentation PR and merge → final CI → tag → GitHub Release → Published → formal milestone closure.
+
+For the current v1.2.0 development branch, Milestone 4 and the version remain In Development. Blocks 1, 2 and 3 are Completed / Validated; later blocks are Pending. Cucumber JSON is a validated Block 3 output. No publication date is assigned. See the [reporting contract](REPORTING.md).

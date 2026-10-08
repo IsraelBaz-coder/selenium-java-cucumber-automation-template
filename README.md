@@ -5,12 +5,12 @@ Template reutilizable para pruebas Web UI con Java 21, Selenium WebDriver, Cucum
 | Release | Valor |
 |---|---|
 | Versión estable publicada | **v1.1.0** |
-| Versión en desarrollo | **v1.2.0 — Hito 4, Bloque 2** |
-| Estado técnico | **Hito 4 en desarrollo; Bloques 1 y 2 Completed / Validated; bloques posteriores pendientes** |
+| Versión en desarrollo | **v1.2.0 — Hito 4, Bloque 3** |
+| Estado técnico | **Hito 4 en desarrollo; Bloques 1, 2 y 3 Completed / Validated; bloques posteriores Pending** |
 | Hito 3 | **Completed / Validated** |
 | Fecha de publicación de v1.2.0 | **Sin definir** |
 
-v1.1.0 es la versión estable publicada desde el 1 de octubre de 2026; el Hito 3 está Completed / Validated. En el Hito 4, Bloque 1 (logging con SLF4J/Logback) y Bloque 2 (evidencias automáticas ante fallos) están Completed / Validated. Los bloques posteriores siguen pendientes. v1.2.0 continúa en desarrollo, no está publicada y no tiene fecha de publicación.
+v1.1.0 es la versión estable publicada desde el 1 de octubre de 2026; el Hito 3 está Completed / Validated. En el Hito 4, Bloque 1 (logging con SLF4J/Logback) y Bloque 2 (evidencias automáticas ante fallos) están Completed / Validated. El Bloque 3 (Reporting / Observability) está Completed / Validated: incorpora Cucumber JSON y consolida los resultados. Los bloques posteriores siguen Pending. v1.2.0 continúa en desarrollo, no está publicada y no tiene fecha de publicación.
 
 | Información del documento | Valor |
 |---|---|
@@ -25,7 +25,7 @@ El template fue validado y puede utilizarse como baseline para nuevos proyectos.
 - Java 21 predeterminado, Java 17 compatible, Gradle Wrapper y codificación UTF-8.
 - Page Object Model, Steps y Hooks separados.
 - Chrome/Edge, modo headless y URL configurables por archivo, variable de entorno o `-D`.
-- Esperas explícitas, logging de ejecución, screenshots al fallar y reporte HTML Cucumber. En la rama del Hito 4, el logging usa SLF4J y Logback.
+- Esperas explícitas, logging de ejecución, screenshots al fallar y reportes HTML/JSON Cucumber. En la rama del Hito 4, el logging usa SLF4J y Logback.
 
 ## Arquitectura y estructura
 
@@ -107,10 +107,13 @@ Cada ejecución genera artifacts bajo `build/`, excluidos por Git y regenerables
 | Artifact | Ruta |
 |---|---|
 | Cucumber HTML | `build/reports/cucumber/cucumber.html` |
+| Cucumber JSON | `build/reports/cucumber/cucumber.json` |
 | Gradle HTML | `build/reports/tests/test/` |
 | JUnit XML | `build/test-results/test/` |
 | Screenshots de fallos | `build/evidence/screenshots/` |
 | Log de ejecución | `build/logs/automation.log` |
+
+La salida `build/reports/cucumber/cucumber.json` está implementada y validada. Consulte el [contrato de reporting](docs/REPORTING.md) para su relación con HTML, XML, logs y capturas.
 
 Los Hooks registran inicio, fin y estado; `DriverFactory` y `DriverManager` registran el ciclo del driver. Si un escenario falla y `screenshotOnFailure=true`, el Hook delega a `EvidenceManager` antes de cerrar el navegador. El gestor guarda un PNG con nombre saneado, fecha/hora y UUID, y lo adjunta a Cucumber como `image/png`. La ausencia de WebDriver o un fallo de captura producen warnings sin sustituir el error original. Consulte [Evidencias](docs/EVIDENCE.md) para el flujo, ubicación y validación manual, y [Logging](docs/LOGGING.md) para los eventos de SLF4J/Logback.
 

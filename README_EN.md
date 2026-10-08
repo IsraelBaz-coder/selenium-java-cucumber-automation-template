@@ -5,12 +5,12 @@ Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD
 | Release | Value |
 |---|---|
 | Published stable version | **v1.1.0** |
-| Version in development | **v1.2.0 — Milestone 4, Block 2** |
-| Technical status | **Milestone 4 in development; Blocks 1 and 2 Completed / Validated; later blocks pending** |
+| Version in development | **v1.2.0 — Milestone 4, Block 3** |
+| Technical status | **Milestone 4 in development; Blocks 1, 2 and 3 Completed / Validated; later blocks Pending** |
 | Milestone 3 | **Completed / Validated** |
 | v1.2.0 publication date | **Not set** |
 
-v1.1.0 has been the published stable version since October 1, 2026; Milestone 3 is Completed / Validated. In Milestone 4, Block 1 (SLF4J/Logback logging) and Block 2 (automatic failure evidence) are Completed / Validated. Later blocks remain pending. v1.2.0 is still in development, unpublished, and has no publication date.
+v1.1.0 has been the published stable version since October 1, 2026; Milestone 3 is Completed / Validated. In Milestone 4, Block 1 (SLF4J/Logback logging) and Block 2 (automatic failure evidence) are Completed / Validated. Block 3 (Reporting / Observability) is Completed / Validated: it adds Cucumber JSON and consolidates results. Later blocks remain Pending. v1.2.0 is still in development, unpublished, and has no publication date.
 
 | Document information | Value |
 |---|---|
@@ -25,7 +25,7 @@ The template was validated and can be used as a baseline for new projects. Confi
 - Java 21 by default, Java 17 compatible, Gradle Wrapper and UTF-8 source encoding.
 - Page Object Model, Steps and Hooks kept separate.
 - Chrome/Edge, headless mode and URL configured by file, environment or `-D`.
-- Explicit waits, execution logging, failure screenshots and Cucumber HTML reporting. The Milestone 4 branch uses SLF4J and Logback for logging.
+- Explicit waits, execution logging, failure screenshots and Cucumber HTML/JSON reporting. The Milestone 4 branch uses SLF4J and Logback for logging.
 
 ## Java version selection
 
@@ -79,10 +79,13 @@ Each execution creates regenerable Git-ignored artifacts under `build/`:
 | Artifact | Path |
 |---|---|
 | Cucumber HTML | `build/reports/cucumber/cucumber.html` |
+| Cucumber JSON | `build/reports/cucumber/cucumber.json` |
 | Gradle HTML | `build/reports/tests/test/` |
 | JUnit XML | `build/test-results/test/` |
 | Failure screenshots | `build/evidence/screenshots/` |
 | Execution log | `build/logs/automation.log` |
+
+The `build/reports/cucumber/cucumber.json` output is implemented and validated. See the [reporting contract](docs/REPORTING.md) for its relationship to HTML, XML, logs and screenshots.
 
 Hooks log scenario start, finish and status; `DriverFactory` and `DriverManager` log the driver lifecycle. On failure with `screenshotOnFailure=true`, the Hook delegates to `EvidenceManager` before quitting the browser. The manager saves a PNG with a sanitized name, timestamp and UUID, and attaches it to Cucumber as `image/png`. A missing driver or capture failure produces a warning without replacing the original failure. See [Evidence](docs/EVIDENCE.md) for the flow, location and manual validation, and [Logging](docs/LOGGING.md) for SLF4J/Logback events.
 
