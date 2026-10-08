@@ -1,6 +1,6 @@
 # Guía de Uso del Template de Automatización
 
-<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>Estable publicada: v1.1.0 · 1 de octubre de 2026 · Hito 3 Completed / Validated<br>En desarrollo y no publicada: v1.2.0 · Hito 4 en desarrollo · Bloques 1, 2 y 3 Completed / Validated · Sin fecha de publicación<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
+<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>v1.2.0 · Stable / Validated / Published · 8 de octubre de 2026<br>Última versión publicada: v1.2.0<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
 
 ## Índice
 
@@ -44,14 +44,14 @@ No es necesario conocer este repositorio. Para avanzar con seguridad, siga las s
 
 ## Estado e historial de la release
 
-**Estado técnico y documental.** La v1.1.0 completó y validó el Hito 3: Bloque 1, CI base y smoke test con fixture local; Bloque 2, publicación de evidencias; Bloque 3, caché de Gradle; Bloque 4, Quality Gate, protección de `main` y documentación operativa. v1.1.0 es Stable / Validated / Published desde el 1 de octubre de 2026 y el Hito 3 está **Completed / Validated**. El Hito 4 y v1.2.0 siguen en desarrollo; el Bloque 1 de logging y el Bloque 2 de [evidencias automáticas](EVIDENCE.md) están **Completed / Validated**. El Bloque 3 de [reporting](REPORTING.md) está **Completed / Validated**. Los bloques posteriores siguen pendientes. v1.2.0 no está publicada ni tiene fecha de publicación.
+**Estado técnico y documental.** v1.2.0 es Stable / Validated / Published desde el 8 de octubre de 2026. Reúne logging, [evidencias automáticas](EVIDENCE.md) y [reporting](REPORTING.md). v1.1.0 es la versión publicada anterior.
 
-En el historial, v1.0.2 fue una release publicada: **Documentation-only Hotfix**, Stable / Validated / Published el 25 de septiembre de 2026. Corrige inconsistencias documentales de estado post-release sin cambios funcionales ni de dependencias. La versión estable publicada actualmente es v1.1.0. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM.
+En el historial, v1.0.2 fue una release publicada: **Documentation-only Hotfix**, Stable / Validated / Published el 25 de septiembre de 2026. Corrige inconsistencias documentales de estado post-release sin cambios funcionales ni de dependencias. La versión estable publicada actualmente es v1.2.0. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM.
 
 | Versión | Fecha / publicación | Tipo | Estado | Cambios principales |
 |---|---|---|---|---|
-| v1.2.0 | Sin fecha; no publicada | Hito 4 en desarrollo | In Development; Bloques 1, 2 y 3 Completed / Validated | Logging con SLF4J/Logback, evidencias automáticas y reporting Cucumber HTML/JSON validados. Véase [Reporting](REPORTING.md). Bloques posteriores pendientes. |
-| v1.1.0 | 1 de octubre de 2026 | Hito 3 — Completed / Validated | Stable / Validated / Published | Versión estable publicada. CI, evidencias, caché Gradle, Quality Gate, Branch Protection y documentación operativa validados. |
+| v1.2.0 | 8 de octubre de 2026 | Release estable | Stable / Validated / Published | Logging con SLF4J/Logback, evidencias automáticas y reporting Cucumber HTML/JSON. Véase [Reporting](REPORTING.md). |
+| v1.1.0 | 1 de octubre de 2026 | Release estable | Stable / Validated / Published | CI, evidencias, caché Gradle, Quality Gate, Branch Protection y documentación operativa validados. |
 | v1.0.2 | 25 de septiembre de 2026 | Documentation-only Hotfix | Stable / Validated / Published | Corrección de inconsistencias de estado post-release; no incluye cambios funcionales, dependencias, CI/CD, Docker, Selenium Grid, Healenium ni Playwright. |
 | v1.0.1 | 25 de septiembre de 2026 | Hardening + CI/CD Readiness | Stable / Validated / Published | Logging, screenshots ante fallo, propagación de tags, contrato de artifacts y documentación consolidada para futura integración. No incluye workflow CI/CD. |
 | v1.0.0 | 17 de septiembre de 2026 | First Stable Release | Stable / Validated | Generalización del origen, Selenium + Cucumber + POM, Gradle Wrapper, Chrome/Edge, headless, `baseUrl`, ejemplo funcional, documentación técnica, diagramas, troubleshooting, reporte de migración, CI/CD documentado y manual PDF regenerable. |
@@ -382,9 +382,9 @@ En este repositorio, `main` ya está protegida mediante un ruleset: exige Pull R
 
 Ana crea `feature/ajuste-page`, modifica un Page Object, prueba localmente, hace commit y push y abre un PR. Actions inicia `quality-gate`. Con Success, otra persona revisa y podrá hacer merge cuando se cumplan las reglas del repositorio. Si una prueba falla, Ana abre Details, descarga `test-evidence`, corrige, vuelve a probar, hace un nuevo commit y push. El PR y el check se actualizan.
 
-La validación del Hito 3 ya comprobó la secuencia **PASS inicial → FAIL controlado → bloqueo del merge por `quality-gate` → `test-evidence` disponible → restauración → PASS → merge → PASS post-merge en `main`**. Las evidencias se publicaron tanto en PASS como en FAIL. No quedó el fallo controlado en `main`.
+La validación de CI realizada para v1.1.0 comprobó la secuencia **PASS inicial → FAIL controlado → bloqueo del merge por `quality-gate` → `test-evidence` disponible → restauración → PASS → merge → PASS post-merge en `main`**. Las evidencias se publicaron tanto en PASS como en FAIL. No quedó el fallo controlado en `main`.
 
-**Hito 3 / v1.1.0:** Bloques 1–4 **Completed / Validated**: CI base, evidencias, caché Gradle, Quality Gate, Branch Protection y documentación operativa. Estado técnico: **Stable / Validated / Published** desde el 1 de octubre de 2026. **Hito 4 / v1.2.0:** en desarrollo y no publicada; Bloques 1 y 2 **Completed / Validated**, Bloque 3 **Completed / Validated**, bloques posteriores Pending y sin fecha de publicación.
+**v1.1.0:** versión publicada anterior (1 de octubre de 2026). **v1.2.0:** **Stable / Validated / Published** desde el 8 de octubre de 2026.
 
 ## Regeneración del manual
 
@@ -394,7 +394,7 @@ El script `scripts/create_manual.py` apoya la generación del manual PDF con la 
 python scripts/create_manual.py
 ~~~
 
-El resultado principal se genera en `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf`; el script también actualiza la copia externa en el directorio padre del repositorio. Revise visualmente el PDF después de regenerarlo antes de distribuirlo.
+El resultado se genera en `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf` y se copia a la carpeta padre del proyecto con el mismo nombre. La opción `--output` escribe solo en la ruta indicada. Revise visualmente el PDF después de regenerarlo antes de distribuirlo.
 
 La carpeta `work/` se utiliza solo para archivos temporales de generación y validación documental. Está excluida por `.gitignore`, no forma parte de la arquitectura ni del producto final, puede eliminarse sin afectar el framework y se recrea cuando es necesaria.
 
@@ -449,6 +449,6 @@ Consulte [Troubleshooting](TROUBLESHOOTING.md). Chequeos iniciales: JDK 21, Wrap
 | Commit / Push / Merge | Guardar una instantánea / enviarla a GitHub / unir ramas. |
 | Checkout | Descargar el código de una revisión en el runner. |
 
-## Reporting del Hito 4, Bloque 3
+## Generación y consulta de reportes
 
 El runner genera `build/reports/cucumber/cucumber.html` y `build/reports/cucumber/cucumber.json`; ambas salidas están validadas. Gradle mantiene `build/reports/tests/test/` y `build/test-results/test/`; Logback escribe `build/logs/automation.log`; EvidenceManager guarda PNG de fallos bajo `build/evidence/screenshots/`. GitHub Actions incluye toda la carpeta `build/reports/cucumber/` en `test-evidence` con `if: always()`; por tanto incluye el JSON generado. Las salidas actuales son artifacts regenerables bajo `build/`, ignorados por Git. Consulte [Reporting](REPORTING.md) para uso local, CI y diagnóstico.

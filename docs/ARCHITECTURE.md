@@ -1,6 +1,6 @@
 # Arquitectura del Template
 
-**Versión estable publicada:** v1.1.0 (1 de octubre de 2026); Hito 3 Completed / Validated. **En desarrollo y no publicada:** v1.2.0; Hito 4 en desarrollo, Bloques 1, 2 y 3 Completed / Validated, bloques posteriores Pending. Sin fecha de publicación de v1.2.0.
+**Última versión publicada:** v1.2.0 (8 de octubre de 2026). Estado: Stable / Validated / Published.
 
 ## Capas y responsabilidades
 

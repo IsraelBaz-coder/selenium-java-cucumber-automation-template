@@ -1,6 +1,6 @@
 # Logging y observabilidad básica
 
-**Versión estable publicada:** v1.1.0 (1 de octubre de 2026); Hito 3 Completed / Validated. **Versión en desarrollo y no publicada:** v1.2.0, sin fecha de publicación. **Hito 4:** en desarrollo; Bloques 1 (logging), 2 (evidencias) y 3 (reporting) Completed / Validated. Los bloques posteriores siguen pendientes.
+**Última versión publicada:** v1.2.0 (8 de octubre de 2026). Estado: Stable / Validated / Published.
 
 ## Propósito y arquitectura
 
@@ -79,6 +79,6 @@ El timestamp y nombre del hilo cambian en cada ejecución; Logback puede abrevia
 - Si falla la descarga de dependencias por certificado `PKIX`, revise el almacén de confianza del JDK, el proxy y los certificados del sistema; no desactive la validación TLS.
 - Si el smoke test falla, consulte el estado Cucumber, el log y los reportes existentes en `build/reports/`. La captura por fallo, si se produce, permanece bajo `build/evidence/screenshots/`.
 
-## Alcance y siguientes bloques
+## Alcance y relación con otras salidas
 
-El Bloque 1 (Completed / Validated) estableció SLF4J y Logback. El Bloque 2 (Completed / Validated) separó la captura de evidencia en `EvidenceManager` y registra intento, ruta, attachment y fallos controlados. El reporte HTML Cucumber y la carga actual de `test-evidence` en CI se conservan. El Bloque 3 (Completed / Validated) incorporó JSON Cucumber y consolidó el contrato en [Reporting](REPORTING.md); v1.2.0 sigue en desarrollo y no publicada.
+SLF4J y Logback registran los eventos de ejecución. `EvidenceManager` registra los intentos de captura, la ruta del PNG, el attachment y los fallos controlados. Los reportes Cucumber HTML/JSON y el artifact `test-evidence` permiten consultar el resultado funcional junto con esos eventos; véase [Reporting](REPORTING.md).

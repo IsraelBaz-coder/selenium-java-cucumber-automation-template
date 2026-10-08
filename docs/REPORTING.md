@@ -1,8 +1,8 @@
-# Reporting / Reportes — Hito 4, Bloque 3 (Completed / Validated)
+# Reporting / Reportes
 
-**ES:** v1.1.0 sigue Stable / Validated / Published (1 de octubre de 2026) y Hito 3 Completed / Validated. v1.2.0 y Hito 4 siguen In Development, no publicados y sin fecha oficial. Bloques 1, 2 y 3 Completed / Validated; bloques posteriores Pending.
+**ES:** v1.2.0 es la última versión publicada (8 de octubre de 2026); estado Stable / Validated / Published.
 
-**EN:** v1.1.0 remains Stable / Validated / Published (October 1, 2026) and Milestone 3 Completed / Validated. v1.2.0 and Milestone 4 remain In Development, unpublished and without an official date. Blocks 1, 2 and 3 Completed / Validated; later blocks Pending.
+**EN:** v1.2.0 is the latest published release (October 8, 2026); status Stable / Validated / Published.
 
 ## Propósito / Purpose
 
