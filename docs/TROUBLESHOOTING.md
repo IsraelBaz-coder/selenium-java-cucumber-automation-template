@@ -1,5 +1,7 @@
 # Troubleshooting
 
+[English](../docs_en/TROUBLESHOOTING.md) · [Índice](README.md)
+
 **Última versión publicada:** v1.2.0 (8 de octubre de 2026). Estado: Stable / Validated / Published.
 
 | Síntoma | Causa probable | Solución |

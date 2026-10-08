@@ -1,5 +1,7 @@
 # Guía de Uso del Template de Automatización
 
+[English](../docs_en/GUIA_USO_TEMPLATE_AUTOMATIZACION.md) · [Índice](README.md)
+
 <p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>v1.2.0 · Stable / Validated / Published · 8 de octubre de 2026<br>Última versión publicada: v1.2.0<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
 
 ## Índice
@@ -46,15 +48,15 @@ No es necesario conocer este repositorio. Para avanzar con seguridad, siga las s
 
 **Estado técnico y documental.** v1.2.0 es Stable / Validated / Published desde el 8 de octubre de 2026. Reúne logging, [evidencias automáticas](EVIDENCE.md) y [reporting](REPORTING.md). v1.1.0 es la versión publicada anterior.
 
-En el historial, v1.0.2 fue una release publicada: **Documentation-only Hotfix**, Stable / Validated / Published el 25 de septiembre de 2026. Corrige inconsistencias documentales de estado post-release sin cambios funcionales ni de dependencias. La versión estable publicada actualmente es v1.2.0. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM.
+En el historial, v1.0.2 fue una release publicada: **Documentation-only Hotfix**, Stable / Validated / Published el 26 de septiembre de 2026. Corrige inconsistencias documentales de estado post-release sin cambios funcionales ni de dependencias. La versión estable publicada actualmente es v1.2.0. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM.
 
 | Versión | Fecha / publicación | Tipo | Estado | Cambios principales |
 |---|---|---|---|---|
 | v1.2.0 | 8 de octubre de 2026 | Release estable | Stable / Validated / Published | Logging con SLF4J/Logback, evidencias automáticas y reporting Cucumber HTML/JSON. Véase [Reporting](REPORTING.md). |
 | v1.1.0 | 1 de octubre de 2026 | Release estable | Stable / Validated / Published | CI, evidencias, caché Gradle, Quality Gate, Branch Protection y documentación operativa validados. |
-| v1.0.2 | 25 de septiembre de 2026 | Documentation-only Hotfix | Stable / Validated / Published | Corrección de inconsistencias de estado post-release; no incluye cambios funcionales, dependencias, CI/CD, Docker, Selenium Grid, Healenium ni Playwright. |
+| v1.0.2 | 26 de septiembre de 2026 | Documentation-only Hotfix | Stable / Validated / Published | Corrección de inconsistencias de estado post-release; no incluye cambios funcionales, dependencias, CI/CD, Docker, Selenium Grid, Healenium ni Playwright. |
 | v1.0.1 | 25 de septiembre de 2026 | Hardening + CI/CD Readiness | Stable / Validated / Published | Logging, screenshots ante fallo, propagación de tags, contrato de artifacts y documentación consolidada para futura integración. No incluye workflow CI/CD. |
-| v1.0.0 | 17 de septiembre de 2026 | First Stable Release | Stable / Validated | Generalización del origen, Selenium + Cucumber + POM, Gradle Wrapper, Chrome/Edge, headless, `baseUrl`, ejemplo funcional, documentación técnica, diagramas, troubleshooting, reporte de migración, CI/CD documentado y manual PDF regenerable. |
+| v1.0.0 | 18 de septiembre de 2026 | First Stable Release | Stable / Validated / Published | Generalización del origen, Selenium + Cucumber + POM, Gradle Wrapper, Chrome/Edge, headless, `baseUrl`, ejemplo funcional, documentación técnica, diagramas, troubleshooting, reporte de migración, CI/CD documentado y manual PDF regenerable. |
 
 ## Arquitectura
 
@@ -394,7 +396,7 @@ El script `scripts/create_manual.py` apoya la generación del manual PDF con la 
 python scripts/create_manual.py
 ~~~
 
-El resultado se genera en `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf` y se copia a la carpeta padre del proyecto con el mismo nombre. La opción `--output` escribe solo en la ruta indicada. Revise visualmente el PDF después de regenerarlo antes de distribuirlo.
+El script genera `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf` y `docs_en/Manual_Selenium_Java_Cucumber_Automation_Template.pdf`. La opción `--output` escribe sólo el manual español en la ruta indicada para una validación temporal. Revise visualmente ambos PDF después de regenerarlos antes de distribuirlos.
 
 La carpeta `work/` se utiliza solo para archivos temporales de generación y validación documental. Está excluida por `.gitignore`, no forma parte de la arquitectura ni del producto final, puede eliminarse sin afectar el framework y se recrea cuando es necesaria.
 

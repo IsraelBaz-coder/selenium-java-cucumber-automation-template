@@ -4,9 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
+Release heading dates use the official GitHub Release `published_at` calendar day in UTC.
+
 ## [1.2.0] - 2026-10-08
 
-The v1.2.0 release snapshot is prepared for October 8, 2026 with status **Stable / Validated / Published**. PR validation, tagging and GitHub publication still require confirmation. Logging, automatic failure evidence, reporting and release hardening are included. v1.1.0 was the previous published release.
+The v1.2.0 GitHub Release was published on October 8, 2026 at 06:19:01 UTC with status **Stable / Validated / Published**. Logging, automatic failure evidence, reporting and release hardening are included. v1.1.0 was the previous published release.
 
 ### Block 4 — release audit and hardening (publication controls)
 
@@ -59,7 +61,7 @@ Hito 3 — Completed / Validated. Technical status: Stable / Validated / Publish
 - Confirmed evidence artifacts in both successful and failing runs and an active `main` ruleset requiring a pull request, an up-to-date branch, and the `quality-gate` check while blocking force pushes and branch deletion.
 - v1.1.0 is Stable / Validated / Published, and Hito 3 is Completed / Validated.
 
-## [1.0.2] - 2026-09-25 (Stable / Validated / Published)
+## [1.0.2] - 2026-09-26 (Stable / Validated / Published)
 
 ### Changed
 
@@ -81,7 +83,7 @@ Hito 3 — Completed / Validated. Technical status: Stable / Validated / Publish
 
 > Historical note: `1.0.1` was the stable, validated, and published release at the time of this entry. `v1.0.2` was published later; `v1.1.0` was the latest published release before `v1.2.0`.
 
-## [1.0.0] - 2026-09-17
+## [1.0.0] - 2026-09-18
 
 ### Added
 

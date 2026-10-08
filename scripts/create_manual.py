@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 from math import atan2, cos, sin, pi
-from shutil import copy2
+
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import A4
@@ -14,7 +14,7 @@ parser = argparse.ArgumentParser(description='Generate the Selenium Java Cucumbe
 parser.add_argument('--output', type=Path, help='Optional PDF path for validation without replacing the repository manual.')
 args = parser.parse_args()
 OUT = args.output.resolve() if args.output else ROOT / 'docs' / 'Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf'
-EXTERNAL_OUT = ROOT.parent / OUT.name
+EN_OUT = ROOT / 'docs_en' / 'Manual_Selenium_Java_Cucumber_Automation_Template.pdf'
 
 styles = getSampleStyleSheet()
 styles.add(ParagraphStyle(name='Cover', parent=styles['Title'], fontName='Helvetica-Bold', fontSize=25, leading=31, textColor=colors.HexColor('#152B4E'), alignment=TA_CENTER, spaceAfter=16))
@@ -43,15 +43,17 @@ def table(rows, widths):
     t.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),colors.HexColor('#152B4E')),('TEXTCOLOR',(0,0),(-1,0),colors.white),('FONTNAME',(0,0),(-1,0),'Helvetica-Bold'),('GRID',(0,0),(-1,-1),0.35,colors.HexColor('#CBD5E1')),('VALIGN',(0,0),(-1,-1),'MIDDLE'),('LEFTPADDING',(0,0),(-1,-1),6),('RIGHTPADDING',(0,0),(-1,-1),6),('TOPPADDING',(0,0),(-1,-1),5),('BOTTOMPADDING',(0,0),(-1,-1),5),('BACKGROUND',(0,1),(-1,-1),colors.white)]))
     return t
 
-def glossary_table(rows):
-    data = [[Paragraph('Término', styles['GlossaryHeader']), Paragraph('Definición', styles['GlossaryHeader'])]]
+def glossary_table(rows, language='es'):
+    labels = ('Term', 'Definition') if language == 'en' else ('Término', 'Definición')
+    data = [[Paragraph(labels[0], styles['GlossaryHeader']), Paragraph(labels[1], styles['GlossaryHeader'])]]
     data += [[Paragraph(term, styles['GlossaryX']), Paragraph(definition, styles['GlossaryX'])] for term, definition in rows]
     t = Table(data, colWidths=[4.5*cm, 11.8*cm], repeatRows=1)
     t.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),colors.HexColor('#152B4E')),('GRID',(0,0),(-1,-1),0.3,colors.HexColor('#CBD5E1')),('VALIGN',(0,0),(-1,-1),'MIDDLE'),('LEFTPADDING',(0,0),(-1,-1),5),('RIGHTPADDING',(0,0),(-1,-1),5),('TOPPADDING',(0,0),(-1,-1),3),('BOTTOMPADDING',(0,0),(-1,-1),3),('BACKGROUND',(0,1),(-1,-1),colors.white)]))
     return t
 
-def version_table(rows):
-    data = [[Paragraph('Versión', styles['GlossaryHeader']), Paragraph('Fecha / estado', styles['GlossaryHeader']), Paragraph('Cambios principales', styles['GlossaryHeader'])]]
+def version_table(rows, language='es'):
+    labels = ('Version', 'Date / status', 'Main changes') if language == 'en' else ('Versión', 'Fecha / estado', 'Cambios principales')
+    data = [[Paragraph(label, styles['GlossaryHeader']) for label in labels]]
     data += [[Paragraph(version, styles['GlossaryX']), Paragraph(date, styles['GlossaryX']), Paragraph(changes, styles['GlossaryX'])] for version, date, changes in rows]
     t = Table(data, colWidths=[2.2*cm, 3.4*cm, 10.7*cm], repeatRows=1)
     t.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),colors.HexColor('#152B4E')),('GRID',(0,0),(-1,-1),0.3,colors.HexColor('#CBD5E1')),('VALIGN',(0,0),(-1,-1),'MIDDLE'),('LEFTPADDING',(0,0),(-1,-1),5),('RIGHTPADDING',(0,0),(-1,-1),5),('TOPPADDING',(0,0),(-1,-1),4),('BOTTOMPADDING',(0,0),(-1,-1),4),('BACKGROUND',(0,1),(-1,-1),colors.white)]))
@@ -60,9 +62,10 @@ def version_table(rows):
 class LoggingDiagram(Flowable):
     """Vector diagrams for the Block 1 logging architecture and event flow."""
 
-    def __init__(self, kind):
+    def __init__(self, kind, language='es'):
         super().__init__()
         self.kind = kind
+        self.language = language
         self.width = 16.3 * cm
         self.height = 10.5 * cm if kind == 'architecture' else 14.0 * cm
 
@@ -90,13 +93,13 @@ class LoggingDiagram(Flowable):
         c = self.canv
         center = self.width / 2
         if self.kind == 'architecture':
-            self._box(c, center - 65, 267, 130, ['Escenario Cucumber'])
+            self._box(c, center - 65, 267, 130, ['Cucumber scenario'] if self.language == 'en' else ['Escenario Cucumber'])
             self._box(c, center - 50, 222, 100, ['Hooks'])
-            self._box(c, 15, 157, 165, ['Ciclo del escenario', 'inicio y resultado'])
-            self._box(c, self.width - 180, 157, 165, ['Ciclo WebDriver', 'Factory y Manager'])
+            self._box(c, 15, 157, 165, ['Scenario lifecycle', 'start and result'] if self.language == 'en' else ['Ciclo del escenario', 'inicio y resultado'])
+            self._box(c, self.width - 180, 157, 165, ['WebDriver lifecycle', 'Factory and Manager'] if self.language == 'en' else ['Ciclo WebDriver', 'Factory y Manager'])
             self._box(c, center - 50, 112, 100, ['SLF4J'])
             self._box(c, center - 50, 67, 100, ['Logback'])
-            self._box(c, 50, 7, 105, ['Consola'])
+            self._box(c, 50, 7, 105, ['Console'] if self.language == 'en' else ['Consola'])
             self._box(c, self.width - 165, 7, 150, ['build/logs/', 'automation.log'])
             self._arrow(c, center, 267, center, 248)
             self._arrow(c, center - 25, 222, 97, 190)
@@ -117,6 +120,17 @@ class LoggingDiagram(Flowable):
                 ['Cierre de WebDriver'],
                 ['Consola + build/logs/automation.log'],
             ]
+            if self.language == 'en':
+                labels = [
+                    ['Scenario starts'],
+                    ['Name and effective configuration'],
+                    ['Browser and headless mode'],
+                    ['WebDriver initialization'],
+                    ['Test execution'],
+                    ['Scenario result'],
+                    ['WebDriver shutdown'],
+                    ['Console + build/logs/automation.log'],
+                ]
             positions = [350 - index * 49 for index in range(len(labels))]
             for y, label in zip(positions, labels):
                 self._box(c, center - 117, y, 234, label)
@@ -138,9 +152,9 @@ story += [
     version_table([
         ('v1.2.0', '8 de octubre de 2026', 'Stable / Validated / Published. Logging con SLF4J/Logback, evidencias automáticas, reportes HTML/JSON y mejoras de estabilidad.'),
         ('v1.1.0', '1 de octubre de 2026', 'Stable / Validated / Published. CI con Quality Gate y artifacts de resultados.'),
-        ('v1.0.2', '25 de septiembre de 2026', 'Documentation-only Hotfix, Stable / Validated / Published.'),
+        ('v1.0.2', '26 de septiembre de 2026', 'Documentation-only Hotfix, Stable / Validated / Published.'),
         ('v1.0.1', '25 de septiembre de 2026', 'Hardening + CI/CD Readiness. Stable / Validated / Published.'),
-        ('v1.0.0', '17 de septiembre de 2026', 'Primera versión estable: Java, Selenium, Cucumber, POM y manual PDF.')
+        ('v1.0.0', '18 de septiembre de 2026', 'Primera versión estable: Java, Selenium, Cucumber, POM y manual PDF.')
     ]),
     PageBreak(),
 ]
@@ -152,7 +166,7 @@ story += [heading('Sección 3.1 — Configurar Java 17 paso a paso'), p('Use Jav
 
 story += [heading('4. Configuración y comandos'), p('config.properties contiene los valores por defecto. Los valores pueden reemplazarse con -D o con variables BASE_URL, BROWSER, HEADLESS, TIMEOUT_SECONDS y SCREENSHOT_ON_FAILURE. javaVersion usa -P, no -D.'), p('browser=CHROME<br/>headless=false<br/>baseUrl=https://example.com/<br/>timeoutSeconds=15<br/>screenshotOnFailure=true', 'CodeX'), table([['Objetivo','Comando'],['Limpiar','.\\gradlew.bat clean'],['Limpiar y ejecutar','.\\gradlew.bat clean test'],['Headless','.\\gradlew.bat clean test -Dheadless=true'],['Chrome','.\\gradlew.bat clean test -Dbrowser=CHROME'],['Edge','.\\gradlew.bat clean test -Dbrowser=EDGE'],['URL','.\\gradlew.bat clean test -DbaseUrl=https://su-aplicacion'],['Tags','.\\gradlew.bat clean test -Dcucumber.filter.tags=@example'],['Tags headless','.\\gradlew.bat clean test -Dheadless=true -Dcucumber.filter.tags=@example'],['Alias Cucumber','.\\gradlew.bat cucumber']], [5.2*cm, 11.1*cm]), Spacer(1,10), p('El smoke test incluido usa la fixture HTML local versionada y no depende de un sitio externo. baseUrl sigue disponible para los Page Objects de aplicaciones reales, pero no modifica este escenario de ejemplo. Los reports se generan en build/reports/cucumber/cucumber.html, build/reports/cucumber/cucumber.json, build/reports/tests/test y build/test-results/test; el log se guarda en build/logs/automation.log y las capturas de fallos en build/evidence/screenshots sólo si falla un escenario, screenshotOnFailure está activo y WebDriver permite capturar.'), PageBreak()]
 story += [heading('5&#46; Crear la primera automatización'), p('1. Cree src/test/resources/features/login.feature:'), p('# language: en<br/>Feature: Login<br/>&nbsp;&nbsp;Scenario: Successful login<br/>&nbsp;&nbsp;&nbsp;&nbsp;Given the user opens the login page<br/>&nbsp;&nbsp;&nbsp;&nbsp;When the user signs in with "username" and "password"<br/>&nbsp;&nbsp;&nbsp;&nbsp;Then the dashboard is displayed', 'CodeX'), p('2. Cree LoginPage.java en pages. Mantenga locators privados y métodos de intención, por ejemplo open(), login() e isDashboardVisible().'), p('3. Cree LoginSteps.java en steps. Obtenga el driver mediante DriverManager, delegue a LoginPage y use aserciones JUnit.'), p('4. Configure la URL con -DbaseUrl=... y ejecute .\\gradlew.bat test -Dheadless=true.'), p('5. Revise el reporte HTML. Use esperas explícitas WebDriverWait; nunca Thread.sleep.'), Spacer(1,10), heading('6. Reutilización paso a paso'), p('1. Copie o clone el template; conserve la base original sin cambios.'), p('2. Actualice rootProject.name en settings.gradle y group en build.gradle.'), p('3. Configure baseUrl con -DbaseUrl=https://su-aplicacion, sin secretos en Git.'), p('4. Abra la URL manualmente y ejecute una prueba smoke en headless.'), p('5. Cuando el smoke funcione, sustituya el ejemplo por sus Features, Pages y Steps.'), p('6. Añada tags como @smoke y @regression para seleccionar subconjuntos.'), p('7. Inicialice Git, revise .gitignore, cree una rama y abra Pull Request.'), p('8. Revise el workflow incluido en .github/workflows/ci.yml: ya ejecuta pruebas headless y publica las evidencias disponibles.'), p('Criterio de salida: el equipo puede configurar URL, ejecutar una prueba y consultar el reporte sin editar componentes compartidos.'), PageBreak()]
-story += [Spacer(1, .4*cm), heading('7. Contrato CI/CD, buenas prácticas y soporte'), p('Workflow de GitHub Actions', 'H2x'), p('El workflow .github/workflows/ci.yml ejecuta ./gradlew clean test -Dheadless=true con Java 21 de Temurin y el Gradle Wrapper en pull requests y pushes hacia main. En Windows, use .\\gradlew.bat clean test -Dheadless=true para la validación local. Exit code 0 es éxito; cualquier otro código debe fallar el job. El contrato permite BROWSER, BASE_URL, HEADLESS y filtros cucumber.filter.tags; recolecte build/reports/cucumber/ (HTML y JSON), build/reports/tests/test, build/test-results/test, build/logs/automation.log y, sólo ante fallo, build/evidence/screenshots.'), p('Flujo: checkout, Java 21 Temurin, Gradle Setup/Cache, Gradle Wrapper, pruebas headless, reportes y test-evidence. gradle/actions/setup-gradle@v6 usa caché básica para reutilizar dependencias e información de Gradle; puede reducir trabajo repetitivo en ejecuciones posteriores. Si no hay caché (cache miss), Gradle descarga lo necesario y las pruebas continúan. El Wrapper sigue siendo el mecanismo oficial. La caché no cambia Selenium, Cucumber, Page Object Model, features, steps ni el smoke test local.'), p('El workflow usa ubuntu-latest y permisos mínimos de lectura. Intenta publicar las rutas anteriores como test-evidence durante 14 días incluso si Gradle falla. Una ruta vacía, como screenshots en una ejecución sin fallos, se ignora. Descargue el artifact en Artifacts dentro del resumen de GitHub Actions. La evidencia no cambia el estado PASS/FAIL del job. Docker, Grid y secretos de CI/CD no están implementados en este template.'), p('Troubleshooting de Gradle', 'H2x'), p('.\\gradlew.bat --stop detiene Gradle Daemons ante problemas transitorios. Para diagnóstico de dependencias use .\\gradlew.bat clean test --offline o .\\gradlew.bat clean test -PjavaVersion=21 --offline; sólo usa caché y puede fallar si faltan dependencias. Si aparece PKIX path building failed o unable to find valid certification path, revise certificado Java, proxy, inspección SSL, red y daemon; ejecute java -version, .\\gradlew.bat --version, .\\gradlew.bat --stop y .\\gradlew.bat clean test. No deshabilite SSL ni ignore certificados.'), p('Regeneración del manual', 'H2x'), p('scripts/create_manual.py requiere Python 3 y reportlab. Ejecute python scripts/create_manual.py desde la raíz. Genera docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf y una copia idéntica en la carpeta padre del proyecto. work/ es temporal, está ignorada por Git, no es parte del framework y puede eliminarse.'), p('Buenas prácticas', 'H2x'), p('Un Page Object por pantalla/componente; nombres descriptivos; configuración externa; locators estables; datos aislados; screenshots y logs como evidencia; commits pequeños; ramas, Pull Requests y revisión de código; actualización deliberada de dependencias.'), p('Para problemas de Java, navegador, features o CI, consulte docs/TROUBLESHOOTING.md y conserve el mensaje completo antes de modificar código.'), PageBreak()]
+story += [Spacer(1, .4*cm), heading('7. Contrato CI/CD, buenas prácticas y soporte'), p('Workflow de GitHub Actions', 'H2x'), p('El workflow .github/workflows/ci.yml ejecuta ./gradlew clean test -Dheadless=true con Java 21 de Temurin y el Gradle Wrapper en pull requests y pushes hacia main. En Windows, use .\\gradlew.bat clean test -Dheadless=true para la validación local. Exit code 0 es éxito; cualquier otro código debe fallar el job. El contrato permite BROWSER, BASE_URL, HEADLESS y filtros cucumber.filter.tags; recolecte build/reports/cucumber/ (HTML y JSON), build/reports/tests/test, build/test-results/test, build/logs/automation.log y, sólo ante fallo, build/evidence/screenshots.'), p('Flujo: checkout, Java 21 Temurin, Gradle Setup/Cache, Gradle Wrapper, pruebas headless, reportes y test-evidence. gradle/actions/setup-gradle@v6 usa caché básica para reutilizar dependencias e información de Gradle; puede reducir trabajo repetitivo en ejecuciones posteriores. Si no hay caché (cache miss), Gradle descarga lo necesario y las pruebas continúan. El Wrapper sigue siendo el mecanismo oficial. La caché no cambia Selenium, Cucumber, Page Object Model, features, steps ni el smoke test local.'), p('El workflow usa ubuntu-latest y permisos mínimos de lectura. Intenta publicar las rutas anteriores como test-evidence durante 14 días incluso si Gradle falla. Una ruta vacía, como screenshots en una ejecución sin fallos, se ignora. Descargue el artifact en Artifacts dentro del resumen de GitHub Actions. La evidencia no cambia el estado PASS/FAIL del job. Docker, Grid y secretos de CI/CD no están implementados en este template.'), p('Troubleshooting de Gradle', 'H2x'), p('.\\gradlew.bat --stop detiene Gradle Daemons ante problemas transitorios. Para diagnóstico de dependencias use .\\gradlew.bat clean test --offline o .\\gradlew.bat clean test -PjavaVersion=21 --offline; sólo usa caché y puede fallar si faltan dependencias. Si aparece PKIX path building failed o unable to find valid certification path, revise certificado Java, proxy, inspección SSL, red y daemon; ejecute java -version, .\\gradlew.bat --version, .\\gradlew.bat --stop y .\\gradlew.bat clean test. No deshabilite SSL ni ignore certificados.'), p('Regeneración del manual', 'H2x'), p('scripts/create_manual.py requiere Python 3 y reportlab. Ejecute python scripts/create_manual.py desde la raíz. Genera manuales PDF en docs/ (español) y docs_en/ (inglés). work/ es temporal, está ignorada por Git, no es parte del framework y puede eliminarse.'), p('Buenas prácticas', 'H2x'), p('Un Page Object por pantalla/componente; nombres descriptivos; configuración externa; locators estables; datos aislados; screenshots y logs como evidencia; commits pequeños; ramas, Pull Requests y revisión de código; actualización deliberada de dependencias.'), p('Para problemas de Java, navegador, features o CI, consulte docs/TROUBLESHOOTING.md y conserve el mensaje completo antes de modificar código.'), PageBreak()]
 
 story += [heading('8. CI/CD con GitHub Actions'), p('CI (integración continua) valida automáticamente cambios antes de integrarlos. Detecta temprano errores de compilación y pruebas y ofrece al equipo un resultado compartido. CD significa entrega continua (preparar una versión para publicar) o despliegue continuo (publicarla automáticamente). Este proyecto utiliza principalmente CI; no despliega aplicaciones.'), p('Qué ejecuta GitHub Actions', 'H2x'), p('GitHub Actions lee .github/workflows/ci.yml cuando se abre o actualiza un Pull Request hacia main y cuando hay un push a main. Un Pull Request o PR es una propuesta de unir una rama de trabajo con otra. El workflow obtiene el código (checkout), prepara Java 21 Temurin y caché Gradle en un runner Linux ubuntu-latest, y ejecuta el Gradle Wrapper con Selenium y Cucumber en modo headless, sin ventana visible.'), p('Flujo para principiantes', 'H2x'), p('Developer -&gt; feature branch -&gt; commit -&gt; push -&gt; Pull Request hacia main -&gt; GitHub Actions -&gt; quality-gate -&gt; Gradle -&gt; Selenium + Cucumber -&gt; PASS/FAIL -&gt; evidencias -&gt; revisión -&gt; merge a main.'), p('El workflow se ejecuta automáticamente. No hay botón de ejecución manual configurado. El merge debe esperar la revisión y un check exitoso; el ruleset activo de main exige un Pull Request, la rama actualizada y quality-gate aprobado; un fallo bloquea el merge.'), p('9. Cómo ejecutar y revisar el CI/CD en GitHub Actions', 'H1x'), p('Necesita Git, acceso al repositorio en GitHub y permiso para enviar ramas. Ejecute desde la raíz del proyecto.'), p('1. Cree una rama separada de main: git switch -c feature/mi-cambio. Si ya existe: git switch feature/mi-cambio. Main es la línea compartida; una feature branch aísla su trabajo.'), p('2. Modifique el proyecto, por ejemplo un Page Object y sus pruebas.'), p('3. Revise git status y git diff. Compruebe que no haya credenciales ni archivos generados.'), p('4. Ejecute las pruebas locales:'), p('Windows PowerShell: .\\gradlew.bat clean test "-Dheadless=true"<br/>Linux/macOS: ./gradlew clean test -Dheadless=true', 'CodeX'), p('Espere BUILD SUCCESSFUL. Si ve BUILD FAILED, corrija el error.'), PageBreak()]
 story += [heading('Continuación: Pull Request y revisión de resultados'), p('5. Guarde el cambio en Git: git add ruta/del/archivo y git commit -m "Describe mi cambio". Un commit es una instantánea identificable.'), p('6. Envíe la rama: git push -u origin feature/mi-cambio la primera vez; luego git push. Push copia los commits a GitHub.'), p('7. En el repositorio de GitHub abra Pull requests -&gt; New pull request. Seleccione main como base (destino) y feature/mi-cambio como compare (origen). Revise el contenido, agregue título y descripción y pulse Create pull request. No haga merge todavía.'), p('8. GitHub detecta el PR y ejecuta .github/workflows/ci.yml automáticamente. Cada nuevo commit seguido de push a la misma rama actualiza el PR y inicia otra ejecución.'), p('Desde el Pull Request', 'H2x'), p('Abra Repositorio -&gt; Pull requests -&gt; su PR -&gt; Checks; según la interfaz, los checks también aparecen en Conversation. Busque quality-gate y pulse Details. Allí verá checkout, Java 21, caché Gradle, pruebas, carga de evidencias y resultado final. Expanda un step para ver sus logs.'), p('Desde Actions', 'H2x'), p('Abra Repositorio -&gt; Actions -&gt; workflow CI -&gt; ejecución del PR. Identifique rama, PR, commit, fecha, estado y duración. Abra la ejecución y el job quality-gate para inspeccionar cada step.'), table([['Estado visible', 'Qué significa'], ['Success (verde)', 'Las verificaciones terminaron correctamente.'], ['Failure (rojo)', 'Una verificación falló.'], ['In progress (amarillo/progreso)', 'La ejecución todavía no termina.'], ['Cancelled', 'La ejecución se canceló.'], ['Skipped', 'Un step no se ejecutó por una condición.']], [6.2*cm, 10.1*cm]), p('Lea el texto del estado además del color: así puede interpretar el resultado aun sin distinguir colores.'), PageBreak()]
@@ -282,5 +296,166 @@ doc=SimpleDocTemplate(str(OUT), pagesize=A4, rightMargin=2*cm, leftMargin=2*cm, 
 doc.build(story, onFirstPage=footer, onLaterPages=footer)
 print(OUT)
 if args.output is None:
-    copy2(OUT, EXTERNAL_OUT)
-    print(EXTERNAL_OUT)
+    english = [
+        Spacer(1, 5*cm),
+        p('SELENIUM JAVA CUCUMBER', 'Cover'),
+        p('Automation Template - User Manual', 'CoverSub'),
+        p('v1.2.0 - Stable / Validated / Published<br/>Published: October 8, 2026, 06:19:01 UTC<br/>Latest published release: v1.2.0', 'CoverSub'),
+        Spacer(1, 2*cm),
+        p('Java 21 default / Java 17 supported - Selenium 4.48.0 - Cucumber 7.34.7 - JUnit 5.13.4 - Gradle 8.14.5', 'CoverSub'),
+        PageBreak(),
+        heading('Contents'),
+        p('1. First run<br/>2. Architecture<br/>3. Stack, prerequisites and VS Code<br/>3.1 Configure Java 17<br/>4. Configuration and commands<br/>5. First automation<br/>6. Reuse<br/>7. CI/CD contract and support<br/>8. GitHub Actions workflow<br/>9. Run and inspect CI<br/>10. Quality gate and evidence<br/>11. Main branch protection<br/>12. Logging and observability<br/>12.1 Event flow<br/>12.2 Levels<br/>12.3 Execution and privacy<br/>12.4 Diagnostics<br/>13. Automatic failure evidence<br/>14. Generate and inspect reports<br/>15. Glossary'),
+        p('Purpose', 'H2x'),
+        p('This manual covers setup, configuration, execution, extension, CI, evidence, reporting and diagnosis for the Web UI automation template. The included example uses a local HTML fixture. Basic Java knowledge is needed to create new tests.'),
+        PageBreak(),
+        heading('Version history'),
+        version_table([
+            ('v1.2.0', 'Oct 8, 2026', 'Stable / Validated / Published. Logging, failure evidence, Cucumber HTML/JSON reporting.'),
+            ('v1.1.0', 'Oct 1, 2026', 'Stable / Validated / Published. CI quality gate and test artifacts.'),
+            ('v1.0.2', 'Sep 26, 2026', 'Published documentation-only hotfix.'),
+            ('v1.0.1', 'Sep 25, 2026', 'Published hardening and CI/CD readiness.'),
+            ('v1.0.0', 'Sep 18, 2026', 'First stable template release.'),
+        ], 'en'),
+        p('The release date above is GitHub Release published_at in UTC. The original Milestone 4 candidate audit remains a historical record, not the current release status.'),
+        PageBreak(),
+        heading('1. First run'),
+        p('Install JDK 21 and Chrome or Edge. Open PowerShell at the repository root and run the Gradle Wrapper. Global Gradle is not needed.'),
+        p('.\\gradlew.bat clean test -Dheadless=true', 'CodeX'),
+        p('A visible run uses -Dheadless=false and requires a graphical desktop. On Linux/macOS use ./gradlew. Open build/reports/cucumber/cucumber.html after the run. The sample scenario checks the local HTML fixture, so it does not rely on the content of an external website.'),
+        heading('2. Architecture'),
+        p('Gradle -> JUnit Platform runner -> Cucumber feature -> Before hook -> Steps -> Page objects -> WebDriver -> After hook -> evidence and reports. Configuration precedence: JVM -D, environment, then config.properties.'),
+        table([['Layer', 'Responsibility'], ['Features', 'Gherkin scenarios under src/test/resources/features.'], ['Steps', 'Map Gherkin to page actions and assertions.'], ['Pages', 'Hold locators, explicit waits and UI interactions.'], ['Driver / Hooks', 'Create and close a per-thread Chrome or Edge session.'], ['Support', 'Manage the driver reference and failure evidence.']], [4.5*cm, 11.8*cm]),
+        p('Keep locators out of steps, scenario assertions out of pages, and business logic out of hooks.'),
+        PageBreak(),
+        heading('3. Stack, prerequisites and VS Code'),
+        table([['Component', 'Version and use'], ['Java', '21 default, 17 supported toolchain.'], ['Gradle Wrapper', '8.14.5 build and dependencies.'], ['Selenium Java', '4.48.0 browser control.'], ['Cucumber Java/Engine', '7.34.7 BDD/Gherkin.'], ['JUnit BOM', '5.13.4 JUnit Platform.'], ['SLF4J / Logback', '2.0.20 / 1.6.5 test logging.']], [5*cm, 11.3*cm]),
+        p('Check java -version, .\\gradlew.bat --version, and git --version. In VS Code open the root with code ., install Java/Gradle and Gherkin support, and wait for Gradle import.'),
+        heading('3.1. Configure Java 17'),
+        p('Only 17 and 21 are accepted by -PjavaVersion. Set JAVA_HOME to an installed JDK 17 for the current shell, add its bin directory to PATH, confirm java -version, then run .\\gradlew.bat clean test -PjavaVersion=17. In VS Code, select JDK 17 in Java: Configure Java Runtime. Restore JDK 21 and use -PjavaVersion=21 to return to the default. CI uses Java 21.'),
+        PageBreak(),
+        heading('4. Configuration and commands'),
+        p('config.properties defaults: browser=CHROME, headless=false, baseUrl=https://example.com/, timeoutSeconds=15, screenshotOnFailure=true. Override them with JVM -D properties or BROWSER, HEADLESS, BASE_URL, TIMEOUT_SECONDS and SCREENSHOT_ON_FAILURE environment variables. javaVersion is a Gradle -P property.'),
+        table([['Goal', 'Command'], ['Headless suite', '.\\gradlew.bat clean test -Dheadless=true'], ['Visible suite', '.\\gradlew.bat clean test -Dheadless=false'], ['Edge', '.\\gradlew.bat clean test -Dbrowser=EDGE'], ['Java 17', '.\\gradlew.bat clean test -PjavaVersion=17'], ['Tag @example', '.\\gradlew.bat test "-Dcucumber.filter.tags=@example"'], ['Alias', '.\\gradlew.bat cucumber']], [4*cm, 12.3*cm]),
+        p('The sample uses a local fixture regardless of baseUrl. A derived project can use baseUrl in its own page objects.'),
+        heading('5. First automation'),
+        p('Add a .feature under src/test/resources/features, Java step definitions under steps, and a page object under pages. Place stable locators and explicit waits in the page, and scenario assertions in steps. Start with the included example_domain.feature and ExampleDomainPage.'),
+        p('Example feature', 'H2x'),
+        p('# language: en<br/>Feature: Login<br/>  Scenario: Successful login<br/>    Given the user opens the login page<br/>    When the user signs in with valid credentials<br/>    Then the dashboard is displayed', 'CodeX'),
+        p('Create LoginPage.java with private locators and intention-revealing open(), login() and isDashboardVisible() methods. Create LoginSteps.java using DriverManager, delegate UI actions to the page and assert the expected outcome with JUnit. Set the target URL through -DbaseUrl. Prefer WebDriverWait over Thread.sleep.'),
+        heading('6. Reuse'),
+        p('Replace the sample with the target application, externalize test data, run the tagged scenario, then the full suite. Keep credentials, generated build output, and screenshots out of Git.'),
+        p('For a derived repository, update rootProject.name in settings.gradle and group in build.gradle. Replace sample features, pages and steps only after the smoke test works. Use tags such as @smoke and @regression to select suites. Review the included CI workflow before relying on it for a new application.'),
+        PageBreak(),
+        heading('7. CI/CD contract and support'),
+        p('.github/workflows/ci.yml runs on pull requests to main and pushes to main. It uses ubuntu-latest, Temurin Java 21, Gradle cache, and ./gradlew clean test -Dheadless=true. A nonzero Gradle exit code fails the job. Docker, Selenium Grid and automated deployment are not implemented.'),
+        heading('8. GitHub Actions workflow'),
+        p('Workflow: checkout -> Java 21 -> Gradle setup/cache -> headless test -> upload available test-evidence. The artifact includes Cucumber HTML/JSON, Gradle HTML, JUnit XML, logs and eligible failure screenshots; it is retained for 14 days. Upload runs with if: always() and cannot turn FAIL into PASS.'),
+        heading('9. Run and inspect CI'),
+        p('For a pull request, open Checks -> quality-gate -> Details. Inspect the failed step and download test-evidence from Actions when available. Fix the branch and rerun. An early compilation failure may leave incomplete artifacts.'),
+        p('Step-by-step PR review', 'H2x'),
+        p('Create a focused branch, edit and test locally, then inspect git status and git diff for secrets and generated files. Commit the change and push the branch. On GitHub select main as the PR base and your branch as compare. Open Checks to see checkout, Java setup, Gradle cache, tests and evidence upload. Every new pushed commit reruns the check. In Actions, open the workflow run and its quality-gate job; read the status text, not only its color.'),
+        p('When quality-gate fails, expand the failed step, keep the full error, download test-evidence if present, fix the branch, rerun .\\gradlew.bat clean test -Dheadless=true locally, then commit and push. Wait for the new check. The artifact may contain fewer files if compilation stopped before tests.'),
+        heading('10. Quality gate and evidence'),
+        p('The main ruleset documented by the project requires a pull request and passing quality-gate. A passing scenario produces no failure screenshot; an eligible failed scenario can produce a PNG and Cucumber image/png attachment.'),
+        heading('11. Main branch protection'),
+        p('Review and CI validation precede merge. A required check that fails or remains pending blocks integration. Do not move an existing release tag to correct documentation.'),
+        PageBreak(),
+        heading('12. Logging and observability'),
+        p('SLF4J 2.0.20 in hooks and driver code delegates to Logback 1.6.5, configured by src/test/resources/logback-test.xml. Logback writes console output and build/logs/automation.log.'),
+        p('Diagram A - logging architecture', 'H2x'),
+        LoggingDiagram('architecture', 'en'),
+        heading('12.1. Event flow'),
+        p('Scenario start and effective browser/headless setting -> WebDriver initialization -> test execution -> scenario result -> optional failure capture -> driver shutdown. Logs record events throughout.'),
+        PageBreak(),
+        p('Diagram B - observability flow', 'H2x'),
+        LoggingDiagram('flow', 'en'),
+        heading('12.2. Levels'),
+        p('DEBUG: technical driver detail (hidden by default). INFO: normal scenario and driver lifecycle. WARN: recoverable capture issue. ERROR: evidence or shutdown error. Root level is INFO.'),
+        heading('12.3. Execution and privacy'),
+        p('The framework does not log baseUrl, screenshot bytes or Base64. Never add passwords, tokens, cookies or full environment dumps. Third-party exception traces, screenshots and reports can contain application data; review them before sharing.'),
+        heading('12.4. Diagnostics'),
+        p('If no log appears, check that test started and that clean did not remove prior output. To inspect dependencies use .\\gradlew.bat dependencies --configuration testRuntimeClasspath. For PKIX errors inspect the JDK trust store and proxy; do not disable TLS.'),
+        PageBreak(),
+        heading('13. Automatic failure evidence'),
+        p('On failed scenarios with screenshotOnFailure=true, the After hook passes WebDriver to EvidenceManager before shutdown. An active screenshot-capable session saves a PNG under build/evidence/screenshots/ and attaches image/png to Cucumber. The filename contains a sanitized scenario name, timestamp and UUID. Capture errors generate warnings without replacing the original test failure.'),
+        heading('14. Generate and inspect reports'),
+        table([['Output', 'Path'], ['Cucumber HTML', 'build/reports/cucumber/cucumber.html'], ['Cucumber JSON', 'build/reports/cucumber/cucumber.json'], ['Gradle HTML', 'build/reports/tests/test/'], ['JUnit XML', 'build/test-results/test/'], ['Logback', 'build/logs/automation.log'], ['Failure PNG', 'build/evidence/screenshots/']], [4.4*cm, 11.9*cm]),
+        p('Match scenario name and status across Cucumber HTML/JSON and the log, then inspect XML/Gradle HTML. clean removes prior results; inspect evidence before rerunning. No historical dashboard or cross-run aggregation is implemented.'),
+        p('To diagnose a failure, open the Cucumber HTML and locate the failed step and image attachment. Compare scenario name and status with automation.log and JUnit XML. If capture was enabled and a driver was active, inspect the PNG. A missing PNG on a PASS is expected. A screenshot capture failure must not hide the original scenario failure. Review reports and images for sensitive application data before sharing.'),
+        PageBreak(),
+        heading('15. Glossary'),
+        glossary_table([
+            ('BDD', 'Behavior-driven development; scenarios describe expected behavior.'),
+            ('Gherkin', 'Readable language for features, scenarios and steps.'),
+            ('Page Object Model', 'Pattern that encapsulates UI locators and interactions.'),
+            ('WebDriver', 'Selenium interface that controls Chrome or Edge.'),
+            ('Hook', 'Code that prepares or cleans up a scenario.'),
+            ('Gradle Wrapper', 'Versioned scripts that run the required Gradle version.'),
+            ('Headless', 'Browser execution without a visible window.'),
+            ('Quality gate', 'Required check used before integrating a change.'),
+            ('Artifact', 'Downloadable files produced by a CI run.'),
+            ('Screenshot', 'PNG image saved as evidence on an eligible failure.'),
+            ('Automation testing', 'Tests executed by software to verify an application.'),
+            ('Selenium', 'Library for automating web browsers.'),
+            ('Cucumber', 'BDD tool that runs Gherkin scenarios.'),
+            ('Feature', 'Business capability described in a Gherkin file.'),
+            ('Scenario', 'Concrete example that verifies expected behavior.'),
+            ('Step definition', 'Java code that implements a Gherkin sentence.'),
+            ('JUnit Platform', 'Platform that discovers and coordinates tests.'),
+            ('Gradle', 'Build, dependency and test execution tool.'),
+            ('Locator', 'Rule that identifies a UI element.'),
+            ('CSS selector', 'Rule that selects elements by CSS attributes or classes.'),
+            ('XPath', 'Syntax to locate elements in a DOM.'),
+            ('Assertion', 'Check of an expected test result.'),
+            ('Test data', 'Controlled data used by a test run.'),
+            ('Environment variable', 'External value that configures a run.'),
+            ('Explicit wait', 'Wait until a WebDriver condition holds.'),
+            ('CI', 'Continuous integration of changes through automated checks.'),
+            ('CD', 'Continuous delivery or deployment; this template does not deploy.'),
+        ], 'en'),
+        PageBreak(),
+        heading('Glossary (continued)'),
+        glossary_table([
+            ('CI/CD', 'Continuous integration and delivery processes.'),
+            ('Pipeline', 'Automated sequence of build and validation steps.'),
+            ('Git', 'Distributed version control system.'),
+            ('GitHub', 'Repository hosting and CI platform.'),
+            ('GitHub Actions', 'Service that runs repository workflows.'),
+            ('Workflow', 'Instructions in a file such as ci.yml.'),
+            ('Job', 'Group of steps run by a CI runner.'),
+            ('Step', 'Individual instruction in a CI job.'),
+            ('Runner', 'Temporary machine executing a CI job.'),
+            ('ubuntu-latest', 'GitHub Actions Ubuntu runner label.'),
+            ('Pull request', 'Proposal to integrate branch changes after review.'),
+            ('Branch', 'Separate line of Git development.'),
+            ('main', 'Shared primary repository branch.'),
+            ('Feature branch', 'Branch dedicated to a specific change.'),
+            ('Status check', 'Visible result of a GitHub verification.'),
+            ('Required check', 'Check that must pass before merging.'),
+            ('Branch protection', 'Rules restricting changes to a branch.'),
+            ('Log', 'Chronological record of execution events.'),
+            ('Report', 'Readable summary of test results.'),
+            ('Exit code', 'Process result: zero success; nonzero failure.'),
+            ('PASS', 'Verification completed successfully.'),
+            ('FAIL', 'Verification ended with an error.'),
+            ('Commit', 'Identifiable snapshot of Git changes.'),
+            ('Push', 'Transfer of local commits to a remote repository.'),
+            ('Merge', 'Integration of one branch into another.'),
+            ('Checkout', 'Retrieval of a revision for execution.'),
+        ], 'en'),
+    ]
+    def footer_en(canvas, document):
+        if document.page > 1:
+            canvas.saveState()
+            canvas.setStrokeColor(colors.HexColor('#D9E1EA'))
+            canvas.line(2*cm, 1.45*cm, A4[0]-2*cm, 1.45*cm)
+            canvas.setFont('Helvetica', 8)
+            canvas.setFillColor(colors.HexColor('#526273'))
+            canvas.drawString(2*cm, 0.9*cm, 'Selenium Java Cucumber Automation Template')
+            canvas.drawRightString(A4[0]-2*cm, 0.9*cm, f'Page {document.page}')
+            canvas.restoreState()
+    EN_OUT.parent.mkdir(parents=True, exist_ok=True)
+    doc_en = SimpleDocTemplate(str(EN_OUT), pagesize=A4, rightMargin=2*cm, leftMargin=2*cm, topMargin=1.8*cm, bottomMargin=2*cm, title='Selenium Java Cucumber Automation Template - User Manual', author='Automation Template')
+    doc_en.build(english, onFirstPage=footer_en, onLaterPages=footer_en)
+    print(EN_OUT)

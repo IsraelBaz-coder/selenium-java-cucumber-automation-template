@@ -1,10 +1,12 @@
 # Reporte de Migración del Template
 
+[English](../docs_en/TEMPLATE_MIGRATION_REPORT.md) · [Índice](README.md)
+
 Este documento registra el estado de la migración para v1.0.0. Los pendientes y el ejemplo `example.com` descritos aquí son históricos; para el estado actual del template y del CI consulte el [README](../README.md) y el [versionado](VERSIONING.md).
 
 **Release result:** v1.0.0 - Stable / Validated  
 **Tipo de release:** First Stable Release  
-**Fecha:** 17 de septiembre de 2026
+**Fecha oficial de publicación (UTC):** 18 de septiembre de 2026
 
 ## Origen y alcance
 

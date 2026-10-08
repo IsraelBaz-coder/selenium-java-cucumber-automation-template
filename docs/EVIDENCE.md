@@ -1,22 +1,22 @@
-# Evidencias ante fallos / Failure evidence
+# Evidencias ante fallos
 
-**Estado / Status:** v1.2.0 es la última versión publicada / is the latest published release (8 de octubre de 2026 / October 8, 2026). Stable / Validated / Published.
+[English](../docs_en/EVIDENCE.md) · [Índice](README.md)
 
-## Español
+**Última versión publicada:** v1.2.0 (8 de octubre de 2026). Stable / Validated / Published.
 
 Al fallar un escenario Cucumber, el Hook `@After` registra el fallo y, si `screenshotOnFailure=true`, entrega el WebDriver actual a `EvidenceManager` antes de cerrarlo. El gestor comprueba que exista una sesión activa para `RemoteWebDriver` y que implemente `TakesScreenshot`, captura bytes PNG, guarda el archivo y lo adjunta al escenario mediante `Scenario.attach(image, "image/png", "failure-screenshot")`. La captura no se ejecuta para escenarios exitosos. Si falta el driver, está cerrado o falla la captura, se registra un warning y el fallo original del escenario se conserva. Si falla el guardado, todavía se intenta adjuntar la imagen.
 
 ```mermaid
 flowchart TD
-  S[Scenario] --> H[Hooks @After]
-  H --> F{Failed and enabled?}
-  F -- no --> Q[Driver quit]
-  F -- yes --> D{WebDriver available and screenshot capable?}
-  D -- no --> W[Warning] --> Q
-  D -- yes --> C[Screenshot PNG bytes]
-  C --> P[build/evidence/screenshots/ PNG]
-  P --> A[Cucumber attachment image/png]
-  A --> L[SLF4J / Logback event]
+  S[Escenario] --> H[Hooks @After]
+  H --> F{Falló y está habilitado?}
+  F -- no --> Q[Cerrar driver]
+  F -- sí --> D{WebDriver activo y compatible?}
+  D -- no --> W[Advertencia] --> Q
+  D -- sí --> C[Bytes PNG]
+  C --> P[build/evidence/screenshots/]
+  P --> A[Adjunto Cucumber image/png]
+  A --> L[Evento SLF4J / Logback]
   L --> Q
 ```
 
@@ -24,12 +24,5 @@ Los archivos están en `build/evidence/screenshots/`, fuera de `src` y excluidos
 
 Para validar manualmente, ejecute `./gradlew.bat clean test -Dheadless=true`, confirme que no exista `build/evidence/screenshots/`, cambie temporalmente la aserción del escenario local para provocar un fallo y ejecute de nuevo. Compruebe PNG, attachment en `build/reports/cucumber/cucumber.html` y `build/reports/cucumber/cucumber.json` y los eventos del log. Restaure la aserción inmediatamente y repita la suite; el resultado final debe ser `BUILD SUCCESSFUL`. Puede usar `-Dheadless=false`; las capturas no dependen del modo. Mantenga `screenshotOnFailure=true` en proyectos derivados y no incluya evidencias generadas en Git.
 
-## English
 
-On a failed Cucumber scenario, the `@After` Hook logs the failure and, when `screenshotOnFailure=true`, passes the current WebDriver to `EvidenceManager` before quitting it. The manager checks for an active `RemoteWebDriver` session and `TakesScreenshot`, captures PNG bytes, saves the file, and calls `Scenario.attach(..., "image/png", "failure-screenshot")`. Passing scenarios produce no failure screenshot. Missing or closed drivers and capture failures produce warnings without replacing the scenario failure. If file storage fails, attachment is still attempted.
-
-Files live under `build/evidence/screenshots/`, outside `src`, and are ignored by Git through `build/`. Filenames combine a sanitized, bounded scenario name, timestamp with milliseconds, and UUID. Capture, path and attachment events use SLF4J/Logback in `build/logs/automation.log`; binary and Base64 content are never logged. Review screenshots before sharing because page content may be sensitive.
-
-To validate manually, run `./gradlew.bat clean test -Dheadless=true` and verify that the screenshot directory is absent. Temporarily make the local fixture assertion fail, rerun, and inspect the PNG, Cucumber HTML/JSON attachment and log. Restore the assertion immediately and rerun the full suite to `BUILD SUCCESSFUL`. The same flow works with `-Dheadless=false`. Keep runtime evidence out of Git.
-
-El contrato de reporting validado está en / The validated reporting contract is in [REPORTING.md](REPORTING.md).
+Consulte el [contrato de reportes](REPORTING.md).

@@ -1,5 +1,7 @@
 # Logging y observabilidad básica
 
+[English](../docs_en/LOGGING.md) · [Índice](README.md)
+
 **Última versión publicada:** v1.2.0 (8 de octubre de 2026). Estado: Stable / Validated / Published.
 
 ## Propósito y arquitectura
