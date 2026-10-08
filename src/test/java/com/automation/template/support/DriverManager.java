@@ -17,7 +17,12 @@ public final class DriverManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(DriverManager.class);
     private DriverManager() { }
     /** ES: Crea el driver del escenario. EN: Creates the scenario driver. */
-    public static void startDriver() { DRIVERS.set(DriverFactory.createDriver()); }
+    public static void startDriver() {
+        if (DRIVERS.get() != null) {
+            throw new IllegalStateException("WebDriver is already initialized for this thread.");
+        }
+        DRIVERS.set(DriverFactory.createDriver());
+    }
     /** ES: Devuelve el driver activo. EN: Returns the active driver. */
     public static WebDriver getDriver() {
         WebDriver driver = DRIVERS.get();

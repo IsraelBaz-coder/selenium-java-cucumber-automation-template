@@ -4,13 +4,12 @@ Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD
 
 | Release | Value |
 |---|---|
-| Published stable version | **v1.1.0** |
-| Version in development | **v1.2.0 — Milestone 4, Block 3** |
-| Technical status | **Milestone 4 in development; Blocks 1, 2 and 3 Completed / Validated; later blocks Pending** |
-| Milestone 3 | **Completed / Validated** |
-| v1.2.0 publication date | **Not set** |
+| Published stable version | **v1.2.0** |
+| Current release | **v1.2.0 — Stable / Validated / Published** |
+| v1.2.0 status | **Stable / Validated / Published** |
+| v1.2.0 publication date | **October 8, 2026** |
 
-v1.1.0 has been the published stable version since October 1, 2026; Milestone 3 is Completed / Validated. In Milestone 4, Block 1 (SLF4J/Logback logging) and Block 2 (automatic failure evidence) are Completed / Validated. Block 3 (Reporting / Observability) is Completed / Validated: it adds Cucumber JSON and consolidates results. Later blocks remain Pending. v1.2.0 is still in development, unpublished, and has no publication date.
+v1.2.0 is the latest published release (October 8, 2026). It includes SLF4J/Logback logging, automatic failure evidence and Cucumber HTML/JSON reports. Its status is **Stable / Validated / Published**. See the [audit report](docs/HITO4_RELEASE_AUDIT.md) for validation results.
 
 | Document information | Value |
 |---|---|
@@ -25,7 +24,7 @@ The template was validated and can be used as a baseline for new projects. Confi
 - Java 21 by default, Java 17 compatible, Gradle Wrapper and UTF-8 source encoding.
 - Page Object Model, Steps and Hooks kept separate.
 - Chrome/Edge, headless mode and URL configured by file, environment or `-D`.
-- Explicit waits, execution logging, failure screenshots and Cucumber HTML/JSON reporting. The Milestone 4 branch uses SLF4J and Logback for logging.
+- Explicit waits, SLF4J/Logback execution logging, failure screenshots and Cucumber HTML/JSON reporting.
 
 ## Java version selection
 
@@ -127,7 +126,7 @@ For architecture, VS Code setup, CI/CD, first test tutorial and troubleshooting,
 
 ## Manual generation and temporary files
 
-`scripts/create_manual.py` generates the PDF manual with ReportLab. It requires Python with `reportlab`; run `python scripts/create_manual.py` from the project root. It generates `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf` and updates the external copy in the repository's parent directory.
+`scripts/create_manual.py` generates the PDF manual with ReportLab. It requires Python with `reportlab`; run `python scripts/create_manual.py` from the project root. It updates `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf` and an identical copy in the project's parent folder. The `--output` option writes only to the specified path for temporary validation.
 
 `work/` contains temporary documentation/PDF-generation and validation files. It is ignored by Git, is not part of the final product, must not be versioned, and can be deleted without affecting the framework.
 
@@ -137,9 +136,13 @@ For the versioning policy and repeatable release procedure, see [Versioning](doc
 
 ## Release history
 
+### v1.2.0 - October 8, 2026
+
+**Stable / Validated / Published.** Logging, evidence and reporting are integrated. Validation is recorded in the [release audit](docs/HITO4_RELEASE_AUDIT.md).
+
 ### v1.1.0 - October 1, 2026
 
-**Milestone 3 Completed / Validated. Stable / Validated / Published.** Base CI, evidence artifacts, Gradle cache, and Quality Gate have been validated.
+**Stable / Validated / Published.** Base CI, evidence artifacts, Gradle cache, and Quality Gate have been validated.
 
 ### v1.0.2 - September 25, 2026
 

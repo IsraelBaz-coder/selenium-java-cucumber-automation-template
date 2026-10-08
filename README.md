@@ -4,13 +4,12 @@ Template reutilizable para pruebas Web UI con Java 21, Selenium WebDriver, Cucum
 
 | Release | Valor |
 |---|---|
-| Versión estable publicada | **v1.1.0** |
-| Versión en desarrollo | **v1.2.0 — Hito 4, Bloque 3** |
-| Estado técnico | **Hito 4 en desarrollo; Bloques 1, 2 y 3 Completed / Validated; bloques posteriores Pending** |
-| Hito 3 | **Completed / Validated** |
-| Fecha de publicación de v1.2.0 | **Sin definir** |
+| Versión estable publicada | **v1.2.0** |
+| Versión vigente | **v1.2.0 — Stable / Validated / Published** |
+| Estado de v1.2.0 | **Stable / Validated / Published** |
+| Fecha de publicación de v1.2.0 | **8 de octubre de 2026** |
 
-v1.1.0 es la versión estable publicada desde el 1 de octubre de 2026; el Hito 3 está Completed / Validated. En el Hito 4, Bloque 1 (logging con SLF4J/Logback) y Bloque 2 (evidencias automáticas ante fallos) están Completed / Validated. El Bloque 3 (Reporting / Observability) está Completed / Validated: incorpora Cucumber JSON y consolida los resultados. Los bloques posteriores siguen Pending. v1.2.0 continúa en desarrollo, no está publicada y no tiene fecha de publicación.
+v1.2.0 es la última versión publicada (8 de octubre de 2026). Incorpora logging con SLF4J/Logback, evidencias automáticas ante fallos y reportes Cucumber HTML/JSON. Su estado es **Stable / Validated / Published**. Consulte el [informe de auditoría](docs/HITO4_RELEASE_AUDIT.md) para los resultados de validación.
 
 | Información del documento | Valor |
 |---|---|
@@ -25,7 +24,7 @@ El template fue validado y puede utilizarse como baseline para nuevos proyectos.
 - Java 21 predeterminado, Java 17 compatible, Gradle Wrapper y codificación UTF-8.
 - Page Object Model, Steps y Hooks separados.
 - Chrome/Edge, modo headless y URL configurables por archivo, variable de entorno o `-D`.
-- Esperas explícitas, logging de ejecución, screenshots al fallar y reportes HTML/JSON Cucumber. En la rama del Hito 4, el logging usa SLF4J y Logback.
+- Esperas explícitas, logging de ejecución con SLF4J/Logback, screenshots al fallar y reportes HTML/JSON Cucumber.
 
 ## Arquitectura y estructura
 
@@ -162,15 +161,19 @@ Documentación adicional: [guía de uso](docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.m
 
 ## Regeneración del manual y archivos temporales
 
-`scripts/create_manual.py` genera el manual PDF con ReportLab. Requiere Python con `reportlab`, se ejecuta desde la raíz con `python scripts/create_manual.py`, genera `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf` y actualiza la copia externa en el directorio padre del repositorio.
+`scripts/create_manual.py` genera el manual PDF con ReportLab. Requiere Python con `reportlab` y se ejecuta desde la raíz con `python scripts/create_manual.py`. Actualiza `docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf` y una copia idéntica en la carpeta padre del proyecto. La opción `--output` escribe solo en la ruta indicada para validaciones temporales.
 
 `work/` contiene archivos temporales de generación y validación documental. Está excluida por `.gitignore`, no forma parte del producto final, no debe versionarse y puede eliminarse sin afectar el framework; se recrea al regenerar o validar documentación.
 
 ## Release history
 
+### v1.2.0 - 8 de octubre de 2026
+
+**Stable / Validated / Published.** Logging, evidencias y reporting integrados; auditoría y pruebas documentadas en el [informe de release](docs/HITO4_RELEASE_AUDIT.md).
+
 ### v1.1.0 - 1 de octubre de 2026
 
-**Hito 3 Completed / Validated. Stable / Validated / Published.** CI base, publicación de evidencias, caché Gradle y Quality Gate validados.
+**Stable / Validated / Published.** CI base, publicación de evidencias, caché Gradle y Quality Gate validados.
 
 ### v1.0.2 - 25 de septiembre de 2026
 

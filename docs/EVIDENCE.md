@@ -1,6 +1,6 @@
 # Evidencias ante fallos / Failure evidence
 
-**Estado / Status:** v1.1.0 Stable / Validated / Published (1 de octubre de 2026 / October 1, 2026); Hito 3 / Milestone 3 Completed / Validated. v1.2.0 In Development / En desarrollo, not published / no publicada, without a publication date / sin fecha de publicación. Hito 4 / Milestone 4 In Development; Bloques 1, 2 y 3 / Blocks 1, 2 and 3 Completed / Validated. Later blocks / bloques posteriores pending / pendientes. Este documento corresponde al Hito 4 — Bloque 2 / This document covers Milestone 4 — Block 2.
+**Estado / Status:** v1.2.0 es la última versión publicada / is the latest published release (8 de octubre de 2026 / October 8, 2026). Stable / Validated / Published.
 
 ## Español
 

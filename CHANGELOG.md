@@ -4,9 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] — v1.2.0 in development, Milestone 4
+## [1.2.0] - 2026-10-08
 
-Milestone 4 remains in development. Blocks 1, 2 and 3 are **Completed / Validated**; later blocks are **Pending**. v1.2.0 is not published and has no publication date. v1.1.0 remains **Stable / Validated / Published** (October 1, 2026), with Milestone 3 **Completed / Validated**.
+The v1.2.0 release snapshot is prepared for October 8, 2026 with status **Stable / Validated / Published**. PR validation, tagging and GitHub publication still require confirmation. Logging, automatic failure evidence, reporting and release hardening are included. v1.1.0 was the previous published release.
+
+### Block 4 — release audit and hardening (publication controls)
+
+- Aligned the Gradle project version with v1.2.0 and hardened WebDriver initialization cleanup.
+- Revalidated local headless and visible runs, plus controlled failure evidence; documented TLS and CI validation blockers in `docs/HITO4_RELEASE_AUDIT.md`.
+- Included definitive bilingual release documentation and the regenerated PDF manual in the v1.2.0 release snapshot.
 
 ### Block 3 — reporting and observability consolidation (Completed / Validated)
 
@@ -18,7 +24,7 @@ Milestone 4 remains in development. Blocks 1, 2 and 3 are **Completed / Validate
 
 - Moved failure screenshot capture, safe naming, local persistence and Cucumber attachment into `EvidenceManager`; Hooks now orchestrate it before WebDriver shutdown.
 - Added controlled handling for absent/closed drivers and capture errors, with SLF4J/Logback events and focused tests.
-- Documented the evidence flow in `docs/EVIDENCE.md` and the manual. v1.1.0 remains the published stable version.
+- Documented the evidence flow in `docs/EVIDENCE.md` and the manual. v1.1.0 was the latest published release at the time.
 
 ### Block 1 — logging foundation (Completed / Validated)
 
@@ -73,7 +79,7 @@ Hito 3 — Completed / Validated. Technical status: Stable / Validated / Publish
 - Consolidated the configuration inventory, artifact collection contract, logging, screenshot behavior, and bilingual execution guidance.
 - Aligned the Gradle root project name with the official repository name.
 
-> Historical note: `1.0.1` was the stable, validated, and published release at the time of this entry. `v1.0.2` was published later; `v1.1.0` is the current published stable release.
+> Historical note: `1.0.1` was the stable, validated, and published release at the time of this entry. `v1.0.2` was published later; `v1.1.0` was the latest published release before `v1.2.0`.
 
 ## [1.0.0] - 2026-09-17
 

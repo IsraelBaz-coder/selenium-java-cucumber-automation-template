@@ -35,7 +35,16 @@ public final class DriverFactory {
             case CHROME -> createChrome(headless);
             case EDGE -> createEdge(headless);
         };
-        if (!headless) driver.manage().window().maximize();
+        try {
+            if (!headless) driver.manage().window().maximize();
+        } catch (RuntimeException exception) {
+            try {
+                driver.quit();
+            } catch (RuntimeException closeException) {
+                exception.addSuppressed(closeException);
+            }
+            throw exception;
+        }
         LOGGER.info("WebDriver initialized successfully.");
         return driver;
     }
