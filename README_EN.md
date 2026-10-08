@@ -92,6 +92,8 @@ Hooks log scenario start, finish and status; `DriverFactory` and `DriverManager`
 
 ## Browsers, URL and Cucumber
 
+The development v1.3.0 Docker base image includes Java 21, Chrome and ChromeDriver 155 for Linux amd64, and uses the Gradle Wrapper. On Windows, start Docker Desktop with WSL2 and its Linux engine; from the repository root run `docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .` and `docker run --rm selenium-java-cucumber-template:1.3.0-dev`. See the [step-by-step Docker guide](docs_en/DOCKER.md) for version checks, interpreting BUILD SUCCESSFUL, troubleshooting, and retaining reports with a verified mount. The user confirmed the build and run; Codex verified a mounted run. Non-critical warnings are tracked in [TECH-001/002](docs_en/TECHNICAL_DEBT.md). v1.2.0 remains the latest published release.
+
 Chrome is the default browser. Use `-Dbrowser=EDGE` for Edge and `-DbaseUrl=https://your-application` for a temporary URL. Use Cucumber tags such as `@smoke` with `-Dcucumber.filter.tags=@smoke` to select scenarios.
 
 ## Configuration inventory
@@ -156,6 +158,6 @@ For the versioning policy and repeatable release procedure, see [Versioning](doc
 
 ### v1.0.0 - September 18, 2026
 
-**First Stable Release - Stable / Validated / Published.** Generalized source project; reusable Web UI architecture with Java, Selenium, Cucumber, Gradle Wrapper and Page Object Model; Chrome/Edge, headless and `baseUrl` configuration; working example; bilingual documentation, diagrams, troubleshooting, migration report, documented CI/CD, manual-generation script and PDF. Docker and Healenium are not part of this template.
+**First Stable Release - Stable / Validated / Published.** Generalized source project; reusable Web UI architecture with Java, Selenium, Cucumber, Gradle Wrapper and Page Object Model; Chrome/Edge, headless and `baseUrl` configuration; working example; bilingual documentation, diagrams, troubleshooting, migration report, documented CI/CD, manual-generation script and PDF. Docker and Healenium were not part of v1.0.0.
 
 The template uses neutral documentation and examples so any team can adapt it to its Web UI application.

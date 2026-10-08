@@ -52,6 +52,11 @@ public final class DriverFactory {
     private static WebDriver createChrome(boolean headless) {
         ChromeOptions options = new ChromeOptions();
         configure(options, headless);
+        // ES: Los flags del contenedor no alteran la ejecución local.
+        // EN: Container flags do not change local execution.
+        if (Boolean.parseBoolean(System.getenv("AUTOMATION_CONTAINER"))) {
+            options.addArguments("--no-sandbox", "--disable-dev-shm-usage");
+        }
         return new ChromeDriver(options);
     }
 

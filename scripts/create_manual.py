@@ -1,6 +1,7 @@
 import argparse
 from pathlib import Path
 from math import atan2, cos, sin, pi
+from xml.sax.saxutils import escape
 
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
@@ -58,6 +59,180 @@ def version_table(rows, language='es'):
     t = Table(data, colWidths=[2.2*cm, 3.4*cm, 10.7*cm], repeatRows=1)
     t.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),colors.HexColor('#152B4E')),('GRID',(0,0),(-1,-1),0.3,colors.HexColor('#CBD5E1')),('VALIGN',(0,0),(-1,-1),'MIDDLE'),('LEFTPADDING',(0,0),(-1,-1),5),('RIGHTPADDING',(0,0),(-1,-1),5),('TOPPADDING',(0,0),(-1,-1),4),('BOTTOMPADDING',(0,0),(-1,-1),4),('BACKGROUND',(0,1),(-1,-1),colors.white)]))
     return t
+
+class DockerFlowDiagram(Flowable):
+    """Original vector overview; illustrative, never presented as a test screenshot."""
+
+    def __init__(self, language='es'):
+        super().__init__()
+        self.width, self.height = 16.3*cm, 4.5*cm
+        self.language = language
+
+    def draw(self):
+        c = self.canv
+        labels = (['GitHub: código fuente', 'Windows / PowerShell', 'Docker Desktop / WSL2',
+                   'Reportes en build/', 'Selenium + Chrome', 'Linux: Gradle + Cucumber']
+                  if self.language == 'es' else
+                  ['GitHub: source code', 'Windows / PowerShell', 'Docker Desktop / WSL2',
+                   'Reports in build/', 'Selenium + Chrome', 'Linux: Gradle + Cucumber'])
+        xs = [0, 5.55*cm, 11.1*cm]
+        ys = [2.55*cm, 0.25*cm]
+        for row, y in enumerate(ys):
+            for col, x in enumerate(xs):
+                label = labels[row*3+col]
+                c.setFillColor(colors.HexColor('#EEF4FA'))
+                c.setStrokeColor(colors.HexColor('#40709E'))
+                c.roundRect(x, y, 5.2*cm, 1.2*cm, 5, fill=1, stroke=1)
+                c.setFont('Helvetica-Bold', 8.1)
+                c.setFillColor(colors.HexColor('#152B4E'))
+                c.drawCentredString(x+2.6*cm, y+0.52*cm, label)
+        c.setStrokeColor(colors.HexColor('#607D98'))
+        c.setLineWidth(1.2)
+        for a,b in [(5.2*cm,5.55*cm),(10.75*cm,11.1*cm)]:
+            c.line(a,3.15*cm,b,3.15*cm)
+        c.line(13.7*cm,2.55*cm,13.7*cm,1.45*cm)
+        for a,b in [(11.1*cm,10.75*cm),(5.55*cm,5.2*cm)]:
+            c.line(a,0.85*cm,b,0.85*cm)
+        c.setFont('Helvetica',7.5)
+        c.setFillColor(colors.HexColor('#526273'))
+        c.drawString(0,0, 'Diagrama ilustrativo; no es evidencia de una ejecución.' if self.language == 'es'
+                     else 'Illustrative diagram; not evidence of a test run.')
+
+def docker_step(title, goal, requirements, command, explanation, expected, error, remedy, language):
+    labels = (['Objetivo', 'Requisitos', 'Explicación', 'Resultado esperado', 'Cómo reconocer un error', 'Cómo resolverlo']
+              if language == 'es' else
+              ['Goal', 'Requirements', 'Explanation', 'Expected result', 'Recognize an error', 'Resolution'])
+    return [
+        p(title, 'H2x'),
+        p(f'<b>{labels[0]}:</b> {goal} <b>{labels[1]}:</b> {requirements}'),
+        p(escape(command).replace('\n', '<br/>'), 'CodeX'),
+        p(f'<b>{labels[2]}:</b> {explanation} <b>{labels[3]}:</b> {expected}'),
+        p(f'<b>{labels[4]}:</b> {error} <b>{labels[5]}:</b> {remedy}'),
+    ]
+
+def docker_manual_section(language):
+    es = language == 'es'
+    items = [
+        heading('4.1. Uso con Docker' if es else '4.1. Using Docker'),
+        p(('Docker ejecuta el framework en un contenedor Linux reproducible, separado del Java y navegador de Windows. La imagen en desarrollo para v1.3.0 contiene Temurin 21, Chrome y ChromeDriver 155.0.8059.39, Gradle Wrapper 8.14.5, Selenium, Cucumber, JUnit y POM. La última release publicada sigue siendo v1.2.0.'
+           if es else
+           'Docker runs the framework in a reproducible Linux container, separate from Windows Java and browser installations. The development v1.3.0 image contains Temurin 21, Chrome and ChromeDriver 155.0.8059.39, Gradle Wrapper 8.14.5, Selenium, Cucumber, JUnit, and POM. v1.2.0 remains the latest published release.')),
+        p('Descargar el proyecto desde GitHub' if es else 'Download the project from GitHub', 'H2x'),
+        p(('Instale Git para Windows desde git-scm.com/download/win y abra PowerShell. Clone el código fuente, entre al directorio y consulte las ramas remotas:'
+           if es else
+           'Install Git for Windows from git-scm.com/download/win and open PowerShell. Clone the source, enter the directory, and list remote branches:')),
+        p(escape('git --version\ngit clone https://github.com/IsraelBaz-coder/selenium-java-cucumber-automation-template.git\nSet-Location .\\selenium-java-cucumber-automation-template\ngit fetch origin\ngit branch -r').replace('\n', '<br/>'), 'CodeX'),
+        p(('Seleccione una referencia publicada con Docker. Sólo cuando aparezca origin/feature/hito-5-docker-base, ejecute git switch --track origin/feature/hito-5-docker-base. Compruebe los tres archivos:'
+           if es else
+           'Select a published Docker-enabled ref. Only when origin/feature/hito-5-docker-base appears, run git switch --track origin/feature/hito-5-docker-base. Check all three files:')),
+        p(escape('Test-Path .\\Dockerfile\nTest-Path .\\gradlew\nTest-Path .\\build.gradle').replace('\n', '<br/>'), 'CodeX'),
+        p(('Los tres resultados deben ser True. Al revisar esta guía, la rama Docker aún no estaba en origin; un clon de main no permite construir esta imagen. Deténgase y solicite una referencia publicada si la rama no aparece.'
+           if es else
+           'All three results must be True. When this guide was checked, the Docker branch was not yet on origin; a clone of main cannot build this image. Stop and request a published ref if the branch is absent.')),
+        p(('git clone descarga fuentes; docker build crea la imagen localmente; docker pull requeriría una imagen publicada en un registro. Aún no hay una imagen preconstruida publicada y verificada.'
+           if es else
+           'git clone downloads source; docker build creates the image locally; docker pull would require an image published in a registry. No published and verified prebuilt image is available yet.')),
+        DockerFlowDiagram(language),
+        Spacer(1, 8),
+        p(('Descripción del diagrama: GitHub entrega el código a Windows; PowerShell solicita a Docker Desktop/WSL2 iniciar el contenedor; Gradle y Cucumber ejecutan Selenium con Chrome; los resultados se escriben bajo build/.'
+           if es else
+           'Diagram description: GitHub supplies source to Windows; PowerShell asks Docker Desktop/WSL2 to start the container; Gradle and Cucumber run Selenium with Chrome; results are written under build/.')),
+    ]
+    if es:
+        items += docker_step('1. Windows, WSL2 y Docker Engine',
+            'Preparar el motor Linux.', 'Docker Desktop instalado, WSL2 y virtualización disponibles.',
+            'wsl --status\ndocker version\ndocker info',
+            'Abra Docker Desktop desde Inicio y espere a que el motor esté activo; Client y Server deben aparecer.',
+            'Server muestra Docker Desktop y Linux.', 'No aparece Server o se informa daemon unavailable.',
+            'Inicie o reinicie Docker Desktop, compruebe modo Linux; si WSL falla, ejecute wsl --update y reinicie cuando se solicite.', language)
+        items.append(PageBreak())
+        items += docker_step('2. PowerShell en la carpeta correcta',
+            'Usar este Dockerfile como contexto.', 'Repositorio descargado en Windows.',
+            'Get-Location\nTest-Path .\\Dockerfile\nTest-Path .\\gradlew\nTest-Path .\\build.gradle',
+            'Trabaje desde la carpeta clonada después de seleccionar una referencia con Docker.',
+            'Los tres Test-Path devuelven True.', 'False indica otra carpeta o una referencia sin Docker.',
+            'Abra la carpeta que contiene Dockerfile, gradlew y build.gradle.', language)
+        items += docker_step('3. Construir la imagen',
+            'Crear la imagen de desarrollo.', 'Docker Engine activo, raíz correcta y red para descargas.',
+            'docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .',
+            '--progress=plain muestra cada paso, -t asigna nombre y etiqueta, el punto usa la carpeta actual.',
+            'El build termina sin ERROR. El usuario informó la construcción inicial; Codex repitió el comando con capas en caché.',
+            'ERROR o código distinto de cero.', 'Revise daemon, red, proxy y certificados. Ante TLS/PKIX no desactive TLS.', language)
+        items.append(PageBreak())
+        items += docker_step('4. Verificar componentes',
+            'Inspeccionar versiones dentro de la imagen.', 'Imagen construida.',
+            'docker run --rm selenium-java-cucumber-template:1.3.0-dev java -version\ndocker run --rm selenium-java-cucumber-template:1.3.0-dev google-chrome --version\ndocker run --rm selenium-java-cucumber-template:1.3.0-dev chromedriver --version',
+            '--rm elimina cada contenedor temporal; el argumento final reemplaza el comando de pruebas.',
+            'Java 21; Chrome y ChromeDriver 155.0.8059.39. Codex verificó estas versiones en una imagen existente.',
+            'Imagen ausente o versiones de navegador y driver distintas.',
+            'Reconstruya desde la raíz y confirme CHROME_VERSION en Dockerfile.', language)
+        items += docker_step('5. Ejecutar e interpretar',
+            'Ejecutar el smoke test headless.', 'Imagen disponible.',
+            'docker run --rm selenium-java-cucumber-template:1.3.0-dev',
+            'Sin otro comando, se ejecuta ./gradlew --no-daemon test. Sin montaje, build/ desaparece con el contenedor.',
+            'WebDriver initialized successfully, Example Domain PASSED y BUILD SUCCESSFUL.',
+            'BUILD FAILED o paso rojo; WARN por sí solo no es fallo.',
+            'Lea el primer error real. Las advertencias CDP y selector están registradas en docs/TECHNICAL_DEBT.md.', language)
+        items += docker_step('6. Persistir reportes',
+            'Guardar build/ en Windows tras --rm.', 'Carpeta compartida y escritura para UID 10001.',
+            r'New-Item -ItemType Directory -Force .\build | Out-Null'+'\n'+r'$out = (Resolve-Path .\build).Path'+'\n'+r'$bind = "type=bind,source=$out,target=/home/automation/app/build"'+'\n'+r'docker run --rm --mount $bind selenium-java-cucumber-template:1.3.0-dev',
+            'El bind mount enlaza build/ del host con el contenedor. Codex comprobó HTML, JSON, XML y log en Windows.',
+            'BUILD SUCCESSFUL y archivos en build/reports/ y build/logs/. Un PNG de fallo no se validó porque el escenario pasó.',
+            'Permission denied o reportes ausentes.',
+            'Compruebe la carpeta, Docker Desktop y permisos para UID 10001; consulte docs/DOCKER.md.', language)
+    else:
+        items += docker_step('1. Windows, WSL2, and Docker Engine',
+            'Prepare the Linux engine.', 'Installed Docker Desktop, WSL2, and virtualization.',
+            'wsl --status\ndocker version\ndocker info',
+            'Open Docker Desktop from Start and wait for the running engine; both Client and Server must appear.',
+            'Server shows Docker Desktop and Linux.', 'No Server or daemon unavailable.',
+            'Start or restart Docker Desktop and confirm Linux mode; for WSL trouble run wsl --update and restart if requested.', language)
+        items.append(PageBreak())
+        items += docker_step('2. PowerShell in the correct directory',
+            'Use this Dockerfile as the build context.', 'Repository downloaded to Windows.',
+            'Get-Location\nTest-Path .\\Dockerfile\nTest-Path .\\gradlew\nTest-Path .\\build.gradle',
+            'Work in the cloned directory after selecting a Docker-enabled ref.',
+            'All three Test-Path commands return True.', 'False means another directory or a ref without Docker.',
+            'Open the folder containing Dockerfile, gradlew, and build.gradle.', language)
+        items += docker_step('3. Build the image',
+            'Create the development image.', 'Running engine, correct root, and download access.',
+            'docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .',
+            '--progress=plain shows each step, -t names and tags the image, and the dot selects the current folder.',
+            'Build ends without ERROR. The user reported the initial build; Codex repeated the command with cached layers.',
+            'ERROR or nonzero exit code.', 'Check daemon, network, proxy, and certificates. Do not disable TLS for TLS/PKIX.', language)
+        items.append(PageBreak())
+        items += docker_step('4. Verify components',
+            'Inspect image versions.', 'Built image.',
+            'docker run --rm selenium-java-cucumber-template:1.3.0-dev java -version\ndocker run --rm selenium-java-cucumber-template:1.3.0-dev google-chrome --version\ndocker run --rm selenium-java-cucumber-template:1.3.0-dev chromedriver --version',
+            '--rm removes each temporary container; the final argument replaces the test command.',
+            'Java 21; Chrome and ChromeDriver 155.0.8059.39. Codex checked these in an existing image.',
+            'Missing image or different browser and driver versions.',
+            'Rebuild from the root and confirm CHROME_VERSION in Dockerfile.', language)
+        items += docker_step('5. Run and interpret',
+            'Run the headless smoke test.', 'Available image.',
+            'docker run --rm selenium-java-cucumber-template:1.3.0-dev',
+            'Without extra arguments, ./gradlew --no-daemon test runs. Without a mount, build/ disappears with the container.',
+            'WebDriver initialized successfully, Example Domain PASSED, and BUILD SUCCESSFUL.',
+            'BUILD FAILED or a red step; WARN alone does not mean failure.',
+            'Read the first real error. CDP and selector warnings are tracked in docs_en/TECHNICAL_DEBT.md.', language)
+        items += docker_step('6. Retain reports',
+            'Keep build/ on Windows after --rm.', 'Shared folder and UID 10001 write access.',
+            r'New-Item -ItemType Directory -Force .\build | Out-Null'+'\n'+r'$out = (Resolve-Path .\build).Path'+'\n'+r'$bind = "type=bind,source=$out,target=/home/automation/app/build"'+'\n'+r'docker run --rm --mount $bind selenium-java-cucumber-template:1.3.0-dev',
+            'The bind mount links host and container build/. Codex verified HTML, JSON, XML, and a log on Windows.',
+            'BUILD SUCCESSFUL and files in build/reports/ and build/logs/. No failure PNG was validated because the scenario passed.',
+            'Permission denied or missing reports.',
+            'Check folder, Docker Desktop, and UID 10001 permissions; see docs_en/DOCKER.md.', language)
+    items += [
+        p('Errores y advertencias' if es else 'Errors and warnings', 'H2x'),
+        p(('Daemon detenido: inicie Docker Desktop. WSL2: wsl --status y wsl --update. Descargas: revise el paso con --progress=plain. TLS/PKIX: inspeccione certificados y proxy. Permisos: compruebe UID 10001 y carpeta compartida. Chrome/ChromeDriver: compare --version. WARN CDP 155/152 y selector features: vea TECH-001/002; no fallaron el smoke test y siguen OPEN.'
+           if es else
+           'Stopped daemon: start Docker Desktop. WSL2: use wsl --status and wsl --update. Downloads: inspect the --progress=plain step. TLS/PKIX: inspect certificates and proxy. Permissions: check UID 10001 and folder sharing. Chrome/ChromeDriver: compare --version. CDP 155/152 and features selector WARN: see TECH-001/002; they did not fail the smoke test and remain OPEN.')),
+        p(('Implementado: imagen y guías. Validado por Codex: versiones y prueba con montaje, BUILD SUCCESSFUL, reportes en Windows. Informado por usuario: build inicial correcto en Docker Desktop 4.89.0. Pendiente: regresión de TECH-001/002 y captura de fallo persistida. Bloque 1 aún abierto.'
+           if es else
+           'Implemented: image and guides. Validated by Codex: versions and mounted test, BUILD SUCCESSFUL, reports on Windows. User-reported: initial successful build on Docker Desktop 4.89.0. Pending: TECH-001/002 regression and persisted failure capture. Block 1 remains open.')),
+    ]
+    items.append(PageBreak())
+    return items
 
 class LoggingDiagram(Flowable):
     """Vector diagrams for the Block 1 logging architecture and event flow."""
@@ -141,7 +316,7 @@ story=[]
 story += [Spacer(1, 5.3*cm), p('Automation Template Selenium Java Cucumber','Cover'), p('Manual de uso', 'CoverSub'), Spacer(1, .4*cm), p('Template reutilizable de automatización Web UI', 'CoverSub'), Spacer(1, 1.7*cm), p('v1.2.0 - Stable / Validated / Published<br/>Fecha de publicación: 8 de octubre de 2026<br/>Última versión publicada: v1.2.0<br/>Java 21 (predeterminado) | Java 17 (compatible)<br/>Selenium 4.48.0<br/>Cucumber 7.34.7<br/>JUnit 5.13.4<br/>Gradle 8.14.5<br/>SLF4J 2.0.20 | Logback 1.6.5', 'CoverSub'), PageBreak()]
 story += [
     heading('Índice'),
-    p('1. Inicio rápido para primera vez<br/>2. Arquitectura<br/>3. Stack, requisitos y VS Code<br/>3.1 Configurar Java 17 paso a paso<br/>4. Configuración y comandos<br/>5. Primera automatización<br/>6. Reutilización<br/>7. Contrato CI/CD, buenas prácticas y soporte<br/>8. CI/CD con GitHub Actions<br/>9. Cómo ejecutar y revisar el CI/CD<br/>10. Quality Gate, fallos y evidencias<br/>11. Protección de la rama main<br/>12. Logging y observabilidad básica<br/>12.1 Flujo de observabilidad<br/>12.2 Niveles de logging<br/>12.3 Ejecución y seguridad<br/>12.4 Diagnóstico del logging<br/>13. Captura automática de evidencias<br/>14. Generación y consulta de reportes<br/>15. Glosario'),
+    p('1. Inicio rápido para primera vez<br/>2. Arquitectura<br/>3. Stack, requisitos y VS Code<br/>3.1 Configurar Java 17 paso a paso<br/>4. Configuración y comandos<br/>4.1 Uso con Docker<br/>5. Primera automatización<br/>6. Reutilización<br/>7. Contrato CI/CD, buenas prácticas y soporte<br/>8. CI/CD con GitHub Actions<br/>9. Cómo ejecutar y revisar el CI/CD<br/>10. Quality Gate, fallos y evidencias<br/>11. Protección de la rama main<br/>12. Logging y observabilidad básica<br/>12.1 Flujo de observabilidad<br/>12.2 Niveles de logging<br/>12.3 Ejecución y seguridad<br/>12.4 Diagnóstico del logging<br/>13. Captura automática de evidencias<br/>14. Generación y consulta de reportes<br/>15. Glosario'),
     Spacer(1, 10),
     heading('Propósito'),
     p('Esta guía permite instalar, configurar, ejecutar y ampliar el template, interpretar resultados y resolver fallos. Explica desde cero el flujo Git, Pull Request y GitHub Actions. Para crear pruebas se necesitan conocimientos básicos de Java. El ejemplo incluido es neutral y usa una página HTML local.'),
@@ -165,8 +340,9 @@ story += [heading('3. Stack, requisitos y VS Code'), table([['Tecnología','Vers
 story += [heading('Sección 3.1 — Configurar Java 17 paso a paso'), p('Use Java 17 solo cuando lo requiera su proyecto. Java 21 continúa siendo el predeterminado de la configuración actual.'), p('1. Instale un JDK 17 aprobado por su equipo. En estos ejemplos, la carpeta se representa como C:\\ruta\\jdk-17.'), p('2. Abra PowerShell en la raíz del proyecto y configure la sesión actual. Esto no modifica permanentemente Windows:'), p("$env:JAVA_HOME = 'C:\\ruta\\jdk-17'<br/>$env:Path = \"$env:JAVA_HOME\\bin;$env:Path\"<br/>java -version", 'CodeX'), p('3. Confirme que java -version indica Java 17. En VS Code, use Ctrl+Shift+P, ejecute Java: Configure Java Runtime, seleccione JDK 17 y espere la importación Gradle.'), p('4. Ejecute las pruebas:'), p('.\\gradlew.bat clean test -PjavaVersion=17', 'CodeX'), p('5. Confirme BUILD SUCCESSFUL y abra build/reports/cucumber/cucumber.html. Para volver a Java 21, abra una consola nueva o cambie JAVA_HOME a C:\\ruta\\jdk-21 y ejecute -PjavaVersion=21.'), p('No guarde rutas de JDK ni JAVA_HOME dentro del repositorio. El workflow incluido usa Java 21. Si adopta Java 17 en otro proyecto, adapte y valide su CI antes de usarlo.'), PageBreak()]
 
 story += [heading('4. Configuración y comandos'), p('config.properties contiene los valores por defecto. Los valores pueden reemplazarse con -D o con variables BASE_URL, BROWSER, HEADLESS, TIMEOUT_SECONDS y SCREENSHOT_ON_FAILURE. javaVersion usa -P, no -D.'), p('browser=CHROME<br/>headless=false<br/>baseUrl=https://example.com/<br/>timeoutSeconds=15<br/>screenshotOnFailure=true', 'CodeX'), table([['Objetivo','Comando'],['Limpiar','.\\gradlew.bat clean'],['Limpiar y ejecutar','.\\gradlew.bat clean test'],['Headless','.\\gradlew.bat clean test -Dheadless=true'],['Chrome','.\\gradlew.bat clean test -Dbrowser=CHROME'],['Edge','.\\gradlew.bat clean test -Dbrowser=EDGE'],['URL','.\\gradlew.bat clean test -DbaseUrl=https://su-aplicacion'],['Tags','.\\gradlew.bat clean test -Dcucumber.filter.tags=@example'],['Tags headless','.\\gradlew.bat clean test -Dheadless=true -Dcucumber.filter.tags=@example'],['Alias Cucumber','.\\gradlew.bat cucumber']], [5.2*cm, 11.1*cm]), Spacer(1,10), p('El smoke test incluido usa la fixture HTML local versionada y no depende de un sitio externo. baseUrl sigue disponible para los Page Objects de aplicaciones reales, pero no modifica este escenario de ejemplo. Los reports se generan en build/reports/cucumber/cucumber.html, build/reports/cucumber/cucumber.json, build/reports/tests/test y build/test-results/test; el log se guarda en build/logs/automation.log y las capturas de fallos en build/evidence/screenshots sólo si falla un escenario, screenshotOnFailure está activo y WebDriver permite capturar.'), PageBreak()]
+story += docker_manual_section('es')
 story += [heading('5&#46; Crear la primera automatización'), p('1. Cree src/test/resources/features/login.feature:'), p('# language: en<br/>Feature: Login<br/>&nbsp;&nbsp;Scenario: Successful login<br/>&nbsp;&nbsp;&nbsp;&nbsp;Given the user opens the login page<br/>&nbsp;&nbsp;&nbsp;&nbsp;When the user signs in with "username" and "password"<br/>&nbsp;&nbsp;&nbsp;&nbsp;Then the dashboard is displayed', 'CodeX'), p('2. Cree LoginPage.java en pages. Mantenga locators privados y métodos de intención, por ejemplo open(), login() e isDashboardVisible().'), p('3. Cree LoginSteps.java en steps. Obtenga el driver mediante DriverManager, delegue a LoginPage y use aserciones JUnit.'), p('4. Configure la URL con -DbaseUrl=... y ejecute .\\gradlew.bat test -Dheadless=true.'), p('5. Revise el reporte HTML. Use esperas explícitas WebDriverWait; nunca Thread.sleep.'), Spacer(1,10), heading('6. Reutilización paso a paso'), p('1. Copie o clone el template; conserve la base original sin cambios.'), p('2. Actualice rootProject.name en settings.gradle y group en build.gradle.'), p('3. Configure baseUrl con -DbaseUrl=https://su-aplicacion, sin secretos en Git.'), p('4. Abra la URL manualmente y ejecute una prueba smoke en headless.'), p('5. Cuando el smoke funcione, sustituya el ejemplo por sus Features, Pages y Steps.'), p('6. Añada tags como @smoke y @regression para seleccionar subconjuntos.'), p('7. Inicialice Git, revise .gitignore, cree una rama y abra Pull Request.'), p('8. Revise el workflow incluido en .github/workflows/ci.yml: ya ejecuta pruebas headless y publica las evidencias disponibles.'), p('Criterio de salida: el equipo puede configurar URL, ejecutar una prueba y consultar el reporte sin editar componentes compartidos.'), PageBreak()]
-story += [Spacer(1, .4*cm), heading('7. Contrato CI/CD, buenas prácticas y soporte'), p('Workflow de GitHub Actions', 'H2x'), p('El workflow .github/workflows/ci.yml ejecuta ./gradlew clean test -Dheadless=true con Java 21 de Temurin y el Gradle Wrapper en pull requests y pushes hacia main. En Windows, use .\\gradlew.bat clean test -Dheadless=true para la validación local. Exit code 0 es éxito; cualquier otro código debe fallar el job. El contrato permite BROWSER, BASE_URL, HEADLESS y filtros cucumber.filter.tags; recolecte build/reports/cucumber/ (HTML y JSON), build/reports/tests/test, build/test-results/test, build/logs/automation.log y, sólo ante fallo, build/evidence/screenshots.'), p('Flujo: checkout, Java 21 Temurin, Gradle Setup/Cache, Gradle Wrapper, pruebas headless, reportes y test-evidence. gradle/actions/setup-gradle@v6 usa caché básica para reutilizar dependencias e información de Gradle; puede reducir trabajo repetitivo en ejecuciones posteriores. Si no hay caché (cache miss), Gradle descarga lo necesario y las pruebas continúan. El Wrapper sigue siendo el mecanismo oficial. La caché no cambia Selenium, Cucumber, Page Object Model, features, steps ni el smoke test local.'), p('El workflow usa ubuntu-latest y permisos mínimos de lectura. Intenta publicar las rutas anteriores como test-evidence durante 14 días incluso si Gradle falla. Una ruta vacía, como screenshots en una ejecución sin fallos, se ignora. Descargue el artifact en Artifacts dentro del resumen de GitHub Actions. La evidencia no cambia el estado PASS/FAIL del job. Docker, Grid y secretos de CI/CD no están implementados en este template.'), p('Troubleshooting de Gradle', 'H2x'), p('.\\gradlew.bat --stop detiene Gradle Daemons ante problemas transitorios. Para diagnóstico de dependencias use .\\gradlew.bat clean test --offline o .\\gradlew.bat clean test -PjavaVersion=21 --offline; sólo usa caché y puede fallar si faltan dependencias. Si aparece PKIX path building failed o unable to find valid certification path, revise certificado Java, proxy, inspección SSL, red y daemon; ejecute java -version, .\\gradlew.bat --version, .\\gradlew.bat --stop y .\\gradlew.bat clean test. No deshabilite SSL ni ignore certificados.'), p('Regeneración del manual', 'H2x'), p('scripts/create_manual.py requiere Python 3 y reportlab. Ejecute python scripts/create_manual.py desde la raíz. Genera manuales PDF en docs/ (español) y docs_en/ (inglés). work/ es temporal, está ignorada por Git, no es parte del framework y puede eliminarse.'), p('Buenas prácticas', 'H2x'), p('Un Page Object por pantalla/componente; nombres descriptivos; configuración externa; locators estables; datos aislados; screenshots y logs como evidencia; commits pequeños; ramas, Pull Requests y revisión de código; actualización deliberada de dependencias.'), p('Para problemas de Java, navegador, features o CI, consulte docs/TROUBLESHOOTING.md y conserve el mensaje completo antes de modificar código.'), PageBreak()]
+story += [Spacer(1, .4*cm), heading('7. Contrato CI/CD, buenas prácticas y soporte'), p('Workflow de GitHub Actions', 'H2x'), p('El workflow .github/workflows/ci.yml ejecuta ./gradlew clean test -Dheadless=true con Java 21 de Temurin y el Gradle Wrapper en pull requests y pushes hacia main. En Windows, use .\\gradlew.bat clean test -Dheadless=true para la validación local. Exit code 0 es éxito; cualquier otro código debe fallar el job. El contrato permite BROWSER, BASE_URL, HEADLESS y filtros cucumber.filter.tags; recolecte build/reports/cucumber/ (HTML y JSON), build/reports/tests/test, build/test-results/test, build/logs/automation.log y, sólo ante fallo, build/evidence/screenshots.'), p('Flujo: checkout, Java 21 Temurin, Gradle Setup/Cache, Gradle Wrapper, pruebas headless, reportes y test-evidence. gradle/actions/setup-gradle@v6 usa caché básica para reutilizar dependencias e información de Gradle; puede reducir trabajo repetitivo en ejecuciones posteriores. Si no hay caché (cache miss), Gradle descarga lo necesario y las pruebas continúan. El Wrapper sigue siendo el mecanismo oficial. La caché no cambia Selenium, Cucumber, Page Object Model, features, steps ni el smoke test local.'), p('El workflow usa ubuntu-latest y permisos mínimos de lectura. Intenta publicar las rutas anteriores como test-evidence durante 14 días incluso si Gradle falla. Una ruta vacía, como screenshots en una ejecución sin fallos, se ignora. Descargue el artifact en Artifacts dentro del resumen de GitHub Actions. La evidencia no cambia el estado PASS/FAIL del job. La imagen Docker es independiente del workflow; Grid y secretos de CI/CD no están implementados.'), p('Troubleshooting de Gradle', 'H2x'), p('.\\gradlew.bat --stop detiene Gradle Daemons ante problemas transitorios. Para diagnóstico de dependencias use .\\gradlew.bat clean test --offline o .\\gradlew.bat clean test -PjavaVersion=21 --offline; sólo usa caché y puede fallar si faltan dependencias. Si aparece PKIX path building failed o unable to find valid certification path, revise certificado Java, proxy, inspección SSL, red y daemon; ejecute java -version, .\\gradlew.bat --version, .\\gradlew.bat --stop y .\\gradlew.bat clean test. No deshabilite SSL ni ignore certificados.'), p('Regeneración del manual', 'H2x'), p('scripts/create_manual.py requiere Python 3 y reportlab. Ejecute python scripts/create_manual.py desde la raíz. Genera manuales PDF en docs/ (español) y docs_en/ (inglés). work/ es temporal, está ignorada por Git, no es parte del framework y puede eliminarse.'), p('Buenas prácticas', 'H2x'), p('Un Page Object por pantalla/componente; nombres descriptivos; configuración externa; locators estables; datos aislados; screenshots y logs como evidencia; commits pequeños; ramas, Pull Requests y revisión de código; actualización deliberada de dependencias.'), p('Para problemas de Java, navegador, features o CI, consulte docs/TROUBLESHOOTING.md y conserve el mensaje completo antes de modificar código.'), PageBreak()]
 
 story += [heading('8. CI/CD con GitHub Actions'), p('CI (integración continua) valida automáticamente cambios antes de integrarlos. Detecta temprano errores de compilación y pruebas y ofrece al equipo un resultado compartido. CD significa entrega continua (preparar una versión para publicar) o despliegue continuo (publicarla automáticamente). Este proyecto utiliza principalmente CI; no despliega aplicaciones.'), p('Qué ejecuta GitHub Actions', 'H2x'), p('GitHub Actions lee .github/workflows/ci.yml cuando se abre o actualiza un Pull Request hacia main y cuando hay un push a main. Un Pull Request o PR es una propuesta de unir una rama de trabajo con otra. El workflow obtiene el código (checkout), prepara Java 21 Temurin y caché Gradle en un runner Linux ubuntu-latest, y ejecuta el Gradle Wrapper con Selenium y Cucumber en modo headless, sin ventana visible.'), p('Flujo para principiantes', 'H2x'), p('Developer -&gt; feature branch -&gt; commit -&gt; push -&gt; Pull Request hacia main -&gt; GitHub Actions -&gt; quality-gate -&gt; Gradle -&gt; Selenium + Cucumber -&gt; PASS/FAIL -&gt; evidencias -&gt; revisión -&gt; merge a main.'), p('El workflow se ejecuta automáticamente. No hay botón de ejecución manual configurado. El merge debe esperar la revisión y un check exitoso; el ruleset activo de main exige un Pull Request, la rama actualizada y quality-gate aprobado; un fallo bloquea el merge.'), p('9. Cómo ejecutar y revisar el CI/CD en GitHub Actions', 'H1x'), p('Necesita Git, acceso al repositorio en GitHub y permiso para enviar ramas. Ejecute desde la raíz del proyecto.'), p('1. Cree una rama separada de main: git switch -c feature/mi-cambio. Si ya existe: git switch feature/mi-cambio. Main es la línea compartida; una feature branch aísla su trabajo.'), p('2. Modifique el proyecto, por ejemplo un Page Object y sus pruebas.'), p('3. Revise git status y git diff. Compruebe que no haya credenciales ni archivos generados.'), p('4. Ejecute las pruebas locales:'), p('Windows PowerShell: .\\gradlew.bat clean test "-Dheadless=true"<br/>Linux/macOS: ./gradlew clean test -Dheadless=true', 'CodeX'), p('Espere BUILD SUCCESSFUL. Si ve BUILD FAILED, corrija el error.'), PageBreak()]
 story += [heading('Continuación: Pull Request y revisión de resultados'), p('5. Guarde el cambio en Git: git add ruta/del/archivo y git commit -m "Describe mi cambio". Un commit es una instantánea identificable.'), p('6. Envíe la rama: git push -u origin feature/mi-cambio la primera vez; luego git push. Push copia los commits a GitHub.'), p('7. En el repositorio de GitHub abra Pull requests -&gt; New pull request. Seleccione main como base (destino) y feature/mi-cambio como compare (origen). Revise el contenido, agregue título y descripción y pulse Create pull request. No haga merge todavía.'), p('8. GitHub detecta el PR y ejecuta .github/workflows/ci.yml automáticamente. Cada nuevo commit seguido de push a la misma rama actualiza el PR y inicia otra ejecución.'), p('Desde el Pull Request', 'H2x'), p('Abra Repositorio -&gt; Pull requests -&gt; su PR -&gt; Checks; según la interfaz, los checks también aparecen en Conversation. Busque quality-gate y pulse Details. Allí verá checkout, Java 21, caché Gradle, pruebas, carga de evidencias y resultado final. Expanda un step para ver sus logs.'), p('Desde Actions', 'H2x'), p('Abra Repositorio -&gt; Actions -&gt; workflow CI -&gt; ejecución del PR. Identifique rama, PR, commit, fecha, estado y duración. Abra la ejecución y el job quality-gate para inspeccionar cada step.'), table([['Estado visible', 'Qué significa'], ['Success (verde)', 'Las verificaciones terminaron correctamente.'], ['Failure (rojo)', 'Una verificación falló.'], ['In progress (amarillo/progreso)', 'La ejecución todavía no termina.'], ['Cancelled', 'La ejecución se canceló.'], ['Skipped', 'Un step no se ejecutó por una condición.']], [6.2*cm, 10.1*cm]), p('Lea el texto del estado además del color: así puede interpretar el resultado aun sin distinguir colores.'), PageBreak()]
@@ -305,7 +481,7 @@ if args.output is None:
         p('Java 21 default / Java 17 supported - Selenium 4.48.0 - Cucumber 7.34.7 - JUnit 5.13.4 - Gradle 8.14.5', 'CoverSub'),
         PageBreak(),
         heading('Contents'),
-        p('1. First run<br/>2. Architecture<br/>3. Stack, prerequisites and VS Code<br/>3.1 Configure Java 17<br/>4. Configuration and commands<br/>5. First automation<br/>6. Reuse<br/>7. CI/CD contract and support<br/>8. GitHub Actions workflow<br/>9. Run and inspect CI<br/>10. Quality gate and evidence<br/>11. Main branch protection<br/>12. Logging and observability<br/>12.1 Event flow<br/>12.2 Levels<br/>12.3 Execution and privacy<br/>12.4 Diagnostics<br/>13. Automatic failure evidence<br/>14. Generate and inspect reports<br/>15. Glossary'),
+        p('1. First run<br/>2. Architecture<br/>3. Stack, prerequisites and VS Code<br/>3.1 Configure Java 17<br/>4. Configuration and commands<br/>4.1 Using Docker<br/>5. First automation<br/>6. Reuse<br/>7. CI/CD contract and support<br/>8. GitHub Actions workflow<br/>9. Run and inspect CI<br/>10. Quality gate and evidence<br/>11. Main branch protection<br/>12. Logging and observability<br/>12.1 Event flow<br/>12.2 Levels<br/>12.3 Execution and privacy<br/>12.4 Diagnostics<br/>13. Automatic failure evidence<br/>14. Generate and inspect reports<br/>15. Glossary'),
         p('Purpose', 'H2x'),
         p('This manual covers setup, configuration, execution, extension, CI, evidence, reporting and diagnosis for the Web UI automation template. The included example uses a local HTML fixture. Basic Java knowledge is needed to create new tests.'),
         PageBreak(),
@@ -338,6 +514,8 @@ if args.output is None:
         p('config.properties defaults: browser=CHROME, headless=false, baseUrl=https://example.com/, timeoutSeconds=15, screenshotOnFailure=true. Override them with JVM -D properties or BROWSER, HEADLESS, BASE_URL, TIMEOUT_SECONDS and SCREENSHOT_ON_FAILURE environment variables. javaVersion is a Gradle -P property.'),
         table([['Goal', 'Command'], ['Headless suite', '.\\gradlew.bat clean test -Dheadless=true'], ['Visible suite', '.\\gradlew.bat clean test -Dheadless=false'], ['Edge', '.\\gradlew.bat clean test -Dbrowser=EDGE'], ['Java 17', '.\\gradlew.bat clean test -PjavaVersion=17'], ['Tag @example', '.\\gradlew.bat test "-Dcucumber.filter.tags=@example"'], ['Alias', '.\\gradlew.bat cucumber']], [4*cm, 12.3*cm]),
         p('The sample uses a local fixture regardless of baseUrl. A derived project can use baseUrl in its own page objects.'),
+        PageBreak(),
+        *docker_manual_section('en'),
         heading('5. First automation'),
         p('Add a .feature under src/test/resources/features, Java step definitions under steps, and a page object under pages. Place stable locators and explicit waits in the page, and scenario assertions in steps. Start with the included example_domain.feature and ExampleDomainPage.'),
         p('Example feature', 'H2x'),
@@ -348,7 +526,7 @@ if args.output is None:
         p('For a derived repository, update rootProject.name in settings.gradle and group in build.gradle. Replace sample features, pages and steps only after the smoke test works. Use tags such as @smoke and @regression to select suites. Review the included CI workflow before relying on it for a new application.'),
         PageBreak(),
         heading('7. CI/CD contract and support'),
-        p('.github/workflows/ci.yml runs on pull requests to main and pushes to main. It uses ubuntu-latest, Temurin Java 21, Gradle cache, and ./gradlew clean test -Dheadless=true. A nonzero Gradle exit code fails the job. Docker, Selenium Grid and automated deployment are not implemented.'),
+        p('.github/workflows/ci.yml runs on pull requests to main and pushes to main. It uses ubuntu-latest, Temurin Java 21, Gradle cache, and ./gradlew clean test -Dheadless=true. A nonzero Gradle exit code fails the job. The Docker image is separate from this workflow; Selenium Grid and automated deployment are not implemented.'),
         heading('8. GitHub Actions workflow'),
         p('Workflow: checkout -> Java 21 -> Gradle setup/cache -> headless test -> upload available test-evidence. The artifact includes Cucumber HTML/JSON, Gradle HTML, JUnit XML, logs and eligible failure screenshots; it is retained for 14 days. Upload runs with if: always() and cannot turn FAIL into PASS.'),
         heading('9. Run and inspect CI'),

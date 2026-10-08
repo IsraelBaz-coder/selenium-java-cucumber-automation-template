@@ -32,6 +32,6 @@ flowchart TD
 
 El Runner descubre features; Cucumber ejecuta `@Before`; `DriverManager` crea un driver por hilo; Steps invocan Pages; `@After` adjunta captura ante fallo y libera el navegador. Steps no contienen selectores, Pages no contienen aserciones de escenario y Hooks no contienen lógica de negocio. La configuración prioriza propiedades `-D`, variables de entorno y `config.properties`. Los Hooks y el ciclo del driver usan SLF4J; Logback escribe en consola y en `build/logs/automation.log`. La [guía de logging](LOGGING.md) contiene los diagramas de arquitectura y flujo, los niveles y los datos registrados. Las capturas existentes sólo se persisten bajo `build/evidence/screenshots/` ante un fallo elegible.
 
-Docker, Selenium Grid y Healenium no están implementados en v1.2.0 y no intervienen en este flujo.
+Docker no formaba parte de la versión publicada v1.2.0; la imagen en desarrollo para v1.3.0 se describe en [Docker](DOCKER.md). Selenium Grid y Healenium no están implementados ni intervienen en este flujo.
 
 Consulte [Reporting](REPORTING.md) para el contrato validado de Cucumber HTML/JSON, Gradle HTML, JUnit XML, logs y screenshots.

@@ -24,3 +24,7 @@ work/
 # Environment / secrets
 .env
 .env.*
+
+# Python cache / Cache de Python
+__pycache__/
+*.py[cod]
