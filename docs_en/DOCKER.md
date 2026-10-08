@@ -2,7 +2,7 @@
 
 [Español](../docs/DOCKER.md) · [Index](README.md) · [Technical debt](TECHNICAL_DEBT.md)
 
-**Status:** Docker is a development capability for v1.3.0. v1.2.0 remains the latest published release. With the LF rule fixed in the local working tree, Codex ran `docker build --no-cache --progress=plain -t selenium-java-cucumber-template:1.3.0-clone-test .` and `docker run --rm selenium-java-cucumber-template:1.3.0-clone-test`: both succeeded, with Example Domain PASSED and BUILD SUCCESSFUL. This correction has not yet been published to GitHub.
+**Status:** Docker is a development capability for v1.3.0. v1.2.0 remains the latest official release. The `.gitattributes` correction has been published on `feature/hito-5-docker-base` since commit `d173e7d`. The user confirmed from a clean GitHub clone that `gradlew` retains LF and `gradlew.bat` uses CRLF; the uncached Docker build and Selenium/Cucumber tests finished with BUILD SUCCESSFUL and exit code 0. The user also reported a SUCCESS result for the GitHub Actions quality-gate. Codex had previously validated the image build and run from its corrected local working tree.
 
 ## Download the project from GitHub
 
@@ -30,7 +30,7 @@
    git check-attr eol -- gradlew
    ~~~
 
-   All three `Test-Path` commands must return `True`, and Git must show `gradlew: eol: lf`. The Docker branch is published, but commit `3ba7245` lacks this rule and may convert `gradlew` to CRLF during a Windows clone. **Until the `.gitattributes` correction is published, a clean clone of that commit may fail to build.** Request a published revision with the LF rule before continuing; a clone of `main` does not provide this workflow either.
+   All three `Test-Path` commands must return `True`, and Git must show `gradlew: eol: lf`. The Docker branch includes the correction since `d173e7d`; an independent clean clone was validated with a successful Docker build and test run. Select this branch before building: `main` does not yet include this workflow.
 
 4. With Docker Desktop running, **build the image locally** using `docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .`. Then **run the tests** and retain results on Windows:
 
@@ -106,7 +106,7 @@ docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .
 ~~~
 
 - **Explanation:** --progress=plain prints full build steps; -t sets the name and tag; the final dot selects the current context. The Dockerfile compiles test classes with the existing Wrapper and does not install another Gradle.
-- **Expected result:** the build ends without ERROR and tags selenium-java-cucumber-template:1.3.0-dev. Codex verified an uncached build of the local correction with the 1.3.0-clone-test tag.
+- **Expected result:** the build ends without ERROR and tags selenium-java-cucumber-template:1.3.0-dev. The user confirmed a successful uncached build from a clean clone of the corrected branch; Codex had previously verified a local build with the 1.3.0-clone-test tag.
 - **Recognize an error:** nonzero exit code, ERROR in download, installation, or Gradle, or no daemon connection.
 - **Resolution:** check engine, network/proxy, and certificates, then retry. For TLS/PKIX, inspect the JDK trust store and corporate proxy; do not disable TLS. For a download failure, check the logged URL and connection before changing dependencies.
 
