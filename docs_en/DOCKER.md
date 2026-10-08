@@ -2,7 +2,7 @@
 
 [Español](../docs/DOCKER.md) · [Index](README.md) · [Technical debt](TECHNICAL_DEBT.md)
 
-**Status:** Docker is a development capability for v1.3.0. v1.2.0 remains the latest published release. The user reported a successful build and run on Docker Desktop 4.89.0. Codex later checked the engine, component versions in an existing image, a build with cached layers, and a test run with a build/ bind mount: BUILD SUCCESSFUL and Example Domain PASSED. Codex did not perform the initial uncached build.
+**Status:** Docker is a development capability for v1.3.0. v1.2.0 remains the latest published release. With the LF rule fixed in the local working tree, Codex ran `docker build --no-cache --progress=plain -t selenium-java-cucumber-template:1.3.0-clone-test .` and `docker run --rm selenium-java-cucumber-template:1.3.0-clone-test`: both succeeded, with Example Domain PASSED and BUILD SUCCESSFUL. This correction has not yet been published to GitHub.
 
 ## Download the project from GitHub
 
@@ -27,9 +27,10 @@
    Test-Path .\Dockerfile
    Test-Path .\gradlew
    Test-Path .\build.gradle
+   git check-attr eol -- gradlew
    ~~~
 
-   All three commands must return `True`. **When this guide was checked, the Docker branch had not been published to `origin`; a clone of `main` does not provide this workflow.** If the branch is missing, stop and request a published Docker-enabled ref from the maintainer. Do not try to build from a version without `Dockerfile`.
+   All three `Test-Path` commands must return `True`, and Git must show `gradlew: eol: lf`. The Docker branch is published, but commit `3ba7245` lacks this rule and may convert `gradlew` to CRLF during a Windows clone. **Until the `.gitattributes` correction is published, a clean clone of that commit may fail to build.** Request a published revision with the LF rule before continuing; a clone of `main` does not provide this workflow either.
 
 4. With Docker Desktop running, **build the image locally** using `docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .`. Then **run the tests** and retain results on Windows:
 
@@ -105,7 +106,7 @@ docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .
 ~~~
 
 - **Explanation:** --progress=plain prints full build steps; -t sets the name and tag; the final dot selects the current context. The Dockerfile compiles test classes with the existing Wrapper and does not install another Gradle.
-- **Expected result:** the build ends without ERROR and tags selenium-java-cucumber-template:1.3.0-dev. The initial uncached build was reported by the user; Codex repeated the command with cached layers.
+- **Expected result:** the build ends without ERROR and tags selenium-java-cucumber-template:1.3.0-dev. Codex verified an uncached build of the local correction with the 1.3.0-clone-test tag.
 - **Recognize an error:** nonzero exit code, ERROR in download, installation, or Gradle, or no daemon connection.
 - **Resolution:** check engine, network/proxy, and certificates, then retry. For TLS/PKIX, inspect the JDK trust store and corporate proxy; do not disable TLS. For a download failure, check the logged URL and connection before changing dependencies.
 
@@ -171,6 +172,7 @@ Test-Path .\build\logs\automation.log
 | Gradle TLS/PKIX | Inspect JDK certificates, TLS interception, and proxy; do not disable TLS or change versions without diagnosis. |
 | Permission denied in build/ | Check Windows folder access and UID 10001 write permission; rerun the verified mount. |
 | Different Chrome/ChromeDriver versions | Run both --version commands, rebuild, and confirm CHROME_VERSION=155.0.8059.39. |
+| `./gradlew: not found` on Linux although it exists | Check `git check-attr eol -- gradlew`: it must report `lf`. A CRLF checkout turns `#!/bin/sh` into `#!/bin/sh\r`, so Linux cannot find the interpreter. Use a revision containing `.gitattributes` with `gradlew text eol=lf` and clone again; `chmod +x` alone does not fix line endings. |
 | CDP 155 → 152 WARN | See [TECH-001](TECHNICAL_DEBT.md); the smoke test passed, but DevTools features need later regression checks. |
 | features selector WARN | See [TECH-002](TECHNICAL_DEBT.md); the current scenario was discovered and passed. |
 

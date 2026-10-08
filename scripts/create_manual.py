@@ -125,10 +125,10 @@ def docker_manual_section(language):
         p(('Seleccione una referencia publicada con Docker. Sólo cuando aparezca origin/feature/hito-5-docker-base, ejecute git switch --track origin/feature/hito-5-docker-base. Compruebe los tres archivos:'
            if es else
            'Select a published Docker-enabled ref. Only when origin/feature/hito-5-docker-base appears, run git switch --track origin/feature/hito-5-docker-base. Check all three files:')),
-        p(escape('Test-Path .\\Dockerfile\nTest-Path .\\gradlew\nTest-Path .\\build.gradle').replace('\n', '<br/>'), 'CodeX'),
-        p(('Los tres resultados deben ser True. Al revisar esta guía, la rama Docker aún no estaba en origin; un clon de main no permite construir esta imagen. Deténgase y solicite una referencia publicada si la rama no aparece.'
+        p(escape('Test-Path .\\Dockerfile\nTest-Path .\\gradlew\nTest-Path .\\build.gradle\ngit check-attr eol -- gradlew').replace('\n', '<br/>'), 'CodeX'),
+        p(('Los tres Test-Path deben ser True y Git debe mostrar gradlew: eol: lf. La rama Docker está publicada, pero el commit 3ba7245 puede convertir gradlew a CRLF en Windows. Solicite una revisión publicada con la regla LF antes de construir; main no incluye Docker.'
            if es else
-           'All three results must be True. When this guide was checked, the Docker branch was not yet on origin; a clone of main cannot build this image. Stop and request a published ref if the branch is absent.')),
+           'All three Test-Path results must be True and Git must show gradlew: eol: lf. The Docker branch is published, but commit 3ba7245 may convert gradlew to CRLF on Windows. Request a published revision with the LF rule before building; main does not include Docker.')),
         p(('git clone descarga fuentes; docker build crea la imagen localmente; docker pull requeriría una imagen publicada en un registro. Aún no hay una imagen preconstruida publicada y verificada.'
            if es else
            'git clone downloads source; docker build creates the image locally; docker pull would require an image published in a registry. No published and verified prebuilt image is available yet.')),
@@ -148,15 +148,15 @@ def docker_manual_section(language):
         items.append(PageBreak())
         items += docker_step('2. PowerShell en la carpeta correcta',
             'Usar este Dockerfile como contexto.', 'Repositorio descargado en Windows.',
-            'Get-Location\nTest-Path .\\Dockerfile\nTest-Path .\\gradlew\nTest-Path .\\build.gradle',
+            'Get-Location\nTest-Path .\\Dockerfile\nTest-Path .\\gradlew\nTest-Path .\\build.gradle\ngit check-attr eol -- gradlew',
             'Trabaje desde la carpeta clonada después de seleccionar una referencia con Docker.',
-            'Los tres Test-Path devuelven True.', 'False indica otra carpeta o una referencia sin Docker.',
-            'Abra la carpeta que contiene Dockerfile, gradlew y build.gradle.', language)
+            'Los tres Test-Path devuelven True y eol indica lf.', 'False o eol unspecified indica otra carpeta o una revisión sin la corrección.',
+            'Abra la carpeta correcta y use una revisión que incluya .gitattributes con gradlew text eol=lf.', language)
         items += docker_step('3. Construir la imagen',
             'Crear la imagen de desarrollo.', 'Docker Engine activo, raíz correcta y red para descargas.',
             'docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .',
             '--progress=plain muestra cada paso, -t asigna nombre y etiqueta, el punto usa la carpeta actual.',
-            'El build termina sin ERROR. El usuario informó la construcción inicial; Codex repitió el comando con capas en caché.',
+            'El build termina sin ERROR. Codex verificó la corrección local con un build sin caché y pruebas Docker exitosas.',
             'ERROR o código distinto de cero.', 'Revise daemon, red, proxy y certificados. Ante TLS/PKIX no desactive TLS.', language)
         items.append(PageBreak())
         items += docker_step('4. Verificar componentes',
@@ -190,15 +190,15 @@ def docker_manual_section(language):
         items.append(PageBreak())
         items += docker_step('2. PowerShell in the correct directory',
             'Use this Dockerfile as the build context.', 'Repository downloaded to Windows.',
-            'Get-Location\nTest-Path .\\Dockerfile\nTest-Path .\\gradlew\nTest-Path .\\build.gradle',
+            'Get-Location\nTest-Path .\\Dockerfile\nTest-Path .\\gradlew\nTest-Path .\\build.gradle\ngit check-attr eol -- gradlew',
             'Work in the cloned directory after selecting a Docker-enabled ref.',
-            'All three Test-Path commands return True.', 'False means another directory or a ref without Docker.',
-            'Open the folder containing Dockerfile, gradlew, and build.gradle.', language)
+            'All three Test-Path commands return True and eol reports lf.', 'False or eol unspecified means a wrong directory or revision without the fix.',
+            'Use the correct folder and a revision with gradlew text eol=lf in .gitattributes.', language)
         items += docker_step('3. Build the image',
             'Create the development image.', 'Running engine, correct root, and download access.',
             'docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .',
             '--progress=plain shows each step, -t names and tags the image, and the dot selects the current folder.',
-            'Build ends without ERROR. The user reported the initial build; Codex repeated the command with cached layers.',
+            'Build ends without ERROR. Codex verified the local correction with an uncached build and successful Docker tests.',
             'ERROR or nonzero exit code.', 'Check daemon, network, proxy, and certificates. Do not disable TLS for TLS/PKIX.', language)
         items.append(PageBreak())
         items += docker_step('4. Verify components',
@@ -224,12 +224,12 @@ def docker_manual_section(language):
             'Check folder, Docker Desktop, and UID 10001 permissions; see docs_en/DOCKER.md.', language)
     items += [
         p('Errores y advertencias' if es else 'Errors and warnings', 'H2x'),
-        p(('Daemon detenido: inicie Docker Desktop. WSL2: wsl --status y wsl --update. Descargas: revise el paso con --progress=plain. TLS/PKIX: inspeccione certificados y proxy. Permisos: compruebe UID 10001 y carpeta compartida. Chrome/ChromeDriver: compare --version. WARN CDP 155/152 y selector features: vea TECH-001/002; no fallaron el smoke test y siguen OPEN.'
+        p(('Si ./gradlew: not found aunque existe, compruebe git check-attr eol -- gradlew: debe ser lf; chmod +x no corrige CRLF. Use una revisión publicada con la regla LF y vuelva a clonar. Daemon detenido: inicie Docker Desktop. WSL2: wsl --status y wsl --update. Descargas: revise --progress=plain. TLS/PKIX: revise certificados y proxy. Permisos: compruebe UID 10001. WARN CDP y selector: TECH-001/002 siguen OPEN.'
            if es else
-           'Stopped daemon: start Docker Desktop. WSL2: use wsl --status and wsl --update. Downloads: inspect the --progress=plain step. TLS/PKIX: inspect certificates and proxy. Permissions: check UID 10001 and folder sharing. Chrome/ChromeDriver: compare --version. CDP 155/152 and features selector WARN: see TECH-001/002; they did not fail the smoke test and remain OPEN.')),
-        p(('Implementado: imagen y guías. Validado por Codex: versiones y prueba con montaje, BUILD SUCCESSFUL, reportes en Windows. Informado por usuario: build inicial correcto en Docker Desktop 4.89.0. Pendiente: regresión de TECH-001/002 y captura de fallo persistida. Bloque 1 aún abierto.'
+           'If ./gradlew: not found although it exists, check git check-attr eol -- gradlew: it must report lf; chmod +x cannot fix CRLF. Use a published revision with the LF rule and clone again. Stopped daemon: start Docker Desktop. WSL2: use wsl --status and wsl --update. Downloads: inspect --progress=plain. TLS/PKIX: check certificates and proxy. Permissions: check UID 10001. CDP and selector WARN: TECH-001/002 remain OPEN.')),
+        p(('Implementado localmente: regla LF y guías. Validado por Codex: build Docker sin caché, prueba Docker y prueba Windows, BUILD SUCCESSFUL. La corrección aún no está publicada. TECH-001/002 siguen OPEN; Bloque 1 continúa abierto.'
            if es else
-           'Implemented: image and guides. Validated by Codex: versions and mounted test, BUILD SUCCESSFUL, reports on Windows. User-reported: initial successful build on Docker Desktop 4.89.0. Pending: TECH-001/002 regression and persisted failure capture. Block 1 remains open.')),
+           'Implemented locally: LF rule and guides. Validated by Codex: uncached Docker build, Docker test, and Windows test, BUILD SUCCESSFUL. The correction is not yet published. TECH-001/002 remain OPEN; Block 1 remains open.')),
     ]
     items.append(PageBreak())
     return items

@@ -2,7 +2,7 @@
 
 [English](../docs_en/DOCKER.md) · [Índice](README.md) · [Deuda técnica](TECHNICAL_DEBT.md)
 
-**Estado:** Docker es una capacidad en desarrollo para v1.3.0. La última release publicada sigue siendo v1.2.0. El usuario informó una construcción y ejecución correctas en Docker Desktop 4.89.0. Codex verificó después el motor, las versiones dentro de una imagen existente, un build con capas en caché y una ejecución de pruebas con montaje de build/: BUILD SUCCESSFUL y escenario Example Domain PASSED. Codex no realizó la construcción inicial sin caché.
+**Estado:** Docker es una capacidad en desarrollo para v1.3.0. La última release publicada sigue siendo v1.2.0. Con la regla LF corregida en el árbol local, Codex ejecutó `docker build --no-cache --progress=plain -t selenium-java-cucumber-template:1.3.0-clone-test .` y `docker run --rm selenium-java-cucumber-template:1.3.0-clone-test`: ambos terminaron correctamente, con Example Domain PASSED y BUILD SUCCESSFUL. Esta corrección aún no está publicada en GitHub.
 
 ## Descargar el proyecto desde GitHub
 
@@ -27,9 +27,10 @@
    Test-Path .\Dockerfile
    Test-Path .\gradlew
    Test-Path .\build.gradle
+   git check-attr eol -- gradlew
    ~~~
 
-   Los tres comandos deben devolver `True`. **Al revisar esta guía, la rama Docker aún no estaba publicada en `origin`; un clon de `main` no ofrece este flujo.** Si la rama no aparece, deténgase y solicite al mantenedor una referencia publicada con Docker. No intente construir desde una versión sin `Dockerfile`.
+   Los tres `Test-Path` deben devolver `True` y Git debe mostrar `gradlew: eol: lf`. La rama Docker está publicada, pero el commit `3ba7245` carece de esta regla y puede convertir `gradlew` a CRLF al clonar en Windows. **Hasta que se publique la corrección de `.gitattributes`, un clon limpio de ese commit puede fallar al construir.** Solicite una revisión publicada que incluya la regla LF antes de seguir; un clon de `main` tampoco ofrece este flujo.
 
 4. Con Docker Desktop activo, **construya la imagen localmente** con `docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .`. Luego **ejecute las pruebas** y conserve los resultados en Windows:
 
@@ -105,7 +106,7 @@ docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .
 ~~~
 
 - **Explicación:** --progress=plain imprime los pasos completos; -t asigna el nombre y etiqueta; el punto final indica el contexto actual. El Dockerfile compila las clases de prueba con el Wrapper; no instala otro Gradle.
-- **Resultado esperado:** el build termina sin ERROR y la imagen queda etiquetada selenium-java-cucumber-template:1.3.0-dev. La construcción inicial sin caché fue informada por el usuario; Codex repitió el comando con capas en caché.
+- **Resultado esperado:** el build termina sin ERROR y la imagen queda etiquetada selenium-java-cucumber-template:1.3.0-dev. Codex verificó un build sin caché de la corrección local con la etiqueta 1.3.0-clone-test.
 - **Cómo reconocer un error:** código de salida distinto de cero, ERROR en descarga, instalación o Gradle, o incapacidad de conectar al daemon.
 - **Cómo resolverlo:** confirme motor, red/proxy y certificados; repita el comando. En TLS/PKIX revise el trust store del JDK y el proxy corporativo. No desactive la validación TLS. Si falla una descarga, compruebe la URL en el log y la conexión antes de cambiar dependencias.
 
@@ -171,6 +172,7 @@ Test-Path .\build\logs\automation.log
 | TLS/PKIX en Gradle | Revise certificados del JDK, inspección TLS y proxy; no desactive TLS ni cambie versiones sin diagnóstico. |
 | Permiso denegado en build/ | Revise acceso a la carpeta de Windows y escritura del UID 10001; repita el montaje verificado. |
 | Chrome/ChromeDriver diferentes | Ejecute los dos comandos --version, reconstruya y confirme CHROME_VERSION=155.0.8059.39. |
+| `./gradlew: not found` en Linux aunque existe | Compruebe `git check-attr eol -- gradlew`: debe indicar `lf`. Un checkout CRLF convierte `#!/bin/sh` en `#!/bin/sh\r` y Linux no encuentra el intérprete. Use una revisión que incluya `.gitattributes` con `gradlew text eol=lf` y vuelva a clonar; `chmod +x` por sí solo no corrige los finales de línea. |
 | WARN CDP 155 → 152 | Consulte [TECH-001](TECHNICAL_DEBT.md); el smoke validado pasó, pero funciones DevTools necesitan regresión posterior. |
 | WARN selector features | Consulte [TECH-002](TECHNICAL_DEBT.md); el escenario actual se descubrió y pasó. |
 
