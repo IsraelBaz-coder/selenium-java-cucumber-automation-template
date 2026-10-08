@@ -2,7 +2,7 @@
 
 [Español](../docs/TECHNICAL_DEBT.md) · [Index](README.md)
 
-Warnings observed while running the development v1.3.0 Docker image. Codex's local bind-mount run ended with BUILD SUCCESSFUL and the Example Domain scenario PASSED; the warnings did not fail the suite. The earlier Docker Desktop 4.89.0 confirmation was supplied by the user. Neither entry closes Block 1 or changes dependencies.
+Warnings observed while running the development v1.3.0 Docker image. The local suite ended with BUILD SUCCESSFUL and the Example Domain scenario PASSED; the warnings did not fail the suite. Both entries remain OPEN during Block 2. A later block must address them; dependencies and the runner stay unchanged here.
 
 ## TECH-001 — Selenium CDP compatibility
 

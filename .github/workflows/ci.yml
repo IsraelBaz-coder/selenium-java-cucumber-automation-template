@@ -46,3 +46,44 @@ jobs:
             build/evidence/screenshots/
           if-no-files-found: ignore
           retention-days: 14
+
+  docker-tests:
+    name: docker-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Build test image
+        run: docker build --progress=plain -t selenium-java-cucumber-template:ci .
+
+      - name: Run headless tests and collect evidence
+        shell: bash
+        run: |
+          mkdir -p docker-artifacts/build
+          container_id=$(docker create --shm-size=2g selenium-java-cucumber-template:ci ./gradlew --no-daemon test -Dheadless=true)
+          set +e
+          timeout 15m docker start -a "$container_id" > docker-artifacts/container.log 2>&1
+          start_status=$?
+          set -e
+          cat docker-artifacts/container.log
+          if [ "$start_status" -eq 124 ]; then
+            docker stop "$container_id" || true
+          fi
+          test_status=$(docker inspect --format '{{.State.ExitCode}}' "$container_id")
+          docker cp "$container_id:/home/automation/app/build/." docker-artifacts/build/
+          docker rm -f "$container_id"
+          if [ "$start_status" -ne 0 ]; then
+            exit "$start_status"
+          fi
+          exit "$test_status"
+
+      - name: Upload Docker test evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: docker-test-evidence
+          path: docker-artifacts/
+          if-no-files-found: ignore
+          retention-days: 14

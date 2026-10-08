@@ -122,6 +122,8 @@ The GitHub Actions workflow runs:
 
 The workflow uses Temurin Java 21 and `gradle/actions/setup-gradle@v6` for caching. A cache miss is not an error: Gradle downloads the required dependencies and continues. The repository's Gradle Wrapper remains the execution method (`./gradlew`; `.\gradlew.bat` on Windows). Gradle exits with code `0` when the build and tests pass; any other code fails the check. Available evidence includes Gradle and Cucumber reports, JUnit XML results, logs, and screenshots when applicable. Use `-Dheadless=true` for local headless execution.
 
+The same workflow adds `docker-tests`: it builds the existing Dockerfile, runs `./gradlew --no-daemon test -Dheadless=true` in the container, and retains its log and `build/` through `docker cp`. The test exit code determines the job result. When files exist, `docker-test-evidence` uploads even on failure and is retained for 14 days. See [Docker in CI](docs_en/DOCKER.md#docker-in-github-actions) for the workflow, both jobs, logs, and artifacts. This Block 2 job needs a real GitHub Actions run before it can be called validated. `v1.3.0` is a development target, not a published release.
+
 ## Create and reuse
 
 Create a feature, Page Object and Step Definitions in their respective folders, then run the wrapper. To start a project, clone/copy this template, change `rootProject.name` and `group`, configure `baseUrl`, replace the example and initialize Git. Do not store secrets in files; use environment variables or pipeline secrets.

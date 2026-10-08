@@ -150,6 +150,8 @@ El workflow de GitHub Actions ejecuta:
 
 El workflow usa Java 21 con Temurin y prepara la caché mediante `gradle/actions/setup-gradle@v6`. Un cache miss no es un error: Gradle descarga lo necesario y continúa. El Wrapper sigue siendo el mecanismo oficial (`./gradlew`; `.\gradlew.bat` en Windows). Gradle devuelve código `0` cuando el build y las pruebas pasan; otro código hace fallar el check. Las evidencias disponibles incluyen reportes Gradle y Cucumber, resultados XML, logs y capturas cuando corresponden. Para una ejecución local sin interfaz, use `-Dheadless=true`.
 
+El mismo workflow incorpora `docker-tests`: construye el Dockerfile, ejecuta `./gradlew --no-daemon test -Dheadless=true` en el contenedor y conserva el log y `build/` mediante `docker cp`. El código de salida de las pruebas determina el resultado del job. Si existen archivos, `docker-test-evidence` se sube incluso ante fallo y se conserva 14 días. Consulte [Docker en CI](docs/DOCKER.md#docker-en-github-actions) para abrir el workflow, los dos jobs, los logs y los artifacts. Este job es nuevo en el Bloque 2 y requiere una ejecución real de GitHub Actions antes de declararlo validado. `v1.3.0` es objetivo en desarrollo, no una release publicada.
+
 ## Crear y reutilizar
 
 1. Cree una feature en `src/test/resources/features`.
