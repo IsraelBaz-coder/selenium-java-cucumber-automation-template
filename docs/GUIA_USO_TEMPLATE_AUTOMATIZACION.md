@@ -15,6 +15,7 @@
 - [Inicio rápido para primera vez](#inicio-rápido-para-primera-vez)
 - [Selección de versión de Java](#selección-de-versión-de-java)
 - [Configuración y comandos](#configuración-y-comandos)
+- [Uso con Docker](#uso-con-docker)
 - [Primera automatización](#primera-automatización)
 - [Reutilizar el template](#reutilizar-el-template)
 - [Contrato CI/CD](#contrato-cicd)
@@ -237,6 +238,20 @@ El smoke test interno abre la fixture local; `baseUrl` queda disponible para las
 | Estado Git | git status |
 
 Variables disponibles: BASE_URL, BROWSER, HEADLESS, TIMEOUT_SECONDS y SCREENSHOT_ON_FAILURE. Reporte: `build/reports/cucumber/cucumber.html`; screenshots de fallos: `build/evidence/screenshots/`; log: `build/logs/automation.log`.
+
+## Uso con Docker
+
+Docker ejecuta las pruebas dentro de un contenedor Linux con Java 21, Chrome/ChromeDriver 155 y el Gradle Wrapper existente. En Windows necesita Docker Desktop con WSL2 y el motor Linux activo. Abra PowerShell en la raíz del repositorio, confirme `docker version` y `docker info`, y ejecute:
+
+~~~powershell
+docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .
+docker run --rm selenium-java-cucumber-template:1.3.0-dev java -version
+docker run --rm selenium-java-cucumber-template:1.3.0-dev google-chrome --version
+docker run --rm selenium-java-cucumber-template:1.3.0-dev chromedriver --version
+docker run --rm selenium-java-cucumber-template:1.3.0-dev
+~~~
+
+El resultado esperado es BUILD SUCCESSFUL y el escenario Example Domain PASSED. `--progress=plain` muestra los pasos del build, `-t` asigna la etiqueta y `--rm` borra el contenedor temporal. Una advertencia WARN no implica fallo: [TECH-001/002](TECHNICAL_DEBT.md) registran las actuales de CDP y descubrimiento Cucumber. Sin montaje, `build/` desaparece al eliminar el contenedor; la [guía Docker](DOCKER.md) documenta un bind mount comprobado para guardar reportes y explica permisos, errores de daemon/WSL2, descargas y TLS/PKIX. La construcción inicial y ejecución fueron informadas por el usuario; Codex verificó una ejecución con montaje. La última release publicada sigue siendo v1.2.0 y el Bloque 1 permanece abierto.
 
 ## Primera automatización
 

@@ -29,4 +29,4 @@ flowchart TD
   H --> R[Reports and screenshots]
 ```
 
-JUnit Platform discovers the runner; Cucumber calls `@Before`; `DriverManager` creates a driver per thread; steps call pages; `@After` records eligible failure evidence before closing the browser. Steps hold no locators, pages hold no scenario assertions, and hooks hold no business logic. Configuration precedence is JVM `-D`, environment, then `config.properties`. See [logging](LOGGING.md), [evidence](EVIDENCE.md), and [reporting](REPORTING.md). Docker, Grid, and Healenium are not implemented.
+JUnit Platform discovers the runner; Cucumber calls `@Before`; `DriverManager` creates a driver per thread; steps call pages; `@After` records eligible failure evidence before closing the browser. Steps hold no locators, pages hold no scenario assertions, and hooks hold no business logic. Configuration precedence is JVM `-D`, environment, then `config.properties`. See [logging](LOGGING.md), [evidence](EVIDENCE.md), and [reporting](REPORTING.md). Docker was not part of published v1.2.0; a development image for v1.3.0 is described in [Docker](DOCKER.md). Grid and Healenium are not implemented.
