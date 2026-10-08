@@ -2,7 +2,7 @@
 
 [English](../docs_en/TECHNICAL_DEBT.md) · [Índice](README.md)
 
-Registro de advertencias observadas durante la ejecución de la imagen Docker de v1.3.0 en desarrollo. La ejecución local de Codex con bind mount terminó con BUILD SUCCESSFUL y el escenario Example Domain PASSED; las advertencias no fallaron la suite. La confirmación previa en Docker Desktop 4.89.0 también fue facilitada por el usuario. Ninguna de estas entradas declara cerrado el Bloque 1 ni cambia dependencias.
+Registro de advertencias observadas durante la ejecución de la imagen Docker de v1.3.0 en desarrollo. La suite local terminó con BUILD SUCCESSFUL y el escenario Example Domain PASSED; las advertencias no fallaron la suite. Ambas entradas permanecen OPEN durante Bloque 2. Su tratamiento requiere un bloque posterior; aquí no se cambian dependencias ni el runner.
 
 ## TECH-001 — Compatibilidad Selenium CDP
 

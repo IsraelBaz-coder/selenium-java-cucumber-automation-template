@@ -2,7 +2,7 @@
 
 [Español](../docs/DOCKER.md) · [Index](README.md) · [Technical debt](TECHNICAL_DEBT.md)
 
-**Status:** Docker is a development capability for v1.3.0. v1.2.0 remains the latest official release. The `.gitattributes` correction has been published on `feature/hito-5-docker-base` since commit `d173e7d`. The user confirmed from a clean GitHub clone that `gradlew` retains LF and `gradlew.bat` uses CRLF; the uncached Docker build and Selenium/Cucumber tests finished with BUILD SUCCESSFUL and exit code 0. The user also reported a SUCCESS result for the GitHub Actions quality-gate. Codex had previously validated the image build and run from its corrected local working tree.
+**Status:** Docker is a development capability for v1.3.0; v1.2.0 remains the latest official release. Block 1 is integrated into `main`. Block 2 adds `docker-tests` to GitHub Actions on this working branch; it still needs validation in a real workflow run.
 
 ## Download the project from GitHub
 
@@ -21,7 +21,7 @@
    git branch -r
    ~~~
 
-3. Select a **published** ref that includes Docker. When `git branch -r` lists `origin/feature/hito-5-docker-base`, run `git switch --track origin/feature/hito-5-docker-base`. If you select another branch or version, check for all three files before proceeding:
+3. Select a Docker-enabled ref such as `main`. To review Block 2 before integration, select `feature/hito-5-docker-ci` when available on the remote. Check the chosen ref for all three files before proceeding:
 
    ~~~powershell
    Test-Path .\Dockerfile
@@ -30,7 +30,7 @@
    git check-attr eol -- gradlew
    ~~~
 
-   All three `Test-Path` commands must return `True`, and Git must show `gradlew: eol: lf`. The Docker branch includes the correction since `d173e7d`; an independent clean clone was validated with a successful Docker build and test run. Select this branch before building: `main` does not yet include this workflow.
+   All three `Test-Path` commands must return `True`, and Git must show `gradlew: eol: lf`. The correction since `d173e7d` is part of `main`. To review Block 2 before integration, use `feature/hito-5-docker-ci` when it is available on the remote.
 
 4. With Docker Desktop running, **build the image locally** using `docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .`. Then **run the tests** and retain results on Windows:
 
@@ -49,7 +49,7 @@
 
 ## What Docker does and what the image contains
 
-Docker runs the framework in a Linux container isolated from the JDK and browser installed on Windows. It helps reproduce the same test environment across machines. The image contains Temurin Java 21, Chrome and ChromeDriver 155.0.8059.39, Gradle Wrapper 8.14.5, Selenium, Cucumber, JUnit, and POM. The Dockerfile targets Linux amd64, works in /home/automation/app, and runs as user automation (UID 10001). Tests use headless Chrome; Edge is not installed. Neither Selenium Grid nor Docker-based CI is included. Base image and browser versions are pinned; Ubuntu packages downloaded during an uncached build can change with the repository.
+Docker runs the framework in a Linux container isolated from the JDK and browser installed on Windows. It helps reproduce the same test environment across machines. The image contains Temurin Java 21, Chrome and ChromeDriver 155.0.8059.39, Gradle Wrapper 8.14.5, Selenium, Cucumber, JUnit, and POM. The Dockerfile targets Linux amd64, works in /home/automation/app, and runs as user automation (UID 10001). Tests use headless Chrome; Edge is not installed. Block 2 adds a Docker job to the CI workflow; Selenium Grid is not implemented. Base image and browser versions are pinned; Ubuntu packages downloaded during an uncached build can change with the repository.
 
 ~~~text
 GitHub (source code) → Windows PowerShell → Docker Desktop / WSL2 → Linux container
@@ -176,4 +176,12 @@ Test-Path .\build\logs\automation.log
 | CDP 155 → 152 WARN | See [TECH-001](TECHNICAL_DEBT.md); the smoke test passed, but DevTools features need later regression checks. |
 | features selector WARN | See [TECH-002](TECHNICAL_DEBT.md); the current scenario was discovered and passed. |
 
-**States:** implemented = Dockerfile and guides exist; validated here = described image inspection and mounted test; pending = TECH-001/002 resolution and persistence of a real failure screenshot. Block 1 remains open pending authorization to close it.
+## Docker in GitHub Actions
+
+The `.github/workflows/ci.yml` workflow runs on pull requests targeting `main` and pushes to `main`. `quality-gate` keeps the existing Gradle run on Java 21. The new `docker-tests` job builds the image locally from the existing Dockerfile and runs Selenium/Cucumber tests in headless Chrome. The job has a 35-minute limit and the container run a 15-minute limit. The container gets 2 GiB of shared memory for Chrome. No image is pushed to a registry.
+
+The job saves `docker-artifacts/container.log` and copies `build/` from the stopped container. When generated, `docker-test-evidence` contains Cucumber HTML/JSON, Gradle HTML, JUnit XML, `automation.log`, and screenshots. Upload is attempted with `if: always()` even if the build or tests fail; when there are no files, no artifact appears. The test exit code is preserved, so a failed suite leaves `docker-tests` in Failure. The artifact is retained for 14 days.
+
+To inspect results on GitHub, open **Pull requests → your PR → Checks**, select `quality-gate` or `docker-tests`, then **Details**. Expand **Build test image** or **Run headless tests and collect evidence** to read the error and log. Alternatively, open **Actions → CI → run**, confirm branch, commit, and status, then open each job and its steps. Under **Artifacts** in the run summary, download `test-evidence` or `docker-test-evidence` when available. Extract the ZIP to inspect `container.log` and `build/reports/`, `build/test-results/`, `build/logs/`, and `build/evidence/`. A failure before tests may yield only a log or no artifact. The new job still needs a real PR run on GitHub for validation; a local run cannot establish that result.
+
+**Status:** Docker and Docker CI are implemented for development target `v1.3.0`. `v1.2.0` remains the latest published release. [TECH-001/002](TECHNICAL_DEBT.md) remain OPEN for later treatment.

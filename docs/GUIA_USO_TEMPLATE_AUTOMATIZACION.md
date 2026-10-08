@@ -251,7 +251,7 @@ docker run --rm selenium-java-cucumber-template:1.3.0-dev chromedriver --version
 docker run --rm selenium-java-cucumber-template:1.3.0-dev
 ~~~
 
-El resultado esperado es BUILD SUCCESSFUL y el escenario Example Domain PASSED. `--progress=plain` muestra los pasos del build, `-t` asigna la etiqueta y `--rm` borra el contenedor temporal. Una advertencia WARN no implica fallo: [TECH-001/002](TECHNICAL_DEBT.md) registran las actuales de CDP y descubrimiento Cucumber. Sin montaje, `build/` desaparece al eliminar el contenedor; la [guía Docker](DOCKER.md) documenta un bind mount comprobado para guardar reportes y explica permisos, errores de daemon/WSL2, descargas y TLS/PKIX. La construcción inicial y ejecución fueron informadas por el usuario; Codex verificó una ejecución con montaje. La última release publicada sigue siendo v1.2.0 y el Bloque 1 permanece abierto.
+El resultado esperado es BUILD SUCCESSFUL y el escenario Example Domain PASSED. `--progress=plain` muestra los pasos del build, `-t` asigna la etiqueta y `--rm` borra el contenedor temporal. Una advertencia WARN no implica fallo: [TECH-001/002](TECHNICAL_DEBT.md) registran las actuales de CDP y descubrimiento Cucumber. Sin montaje, `build/` desaparece al eliminar el contenedor; la [guía Docker](DOCKER.md) documenta un bind mount comprobado para guardar reportes y explica permisos, errores de daemon/WSL2, descargas y TLS/PKIX. En CI, `docker-tests` usa `docker cp` para conservar la evidencia. La última release publicada sigue siendo v1.2.0; v1.3.0 está en desarrollo.
 
 ## Primera automatización
 
@@ -333,6 +333,8 @@ El workflow ejecuta `./gradlew clean test -Dheadless=true`; en Windows, el coman
 
 El workflow `.github/workflows/ci.yml` ejecuta `./gradlew clean test -Dheadless=true` con Java 21 de Temurin en Pull Requests dirigidos a `main` y pushes a `main`. Usa el Gradle Wrapper existente y falla si Gradle o las pruebas fallan. Después intenta subir el artifact `test-evidence` con reportes Gradle/Cucumber, resultados JUnit, logs y screenshots disponibles. Se conserva 14 días y se descarga desde **Artifacts** en el resumen de la ejecución de GitHub Actions. Screenshots pueden no existir cuando no hay escenarios fallidos; una ruta ausente no hace fallar la carga. El artifact no altera el resultado PASS/FAIL.
 
+El segundo job `docker-tests` construye el Dockerfile y ejecuta `./gradlew --no-daemon test -Dheadless=true` dentro de la imagen. Copia `build/` y guarda `container.log` en `docker-test-evidence`, que también se intenta subir ante fallos. El exit code real de las pruebas determina el estado del job. Consulte [Docker en GitHub Actions](DOCKER.md#docker-en-github-actions) para ver jobs, logs y artifacts. La ejecución de GitHub de este job sigue pendiente de validación en un PR.
+
 Después de configurar Java, `gradle/actions/setup-gradle@v6` prepara la caché básica de Gradle. Reutiliza dependencias y otros datos del directorio de usuario de Gradle cuando hay una entrada disponible, lo que evita trabajo repetitivo y puede reducir el tiempo de preparación en ejecuciones posteriores. Si no existe caché (cache miss), Gradle descarga lo necesario y las pruebas continúan normalmente; la caché no es requisito para el pipeline. `./gradlew` sigue siendo el mecanismo oficial de CI y `.\gradlew.bat` su equivalente en Windows. Esta optimización no cambia la lógica de Selenium, Cucumber, Page Object Model, features, steps ni del smoke test con fixture local.
 
 ## CI/CD con GitHub Actions
@@ -343,8 +345,8 @@ GitHub Actions es el servicio que ejecuta las instrucciones de `.github/workflow
 
 ```text
 Developer → feature branch → commit → push → Pull Request hacia main
-→ GitHub Actions → quality-gate → Gradle → Selenium + Cucumber
-→ PASS/FAIL → evidencias → revisión → merge a main
+→ GitHub Actions → quality-gate (Gradle) y docker-tests (Docker)
+→ Selenium + Cucumber headless → PASS/FAIL → evidencias → revisión → merge a main
 ```
 
 ## Cómo ejecutar y revisar el CI/CD en GitHub Actions

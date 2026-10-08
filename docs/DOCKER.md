@@ -2,7 +2,7 @@
 
 [English](../docs_en/DOCKER.md) · [Índice](README.md) · [Deuda técnica](TECHNICAL_DEBT.md)
 
-**Estado:** Docker es una capacidad en desarrollo para v1.3.0. La última release oficial sigue siendo v1.2.0. La corrección de `.gitattributes` está publicada en `feature/hito-5-docker-base` desde el commit `d173e7d`. El usuario confirmó en una clonación limpia de GitHub que `gradlew` conserva LF y `gradlew.bat` usa CRLF; el build Docker sin caché y las pruebas Selenium/Cucumber terminaron con BUILD SUCCESSFUL y código de salida 0. También informó que el quality-gate de GitHub Actions terminó en SUCCESS. Codex había validado previamente el build y la ejecución de la imagen desde su árbol local corregido.
+**Estado:** Docker es una capacidad en desarrollo para v1.3.0; la última release oficial sigue siendo v1.2.0. El Bloque 1 está integrado en `main`. El Bloque 2 añade `docker-tests` a GitHub Actions en esta rama de trabajo; aún requiere validación en una ejecución real del workflow.
 
 ## Descargar el proyecto desde GitHub
 
@@ -21,7 +21,7 @@
    git branch -r
    ~~~
 
-3. Seleccione una referencia **publicada** que incluya Docker. Cuando `git branch -r` muestre `origin/feature/hito-5-docker-base`, ejecute `git switch --track origin/feature/hito-5-docker-base`. Si selecciona otra rama o versión, confirme que contenga los tres archivos antes de continuar:
+3. Seleccione una referencia con Docker, como `main`. Para revisar Bloque 2 antes de integrarlo, seleccione `feature/hito-5-docker-ci` cuando esté disponible en el remoto. Confirme que la referencia elegida contenga los tres archivos antes de continuar:
 
    ~~~powershell
    Test-Path .\Dockerfile
@@ -30,7 +30,7 @@
    git check-attr eol -- gradlew
    ~~~
 
-   Los tres `Test-Path` deben devolver `True` y Git debe mostrar `gradlew: eol: lf`. La rama Docker incluye la corrección desde `d173e7d`; se validó desde una clonación limpia independiente con build y pruebas Docker exitosos. Seleccione esta rama antes de construir: `main` no incluye todavía este flujo.
+   Los tres `Test-Path` deben devolver `True` y Git debe mostrar `gradlew: eol: lf`. La corrección desde `d173e7d` forma parte de `main`. Para revisar el trabajo del Bloque 2 antes de integrarlo, use la rama `feature/hito-5-docker-ci` cuando esté disponible en el remoto.
 
 4. Con Docker Desktop activo, **construya la imagen localmente** con `docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .`. Luego **ejecute las pruebas** y conserve los resultados en Windows:
 
@@ -49,7 +49,7 @@
 
 ## Qué es y qué contiene
 
-Docker ejecuta el framework en un contenedor Linux aislado del JDK y navegador instalados en Windows. Sirve para repetir el mismo entorno de pruebas en distintos equipos. La imagen usa Temurin Java 21, Chrome y ChromeDriver 155.0.8059.39, Gradle Wrapper 8.14.5, Selenium, Cucumber, JUnit y POM. El Dockerfile utiliza Linux amd64, trabaja en /home/automation/app y ejecuta como usuario automation (UID 10001). La prueba usa Chrome headless; Edge no está instalado. No hay Selenium Grid ni integración Docker en el workflow de CI. Las versiones base y del navegador están fijadas; los paquetes Ubuntu descargados durante un build sin caché pueden variar con el repositorio.
+Docker ejecuta el framework en un contenedor Linux aislado del JDK y navegador instalados en Windows. Sirve para repetir el mismo entorno de pruebas en distintos equipos. La imagen usa Temurin Java 21, Chrome y ChromeDriver 155.0.8059.39, Gradle Wrapper 8.14.5, Selenium, Cucumber, JUnit y POM. El Dockerfile utiliza Linux amd64, trabaja en /home/automation/app y ejecuta como usuario automation (UID 10001). La prueba usa Chrome headless; Edge no está instalado. El Bloque 2 añade un job Docker al workflow de CI; Selenium Grid no está implementado. Las versiones base y del navegador están fijadas; los paquetes Ubuntu descargados durante un build sin caché pueden variar con el repositorio.
 
 ~~~text
 GitHub (código fuente) → Windows PowerShell → Docker Desktop / WSL2 → contenedor Linux
@@ -176,4 +176,12 @@ Test-Path .\build\logs\automation.log
 | WARN CDP 155 → 152 | Consulte [TECH-001](TECHNICAL_DEBT.md); el smoke validado pasó, pero funciones DevTools necesitan regresión posterior. |
 | WARN selector features | Consulte [TECH-002](TECHNICAL_DEBT.md); el escenario actual se descubrió y pasó. |
 
-**Estados:** implementado = Dockerfile y guías presentes; validado aquí = inspección de imagen y prueba con montaje descritas; pendiente = resolución de TECH-001/002 y captura real de fallo persistida. El Bloque 1 permanece abierto hasta autorización de cierre.
+## Docker en GitHub Actions
+
+El workflow `.github/workflows/ci.yml` se activa en pull requests hacia `main` y pushes a `main`. `quality-gate` conserva la ejecución Gradle con Java 21. El nuevo job `docker-tests` construye la imagen local con el Dockerfile existente y ejecuta las pruebas Selenium/Cucumber en Chrome headless. Tiene un límite de 35 minutos; la ejecución del contenedor, 15 minutos. El contenedor tiene 2 GiB de memoria compartida para Chrome. No se envía ninguna imagen a un registro.
+
+El job guarda `docker-artifacts/container.log` y copia `build/` desde el contenedor detenido. El artifact `docker-test-evidence` incluye, si se generaron, Cucumber HTML/JSON, Gradle HTML, JUnit XML, `automation.log` y capturas. Se intenta subir con `if: always()` aun si el build o los tests fallan; si no hay archivos, no aparece el artifact. El código de salida de las pruebas se conserva: una suite fallida deja `docker-tests` en Failure. El artifact dura 14 días.
+
+Para consultar el resultado en GitHub: abra **Pull requests → su PR → Checks** y seleccione `quality-gate` o `docker-tests` → **Details**. Expanda **Build test image** o **Run headless tests and collect evidence** para leer el error y el log. También puede abrir **Actions → CI → ejecución**; confirme rama, commit y estado, seleccione cada job y revise sus pasos. En el resumen de esa ejecución, bajo **Artifacts**, descargue `test-evidence` o `docker-test-evidence` cuando existan. Descomprima el ZIP para leer `container.log` y `build/reports/`, `build/test-results/`, `build/logs/` y `build/evidence/`. Un fallo previo a las pruebas puede producir solamente un log o ningún artifact. El nuevo job se validará en GitHub cuando exista una ejecución real del PR; una prueba local no acredita ese resultado.
+
+**Estado:** Docker y CI Docker están implementados para `v1.3.0` en desarrollo. `v1.2.0` sigue siendo la última release publicada. [TECH-001/002](TECHNICAL_DEBT.md) siguen OPEN y se tratarán después de este bloque.

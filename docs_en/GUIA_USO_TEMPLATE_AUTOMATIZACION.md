@@ -142,7 +142,7 @@ docker run --rm selenium-java-cucumber-template:1.3.0-dev chromedriver --version
 docker run --rm selenium-java-cucumber-template:1.3.0-dev
 ~~~
 
-Expect BUILD SUCCESSFUL and Example Domain PASSED. `--progress=plain` displays build steps, `-t` names the image, and `--rm` deletes the temporary container. A WARN does not itself mean failure: [TECH-001/002](TECHNICAL_DEBT.md) track the current CDP and Cucumber discovery warnings. Without a mount, `build/` disappears with the container; the [Docker guide](DOCKER.md) gives a verified bind mount for reports and covers permissions, daemon/WSL2, downloads, and TLS/PKIX. The initial build and run were reported by the user; Codex verified a mounted run. v1.2.0 remains the latest published release and Block 1 stays open.
+Expect BUILD SUCCESSFUL and Example Domain PASSED. `--progress=plain` displays build steps, `-t` names the image, and `--rm` deletes the temporary container. A WARN does not itself mean failure: [TECH-001/002](TECHNICAL_DEBT.md) track the current CDP and Cucumber discovery warnings. Without a mount, `build/` disappears with the container; the [Docker guide](DOCKER.md) gives a verified bind mount for reports and covers permissions, daemon/WSL2, downloads, and TLS/PKIX. In CI, `docker-tests` uses `docker cp` to retain evidence. v1.2.0 remains the latest published release; v1.3.0 is in development.
 
 ## First automation and reuse
 
@@ -168,9 +168,13 @@ flowchart LR
   J --> T[Headless clean test]
   T --> R[Reports, logs, screenshots]
   R --> A[test-evidence artifact]
+  PR --> D[docker-tests]
+  D --> I[Build Docker image]
+  I --> C[Headless tests in container]
+  C --> E[docker-test-evidence artifact]
 ```
 
-`.github/workflows/ci.yml` runs on pull requests targeting `main` and pushes to `main`, uses the Gradle Wrapper on `ubuntu-latest`, and executes `./gradlew clean test -Dheadless=true`. A nonzero Gradle exit code fails `quality-gate`. The artifact upload uses `if: always()` and retains available `test-evidence` for 14 days; an empty screenshot path is expected on PASS. For a failing PR, open **Checks → quality-gate → Details**, identify the failed step, download the artifact from **Actions** if present, fix on the branch, and rerun. The repository's documented `main` ruleset requires a PR and passing check. The Docker image is separate from this workflow; automated deployment, Grid, and CI secrets are not implemented.
+`.github/workflows/ci.yml` runs on pull requests targeting `main` and pushes to `main`. `quality-gate` keeps the Gradle Wrapper run on `ubuntu-latest` with `./gradlew clean test -Dheadless=true`; a nonzero exit code fails that job. Its upload uses `if: always()` and retains available `test-evidence` for 14 days. The new `docker-tests` job builds the existing Dockerfile, runs headless tests inside the container, copies `build/`, and uploads available `docker-test-evidence` even on failure. The test exit code determines its result. Open **Checks → each job → Details** and **Actions → CI → run → Artifacts** for logs and downloads. Docker job validation on GitHub remains pending until a PR run. Automated deployment and Grid are not implemented.
 
 To review a change in GitHub: create a focused branch, run the local headless suite, inspect `git status` and `git diff`, commit, and push. Open a pull request with `main` as base and your branch as compare. Each pushed commit reruns the workflow. In the PR, inspect **Checks**; in **Actions**, inspect the workflow run, `quality-gate` job, individual steps, and the artifact. A failed or pending required check blocks integration. Correct the branch, rerun locally, commit, push, and wait for a new result.
 
@@ -293,7 +297,7 @@ flowchart TD
   REPORTS --> ART[test-evidence]
 ~~~
 
-CI checks changes before integration. CD may mean continuous delivery or automatic deployment; this repository uses CI and does not deploy an application. A PR to main or a push to main starts .github/workflows/ci.yml on ubuntu-latest. It runs `./gradlew clean test -Dheadless=true`; on Windows use `.\gradlew.bat clean test "-Dheadless=true"`. Exit code 0 passes and any other code fails quality-gate. The contract supports CHROME/EDGE selection and cucumber.filter.tags. Docker is separate from this workflow.
+CI checks changes before integration. CD may mean continuous delivery or automatic deployment; this repository uses CI and does not deploy an application. A PR to main or a push to main starts .github/workflows/ci.yml on ubuntu-latest. `quality-gate` runs `./gradlew clean test -Dheadless=true`; on Windows use `.\gradlew.bat clean test "-Dheadless=true"`. `docker-tests` runs the same suite inside Docker in headless mode. Exit code 0 passes and any other test exit code fails its job. The Gradle contract supports CHROME/EDGE selection and cucumber.filter.tags; the Docker image includes Chrome.
 
 After Temurin Java 21 setup, gradle/actions/setup-gradle@v6 prepares a basic cache. A hit may reuse dependencies and reduce preparation time; a miss causes Gradle to download what it needs. The Wrapper remains the execution method. Caching changes no Selenium, Cucumber, POM, Feature, Step, or local-fixture behavior.
 
