@@ -4,6 +4,8 @@
 
 **Latest published release:** v1.2.0 (October 8, 2026). Stable / Validated / Published.
 
+**Candidate:** v1.3.0 — Release Candidate / Pending Publication; target date 2026-10-12 UTC.
+
 | Symptom | Likely cause | Action |
 |---|---|---|
 | `java` not found | JDK or PATH | Install JDK 21 or 17, reopen the terminal, run `java -version`. |

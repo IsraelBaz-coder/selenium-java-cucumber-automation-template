@@ -8,6 +8,7 @@ Este proyecto sigue [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.h
 
 | Versión | Estado documentado |
 |---|---|
+| v1.3.0 | Release Candidate / Pending Publication; fecha objetivo 2026-10-12 UTC. Docker, integración CI y hardening preparados. No publicada. |
 | v1.2.0 | Última versión publicada; 8 de octubre de 2026, 06:19:01 UTC; Stable / Validated / Published. Hito 4: logging, evidencias, reporting y cierre de release. |
 | v1.1.0 | Publicada el 1 de octubre de 2026; Hito 3: CI/CD, artifacts y `quality-gate`. |
 | v1.0.2 | Hotfix de documentación publicado el 26 de septiembre de 2026. |
@@ -15,6 +16,8 @@ Este proyecto sigue [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.h
 | v1.0.0 | Base estable inicial, publicada el 18 de septiembre de 2026. |
 
 El [GitHub Release v1.2.0](https://github.com/IsraelBaz-coder/selenium-java-cucumber-automation-template/releases/tag/v1.2.0) confirma tag, versión, estado y fecha. El [changelog](../CHANGELOG.md) conserva los cambios históricos. La [auditoría del Hito 4](HITO4_RELEASE_AUDIT.md) contiene estados de candidato como evidencia del periodo anterior a la publicación.
+
+La fecha 2026-10-12 es el objetivo de v1.3.0. Sólo el `published_at` de un GitHub Release real podrá convertirse en fecha oficial.
 
 ## Cierre documental de una versión futura
 

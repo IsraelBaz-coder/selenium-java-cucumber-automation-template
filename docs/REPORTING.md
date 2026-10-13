@@ -4,6 +4,8 @@
 
 v1.2.0 es la última versión publicada (8 de octubre de 2026); estado Stable / Validated / Published.
 
+v1.3.0 es la candidata Release Candidate / Pending Publication, con fecha objetivo 2026-10-12 UTC.
+
 
 ## Propósito
 

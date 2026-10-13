@@ -2,7 +2,7 @@
 
 [Español](../docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md) · [English index](README.md)
 
-<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Reusable Web UI automation template<br>v1.2.0 · Stable / Validated / Published · October 8, 2026<br>Latest published release: v1.2.0<br>Java 21 (default) / Java 17 (supported) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
+<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Reusable Web UI automation template<br>v1.3.0 · Release Candidate / Pending Publication · target 12/10/2026 UTC (2026-10-12)<br>Latest published release: v1.2.0<br>Java 21 (default) / Java 17 (supported) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
 
 ## Contents
 
@@ -25,7 +25,7 @@
 
 This template provides a reusable Web UI test foundation: Java, Selenium WebDriver, Cucumber/Gherkin, JUnit Platform, Gradle Wrapper, and Page Object Model. Its neutral smoke test opens `src/test/resources/fixtures/example_page.html` and checks the Example Domain heading. The fixture is local; `baseUrl` remains available when adapting the template to an application.
 
-**Current release:** [v1.2.0](https://github.com/IsraelBaz-coder/selenium-java-cucumber-automation-template/releases/tag/v1.2.0), published October 8, 2026 at 06:19:01 UTC; **Stable / Validated / Published**. Earlier published versions are v1.1.0 (October 1, 2026), v1.0.2 (September 26, 2026), v1.0.1 (September 25, 2026), and v1.0.0 (September 18, 2026); these are UTC publication dates. See the [changelog](../CHANGELOG.md) for preserved historical changes and the [Milestone 4 audit](HITO4_RELEASE_AUDIT.md) for prepublication evidence.
+**Current state:** v1.3.0 is Release Candidate / Pending Publication with a 2026-10-12 UTC target date and includes Docker, CI integration, and automatic [evidence](EVIDENCE.md). [v1.2.0](https://github.com/IsraelBaz-coder/selenium-java-cucumber-automation-template/releases/tag/v1.2.0), published October 8, 2026 at 06:19:01 UTC, remains the latest published release.
 
 ### Before you begin
 
@@ -41,10 +41,11 @@ Run all commands from the project root and replace example paths with your own. 
 
 ### Release history
 
-Application-specific URL, browser, test data, and externally managed secrets belong in properties, environment variables, or JVM arguments. The v1.0.2 documentation-only hotfix corrected post-release status without changing functionality or dependencies. v1.2.0 remains the latest published stable release.
+Application-specific URL, browser, test data, and externally managed secrets belong in properties, environment variables, or JVM arguments. v1.3.0 is Release Candidate / Pending Publication with a 2026-10-12 UTC target date; v1.2.0 remains the latest published stable release.
 
 | Version | Date | Type and status | Main changes |
 |---|---|---|---|
+| v1.3.0 | Target October 12, 2026 UTC | Release Candidate / Pending Publication | Docker, CI integration, hardening, and evidence; not published. |
 | v1.2.0 | October 8, 2026 | Stable / Validated / Published | SLF4J/Logback logging, automatic failure evidence, Cucumber HTML/JSON reporting. |
 | v1.1.0 | October 1, 2026 | Stable / Validated / Published | Validated CI, evidence, Gradle cache, Quality Gate, Branch Protection, and operational documentation. |
 | v1.0.2 | September 26, 2026 | Documentation-only Hotfix; Stable / Validated / Published | Corrected post-release status; this release did not add functionality, dependencies, CI/CD, Docker, Selenium Grid, Healenium, or Playwright. |
@@ -174,7 +175,7 @@ flowchart LR
   C --> E[docker-test-evidence artifact]
 ```
 
-`.github/workflows/ci.yml` runs on pull requests targeting `main` and pushes to `main`. `quality-gate` keeps the Gradle Wrapper run on `ubuntu-latest` with `./gradlew clean test -Dheadless=true`; a nonzero exit code fails that job. Its upload uses `if: always()` and retains available `test-evidence` for 14 days. The new `docker-tests` job builds the existing Dockerfile, runs headless tests inside the container, copies `build/`, and uploads available `docker-test-evidence` even on failure. The test exit code determines its result. Open **Checks → each job → Details** and **Actions → CI → run → Artifacts** for logs and downloads. Docker job validation on GitHub remains pending until a PR run. Automated deployment and Grid are not implemented.
+`.github/workflows/ci.yml` runs on pull requests targeting `main` and pushes to `main`. `quality-gate` keeps the Gradle Wrapper run on `ubuntu-latest` with `./gradlew clean test -Dheadless=true`; a nonzero exit code fails that job. Its upload uses `if: always()` and retains available `test-evidence` for 14 days. `docker-tests` builds the Dockerfile, runs headless tests inside the container, and copies only Gradle/Cucumber reports, JUnit XML, logs, available screenshots, and `container.log`; it excludes classes, caches, temporary files, and Gradle binary results. The hardening PR and subsequent `main` run recorded both jobs as successful. Open **Checks → each job → Details** and **Actions → CI → run → Artifacts** for logs and downloads. Automated deployment and Grid are not implemented.
 
 To review a change in GitHub: create a focused branch, run the local headless suite, inspect `git status` and `git diff`, commit, and push. Open a pull request with `main` as base and your branch as compare. Each pushed commit reruns the workflow. In the PR, inspect **Checks**; in **Actions**, inspect the workflow run, `quality-gate` job, individual steps, and the artifact. A failed or pending required check blocks integration. Correct the branch, rerun locally, commit, push, and wait for a new result.
 

@@ -2,6 +2,8 @@
 
 [Español](../docs/TECHNICAL_DEBT.md) · [Index](README.md)
 
+Register applicable to the v1.3.0 candidate — Release Candidate / Pending Publication; target date 2026-10-12 UTC.
+
 ## TECH-001 — Selenium CDP compatibility
 
 **Status: OPEN.** `build.gradle` pins Selenium 4.48.0; Docker pins Chrome and ChromeDriver 155.0.8059.39. The observed local run uses Chrome/CDP 153; Selenium Manager resolves the local driver. In both environments Selenium selects CDP 152 and emits a warning. There are no explicit DevTools, `executeCdpCommand`, or CDP API calls in `src/`; the smoke scenario uses standard WebDriver and passes.
@@ -12,4 +14,8 @@
 
 **Status: CLOSED after Block 3 local and Docker validation.** The warning came from `@SelectClasspathResource("features")` in `RunCucumberTest`: Cucumber/JUnit Platform requested a package selector. It was replaced by `@SelectPackages("features")`, retaining `@IncludeEngines("cucumber")`, glue, plugins, and the `src/test/resources/features/` layout.
 
-**Evidence:** before the change, the local run showed two discovery warnings. Afterwards, the local headless, visible, and `@example` filtered suites ran 6/6 tests (one scenario) without that warning. The subsequent Docker run confirmed the same count and no warning. HTML/JSON and XML reports remained available. A GitHub Actions run for this branch awaits a PR.
+**Evidence:** before the change, the local run showed two discovery warnings. Afterwards, the local headless, visible, and `@example` filtered suites ran 6/6 tests (one scenario) without that warning. The subsequent Docker run confirmed the same count and no warning. HTML/JSON and XML reports remained available. The PR and subsequent `main` push completed `quality-gate` and `docker-tests` successfully.
+
+## LIMIT-001 — apt package variation
+
+**Status: OPEN / known limitation.** The Dockerfile pins the Temurin image by digest and Chrome/ChromeDriver by version, while `apt-get` uses the current repository rather than a snapshot. A future uncached build can resolve different system package versions. This candidate documents the limit without changing repositories or dependencies.

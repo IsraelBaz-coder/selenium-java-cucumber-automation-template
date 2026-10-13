@@ -4,6 +4,8 @@
 
 **Última versión publicada:** v1.2.0 (8 de octubre de 2026). Stable / Validated / Published.
 
+**Candidata:** v1.3.0 — Release Candidate / Pending Publication; fecha objetivo 2026-10-12 UTC.
+
 Al fallar un escenario Cucumber, el Hook `@After` registra el fallo y, si `screenshotOnFailure=true`, entrega el WebDriver actual a `EvidenceManager` antes de cerrarlo. El gestor comprueba que exista una sesión activa para `RemoteWebDriver` y que implemente `TakesScreenshot`, captura bytes PNG, guarda el archivo y lo adjunta al escenario mediante `Scenario.attach(image, "image/png", "failure-screenshot")`. La captura no se ejecuta para escenarios exitosos. Si falta el driver, está cerrado o falla la captura, se registra un warning y el fallo original del escenario se conserva. Si falla el guardado, todavía se intenta adjuntar la imagen.
 
 ```mermaid

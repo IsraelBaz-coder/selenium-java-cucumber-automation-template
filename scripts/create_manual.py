@@ -1,4 +1,5 @@
 import argparse
+import os
 from pathlib import Path
 from math import atan2, cos, sin, pi
 from xml.sax.saxutils import escape
@@ -10,12 +11,94 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import cm
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, Table, TableStyle, KeepTogether, Flowable
 
+from release_metadata import (
+    PREVIOUS_RELEASE,
+    PREPARE_STATUS,
+    PUBLISHED_STATUS,
+    RELEASE_NAME,
+    RELEASE_TAG,
+    RELEASE_TITLE,
+    TARGET_DATE,
+    TARGET_DISPLAY,
+    document_metadata,
+)
+
 ROOT = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser(description='Generate the Selenium Java Cucumber user manual.')
 parser.add_argument('--output', type=Path, help='Optional PDF path for validation without replacing the repository manual.')
+parser.add_argument('--en-output', type=Path, help='Optional English PDF path for validation without replacing the repository manual.')
+parser.add_argument('--mode', choices=('prepare', 'release-ready', 'preview-final', 'published'), default='release-ready')
+parser.add_argument('--publication-date', help='Planned UTC day (YYYY-MM-DD); required only for preview-final.')
+parser.add_argument('--published-at', help='Confirmed GitHub published_at timestamp; required only for published.')
 args = parser.parse_args()
 OUT = args.output.resolve() if args.output else ROOT / 'docs' / 'Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf'
-EN_OUT = ROOT / 'docs_en' / 'Manual_Selenium_Java_Cucumber_Automation_Template.pdf'
+EN_OUT = args.en_output.resolve() if args.en_output else ROOT / 'docs_en' / 'Manual_Selenium_Java_Cucumber_Automation_Template.pdf'
+OFFICIAL_PDFS = {
+    (ROOT / 'docs' / 'Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf').resolve(),
+    (ROOT / 'docs_en' / 'Manual_Selenium_Java_Cucumber_Automation_Template.pdf').resolve(),
+}
+
+if args.mode == 'prepare' and (args.publication_date or args.published_at):
+    parser.error('prepare mode does not accept publication metadata')
+if args.mode == 'prepare' and args.output is None and args.en_output is None:
+    parser.error('prepare mode requires explicit non-official output paths')
+if args.mode == 'prepare' and (OUT in OFFICIAL_PDFS or EN_OUT in OFFICIAL_PDFS):
+    parser.error('prepare mode cannot overwrite official PDF paths')
+if args.mode == 'release-ready' and (args.publication_date or args.published_at):
+    parser.error('release-ready mode uses the centrally configured launch date')
+if args.mode == 'preview-final':
+    if not args.publication_date or args.published_at:
+        parser.error('--publication-date is required only for --mode=preview-final')
+    if args.output is None or args.en_output is None:
+        parser.error('preview-final requires --output and --en-output temporary paths')
+    if OUT in OFFICIAL_PDFS or EN_OUT in OFFICIAL_PDFS:
+        parser.error('preview-final cannot overwrite official PDF paths')
+if args.mode == 'published' and (not args.published_at or args.publication_date):
+    parser.error('--published-at is required only for --mode=published')
+if args.mode == 'published' and os.environ.get('RELEASE_DOCS_VERIFIED') != '1':
+    parser.error('published mode is restricted to the verified finalize workflow')
+
+META = document_metadata(
+    args.mode,
+    publication_date=args.publication_date,
+    published_at=args.published_at,
+)
+FINAL_LAYOUT = META['mode'] in ('release-ready', 'preview-final', 'published')
+publication_iso = META['day'] if FINAL_LAYOUT else None
+publication_display = META['display'] if FINAL_LAYOUT else None
+publication_es = META['es'] if FINAL_LAYOUT else None
+publication_en = META['en'] if FINAL_LAYOUT else None
+target_display_utc = f'{TARGET_DISPLAY} UTC'
+pdf_subject = (
+    'Release-ready artifact; verify the GitHub Release, tag, commit and published_at before distribution.'
+    if META['mode'] == 'release-ready'
+    else 'Confirmed published release artifact.' if META['mode'] == 'published'
+    else 'Temporary final-layout preview.' if META['mode'] == 'preview-final'
+    else 'Prepublication preparation artifact.'
+)
+
+if FINAL_LAYOUT:
+    docker_context_es = f'La versión publicada v1.3.0 contiene Temurin 21, Chrome y ChromeDriver 155.0.8059.39, Gradle Wrapper 8.14.5, Selenium, Cucumber, JUnit y POM. Su estado es Stable / Validated / Published desde el {publication_es} UTC (ISO: {publication_iso}).'
+    docker_context_en = f'The published v1.3.0 release contains Temurin 21, Chrome and ChromeDriver 155.0.8059.39, Gradle Wrapper 8.14.5, Selenium, Cucumber, JUnit, and POM. Its status is Stable / Validated / Published as of {publication_en} UTC (ISO: {publication_iso}).'
+    validation_context_es = 'v1.3.0 es la última release oficial y está publicada.'
+    validation_context_en = 'v1.3.0 is the latest official published release.'
+    ci_context_es = 'La validación registrada del PR y main confirmó quality-gate, docker-tests y ambos artifacts. v1.3.0 está publicada con estado Stable / Validated / Published.'
+    ci_context_en = 'Recorded PR and main validation confirmed quality-gate, docker-tests, and both artifacts. v1.3.0 is published with Stable / Validated / Published status.'
+    cover_es = f'{escape(RELEASE_NAME)}<br/>{PUBLISHED_STATUS}<br/>Fecha de lanzamiento: {publication_display}'
+    cover_en = f'{escape(RELEASE_NAME)}<br/>{PUBLISHED_STATUS}<br/>Release date: {publication_en}'
+    history_es = (RELEASE_TAG, f'{publication_iso} UTC<br/>Published', f'{escape(RELEASE_TITLE)}.')
+    history_en = (RELEASE_TAG, f'{publication_iso} UTC<br/>Published', f'{escape(RELEASE_TITLE)}.')
+else:
+    docker_context_es = f'La candidata {RELEASE_TAG} contiene Temurin 21, Chrome y ChromeDriver 155.0.8059.39, Gradle Wrapper 8.14.5, Selenium, Cucumber, JUnit y POM. Su estado es {PREPARE_STATUS} y su fecha objetivo es {target_display_utc} (ISO: {TARGET_DATE}). La última release publicada sigue siendo {PREVIOUS_RELEASE}.'
+    docker_context_en = f'The {RELEASE_TAG} candidate contains Temurin 21, Chrome and ChromeDriver 155.0.8059.39, Gradle Wrapper 8.14.5, Selenium, Cucumber, JUnit, and POM. Its status is {PREPARE_STATUS} and its target date is {target_display_utc} (ISO: {TARGET_DATE}). {PREVIOUS_RELEASE} remains the latest published release.'
+    validation_context_es = 'v1.2.0 sigue siendo la última release oficial; v1.3.0 es candidata y no está publicada.'
+    validation_context_en = 'v1.2.0 remains the latest official release; v1.3.0 is a candidate and is not published.'
+    ci_context_es = 'La validación registrada del PR y main confirmó quality-gate, docker-tests y ambos artifacts. v1.3.0 continúa como candidata; v1.2.0 es la última release publicada.'
+    ci_context_en = 'Recorded PR and main validation confirmed quality-gate, docker-tests, and both artifacts. v1.3.0 remains a candidate; v1.2.0 is the latest published release.'
+    cover_es = f'{escape(RELEASE_NAME)}<br/>{PREPARE_STATUS}<br/>Fecha objetivo: {target_display_utc} (ISO: {TARGET_DATE})<br/>No es la fecha real de publicación<br/>Última versión publicada: {PREVIOUS_RELEASE}'
+    cover_en = f'{escape(RELEASE_NAME)}<br/>{PREPARE_STATUS}<br/>Target date: {target_display_utc} (ISO: {TARGET_DATE})<br/>Not the actual publication date<br/>Latest published release: {PREVIOUS_RELEASE}'
+    history_es = (RELEASE_TAG, f'Objetivo {target_display_utc} ({TARGET_DATE})', f'{PREPARE_STATUS}. Docker, integración CI, hardening y evidencias; aún no publicada.')
+    history_en = (RELEASE_TAG, f'Target {target_display_utc} ({TARGET_DATE})', f'{PREPARE_STATUS}. Docker, CI integration, hardening, and evidence; not published.')
 
 styles = getSampleStyleSheet()
 styles.add(ParagraphStyle(name='Cover', parent=styles['Title'], fontName='Helvetica-Bold', fontSize=25, leading=31, textColor=colors.HexColor('#152B4E'), alignment=TA_CENTER, spaceAfter=16))
@@ -114,9 +197,9 @@ def docker_manual_section(language):
     es = language == 'es'
     items = [
         heading('4.1. Uso con Docker' if es else '4.1. Using Docker'),
-        p(('Docker ejecuta el framework en un contenedor Linux reproducible, separado del Java y navegador de Windows. La imagen en desarrollo para v1.3.0 contiene Temurin 21, Chrome y ChromeDriver 155.0.8059.39, Gradle Wrapper 8.14.5, Selenium, Cucumber, JUnit y POM. La última release publicada sigue siendo v1.2.0.'
+        p((f'Docker ejecuta el framework en un contenedor Linux reproducible, separado del Java y navegador de Windows. {docker_context_es}'
            if es else
-           'Docker runs the framework in a reproducible Linux container, separate from Windows Java and browser installations. The development v1.3.0 image contains Temurin 21, Chrome and ChromeDriver 155.0.8059.39, Gradle Wrapper 8.14.5, Selenium, Cucumber, JUnit, and POM. v1.2.0 remains the latest published release.')),
+           f'Docker runs the framework in a reproducible Linux container, separate from Windows Java and browser installations. {docker_context_en}')),
         p('Descargar el proyecto desde GitHub' if es else 'Download the project from GitHub', 'H2x'),
         p(('Instale Git para Windows desde git-scm.com/download/win y abra PowerShell. Clone el código fuente, entre al directorio y consulte las ramas remotas:'
            if es else
@@ -227,9 +310,9 @@ def docker_manual_section(language):
         p(('Si ./gradlew: not found aunque existe, compruebe git check-attr eol -- gradlew: debe ser lf; chmod +x no corrige CRLF. Daemon detenido: inicie Docker Desktop. WSL2: wsl --status y wsl --update. Descargas: revise --progress=plain. TLS/PKIX: revise certificados y proxy. Permisos: compruebe UID 10001. La advertencia CDP es TECH-001 OPEN; el selector Cucumber es TECH-002 CLOSED. Chrome requiere --no-sandbox en este contenedor; el proceso usa UID 10001. CI conserva sólo reportes, XML, logs y capturas disponibles, más container.log; excluye clases y cachés.'
            if es else
            'If ./gradlew: not found although it exists, check git check-attr eol -- gradlew: it must report lf; chmod +x cannot fix CRLF. Stopped daemon: start Docker Desktop. WSL2: use wsl --status and wsl --update. Downloads: inspect --progress=plain. TLS/PKIX: check certificates and proxy. Permissions: check UID 10001. The CDP warning is TECH-001 OPEN; the Cucumber selector is TECH-002 CLOSED. Chrome needs --no-sandbox in this container; the process runs as UID 10001. CI retains only reports, XML, logs, available screenshots, and container.log; classes and caches are excluded.')),
-        p(('La regla LF forma parte de main. v1.2.0 sigue siendo la última release oficial; v1.3.0 está en desarrollo. Bloque 3: build y Docker locales, 6/6 pruebas y un escenario. La ejecución del workflow en GitHub sigue pendiente de PR; la imagen base está fijada por digest, pero los paquetes apt pueden variar en builds futuros sin caché.'
+        p((f'La regla LF forma parte de main. {validation_context_es} La validación final confirmó BUILD SUCCESSFUL en local con headless=true y headless=false usando --offline, escenario Cucumber PASSED y Docker 6/6. Se observaron CDP local 153 frente a 152 y Docker 155 frente a 152; no reapareció el aviso del selector Cucumber/JUnit. quality-gate y docker-tests pasaron en el PR y main. La imagen base está fijada por digest, pero los paquetes apt pueden variar en builds futuros sin caché.'
            if es else
-           'The LF rule is part of main. v1.2.0 remains the latest official release; v1.3.0 is in development. Block 3: local build and Docker run, 6/6 tests and one scenario. A GitHub workflow run still awaits a PR; the base image is pinned by digest, but apt packages may vary in future uncached builds.')),
+           f'The LF rule is part of main. {validation_context_en} Final validation confirmed BUILD SUCCESSFUL locally with headless=true and headless=false using --offline, a PASSED Cucumber scenario, and Docker 6/6. Local CDP 153 versus 152 and Docker CDP 155 versus 152 warnings appeared; the Cucumber/JUnit selector warning did not. quality-gate and docker-tests passed in the PR and main. The base image is pinned by digest, but apt packages may vary in future uncached builds.')),
     ]
     items.append(PageBreak())
     return items
@@ -313,7 +396,7 @@ class LoggingDiagram(Flowable):
                 self._arrow(c, center, previous, center, following + 26)
 
 story=[]
-story += [Spacer(1, 5.3*cm), p('Automation Template Selenium Java Cucumber','Cover'), p('Manual de uso', 'CoverSub'), Spacer(1, .4*cm), p('Template reutilizable de automatización Web UI', 'CoverSub'), Spacer(1, 1.7*cm), p('v1.2.0 - Stable / Validated / Published<br/>Fecha de publicación: 8 de octubre de 2026<br/>Última versión publicada: v1.2.0<br/>Java 21 (predeterminado) | Java 17 (compatible)<br/>Selenium 4.48.0<br/>Cucumber 7.34.7<br/>JUnit 5.13.4<br/>Gradle 8.14.5<br/>SLF4J 2.0.20 | Logback 1.6.5', 'CoverSub'), PageBreak()]
+story += [Spacer(1, 5.3*cm), p('Automation Template Selenium Java Cucumber','Cover'), p('Manual de uso', 'CoverSub'), Spacer(1, .4*cm), p('Template reutilizable de automatización Web UI', 'CoverSub'), Spacer(1, 1.7*cm), p(f'{cover_es}<br/>Java 21 (predeterminado) | Java 17 (compatible)<br/>Selenium 4.48.0<br/>Cucumber 7.34.7<br/>JUnit 5.13.4<br/>Gradle 8.14.5<br/>SLF4J 2.0.20 | Logback 1.6.5', 'CoverSub'), PageBreak()]
 story += [
     heading('Índice'),
     p('1. Inicio rápido para primera vez<br/>2. Arquitectura<br/>3. Stack, requisitos y VS Code<br/>3.1 Configurar Java 17 paso a paso<br/>4. Configuración y comandos<br/>4.1 Uso con Docker<br/>5. Primera automatización<br/>6. Reutilización<br/>7. Contrato CI/CD, buenas prácticas y soporte<br/>8. CI/CD con GitHub Actions<br/>9. Cómo ejecutar y revisar el CI/CD<br/>10. Quality Gate, fallos y evidencias<br/>11. Protección de la rama main<br/>12. Logging y observabilidad básica<br/>12.1 Flujo de observabilidad<br/>12.2 Niveles de logging<br/>12.3 Ejecución y seguridad<br/>12.4 Diagnóstico del logging<br/>13. Captura automática de evidencias<br/>14. Generación y consulta de reportes<br/>15. Glosario'),
@@ -323,8 +406,10 @@ story += [
     p('Información del documento', 'H2x'),
     table([['Campo', 'Valor'], ['Autor / Creador del template', 'Israel Baz'], ['Rol', 'Test Automation / Prompt Engineering / AI Automation'], ['Mantenimiento', 'Israel Baz']], [5.2*cm, 11.1*cm]),
     Spacer(1, 8),
+    PageBreak(),
     p('Estado e historial de versiones', 'H2x'),
     version_table([
+        history_es,
         ('v1.2.0', '8 de octubre de 2026', 'Stable / Validated / Published. Logging con SLF4J/Logback, evidencias automáticas, reportes HTML/JSON y mejoras de estabilidad.'),
         ('v1.1.0', '1 de octubre de 2026', 'Stable / Validated / Published. CI con Quality Gate y artifacts de resultados.'),
         ('v1.0.2', '26 de septiembre de 2026', 'Documentation-only Hotfix, Stable / Validated / Published.'),
@@ -336,12 +421,12 @@ story += [
 
 story += [heading('1. Inicio rápido para primera vez'), p('Siga estos pasos sin modificar ningún archivo. Si un comando termina con BUILD SUCCESSFUL, se ejecutó correctamente. Si termina con BUILD FAILED, conserve el mensaje y consulte Troubleshooting antes de cambiar código.'), p('Paso 1 - Abra PowerShell y navegue a la raíz:', 'H2x'), p('cd C:\\ruta\\automation-template-selenium-java-cucumber', 'CodeX'), p('Paso 2 - Ejecute la prueba de ejemplo sin ventana visible:', 'H2x'), p('.\\gradlew.bat test -Dheadless=true', 'CodeX'), p('Paso 3 - Abra el reporte de ejecución:', 'H2x'), p('Abra build/reports/cucumber/cucumber.html. El escenario abre la fixture HTML local src/test/resources/fixtures/example_page.html y valida el encabezado Example Domain. La fixture está versionada y no depende del contenido de un sitio externo; el escenario se reproduce en CI.'), p('Paso 4 - Ejecute con navegador visible:', 'H2x'), p('Ejecute .\\gradlew.bat clean test sin el parámetro headless.'), p('Cómo comprobar VS Code', 'H2x'), p('Debe ver src, gradle, build.gradle y settings.gradle. Abra example_domain.feature: debe aparecer coloreado como Gherkin. Abra ExampleDomainPage.java: Java no debe mostrar imports en rojo. Si VS Code solicita un JDK, seleccione Java 21 y espere que termine "Importing Gradle project".'), p('Lista antes de pedir ayuda', 'H2x'), p('Estoy en la raíz del proyecto; java -version muestra Java 21; el navegador está instalado; la fixture local existe; la Feature termina en .feature y está bajo src/test/resources/features; cada frase Gherkin coincide con su Step; no guardé credenciales ni tokens en Git.'), PageBreak()]
 story += [heading('2. Arquitectura'), p('El template estandariza la automatización Web UI: configuración externa, navegador, ejecución BDD, Page Object Model, evidencia y reportes. Es adecuado para proyectos que operan en Chrome o Edge. La configuración tiene prioridad JVM (-D), variable de entorno y archivo config.properties.'), p('Arquitectura general', 'H2x'), table([['Capa','Responsabilidad'],['Feature','Describe comportamiento en Gherkin.'],['Step Definitions','Traduce intención a llamadas del framework.'],['Page Objects','Encapsula locators, esperas e interacciones.'],['WebDriver','Controla Chrome o Edge.'],['Hooks / reports','Gestiona ciclo de vida, screenshots y resultados.']], [4.1*cm, 12.2*cm]), Spacer(1,10), p('Flujo de ejecución', 'H2x'), p('gradlew test -> Gradle compila -> JUnit Platform descubre el Runner -> Cucumber carga Features -> Hook Before crea WebDriver -> Steps llaman Pages -> Hook After captura evidencia y cierra -> Reporte HTML.'), p('Regla de diseño: Steps no contienen selectores; Pages no contienen aserciones de escenario; Hooks no incluyen lógica de negocio.'), p('Estructura principal: src/main/java/com/automation/template/{config,driver,pages}; src/test/java/com/automation/template/{hooks,runners,steps,support}; src/test/resources/{features,fixtures,config.properties}. El workflow está en .github/workflows/ci.yml y el manual se genera con scripts/create_manual.py.'), PageBreak()]
-story += [heading('3. Stack, requisitos y VS Code'), table([['Tecnología','Versión','Uso'],['Java','21 (pred.) / 17','Lenguaje y toolchain.'],['Gradle Wrapper','8.14.5','Build y dependencias reproducibles.'],['Selenium Java','4.48.0','WebDriver.'],['Cucumber Java/Engine','7.34.7','BDD y Gherkin.'],['JUnit BOM','5.13.4','JUnit Platform y Suite.'],['SLF4J API','2.0.20','Fachada de logging.'],['Logback Classic','1.6.5','Proveedor de logs durante las pruebas.']], [4.5*cm, 3*cm, 8.8*cm]), Spacer(1,10), p('v1.2.0 identifica el template; 17/21 son versiones de Java seleccionables, y las demás cifras son versiones de dependencias fijadas en build.gradle y gradle-wrapper.properties.'), p('Prerrequisitos', 'H2x'), p('Instale JDK 21 (recomendado) o JDK 17 (compatible), y Chrome o Edge. Use siempre el Gradle Wrapper incluido; en Windows, .\\gradlew.bat. No requiere Gradle global. Valide con:'), p('java -version<br/>.\\gradlew.bat --version<br/>git --version', 'CodeX'), p('Apertura en Visual Studio Code', 'H2x'), p('Abra PowerShell y ejecute:'), p('cd C:\\ruta\\automation-template-selenium-java-cucumber<br/>code .', 'CodeX'), p('Instale Extension Pack for Java, Gradle for Java, Cucumber (Gherkin) Full Support y GitLens. Espere que VS Code importe Gradle. Las Features están en src/test/resources/features; Pages en src/main/java; Steps, Hooks y Runner en src/test/java.'), p('Selección de versión de Java', 'H2x'), p('Java 21 es el predeterminado de la configuración actual. Java 17 es la única compatibilidad alternativa mediante la propiedad Gradle javaVersion. Java 18, 19, 20, 22 y cualquier otro valor distinto de 17 o 21 se rechazan explícitamente.'), p('.\\gradlew.bat clean test<br/>.\\gradlew.bat clean test -PjavaVersion=17<br/>.\\gradlew.bat clean test -PjavaVersion=21<br/>.\\gradlew.bat clean test -PjavaVersion=18  # rechazado', 'CodeX'), p('Gradle debe ejecutarse con JDK 17 o superior y la toolchain seleccionada debe estar instalada o disponible para Gradle.'), PageBreak()]
+story += [heading('3. Stack, requisitos y VS Code'), table([['Tecnología','Versión','Uso'],['Java','21 (pred.) / 17','Lenguaje y toolchain.'],['Gradle Wrapper','8.14.5','Build y dependencias reproducibles.'],['Selenium Java','4.48.0','WebDriver.'],['Cucumber Java/Engine','7.34.7','BDD y Gherkin.'],['JUnit BOM','5.13.4','JUnit Platform y Suite.'],['SLF4J API','2.0.20','Fachada de logging.'],['Logback Classic','1.6.5','Proveedor de logs durante las pruebas.']], [4.5*cm, 3*cm, 8.8*cm]), Spacer(1,10), p('v1.3.0 identifica el template; 17/21 son versiones de Java seleccionables, y las demás cifras son versiones de dependencias fijadas en build.gradle y gradle-wrapper.properties.'), p('Prerrequisitos', 'H2x'), p('Instale JDK 21 (recomendado) o JDK 17 (compatible), y Chrome o Edge. Use siempre el Gradle Wrapper incluido; en Windows, .\\gradlew.bat. No requiere Gradle global. Valide con:'), p('java -version<br/>.\\gradlew.bat --version<br/>git --version', 'CodeX'), p('Apertura en Visual Studio Code', 'H2x'), p('Abra PowerShell y ejecute:'), p('cd C:\\ruta\\automation-template-selenium-java-cucumber<br/>code .', 'CodeX'), p('Instale Extension Pack for Java, Gradle for Java, Cucumber (Gherkin) Full Support y GitLens. Espere que VS Code importe Gradle. Las Features están en src/test/resources/features; Pages en src/main/java; Steps, Hooks y Runner en src/test/java.'), p('Selección de versión de Java', 'H2x'), p('Java 21 es el predeterminado de la configuración actual. Java 17 es la única compatibilidad alternativa mediante la propiedad Gradle javaVersion. Java 18, 19, 20, 22 y cualquier otro valor distinto de 17 o 21 se rechazan explícitamente.'), p('.\\gradlew.bat clean test<br/>.\\gradlew.bat clean test -PjavaVersion=17<br/>.\\gradlew.bat clean test -PjavaVersion=21<br/>.\\gradlew.bat clean test -PjavaVersion=18  # rechazado', 'CodeX'), p('Gradle debe ejecutarse con JDK 17 o superior y la toolchain seleccionada debe estar instalada o disponible para Gradle.'), PageBreak()]
 story += [heading('Sección 3.1 — Configurar Java 17 paso a paso'), p('Use Java 17 solo cuando lo requiera su proyecto. Java 21 continúa siendo el predeterminado de la configuración actual.'), p('1. Instale un JDK 17 aprobado por su equipo. En estos ejemplos, la carpeta se representa como C:\\ruta\\jdk-17.'), p('2. Abra PowerShell en la raíz del proyecto y configure la sesión actual. Esto no modifica permanentemente Windows:'), p("$env:JAVA_HOME = 'C:\\ruta\\jdk-17'<br/>$env:Path = \"$env:JAVA_HOME\\bin;$env:Path\"<br/>java -version", 'CodeX'), p('3. Confirme que java -version indica Java 17. En VS Code, use Ctrl+Shift+P, ejecute Java: Configure Java Runtime, seleccione JDK 17 y espere la importación Gradle.'), p('4. Ejecute las pruebas:'), p('.\\gradlew.bat clean test -PjavaVersion=17', 'CodeX'), p('5. Confirme BUILD SUCCESSFUL y abra build/reports/cucumber/cucumber.html. Para volver a Java 21, abra una consola nueva o cambie JAVA_HOME a C:\\ruta\\jdk-21 y ejecute -PjavaVersion=21.'), p('No guarde rutas de JDK ni JAVA_HOME dentro del repositorio. El workflow incluido usa Java 21. Si adopta Java 17 en otro proyecto, adapte y valide su CI antes de usarlo.'), PageBreak()]
 
 story += [heading('4. Configuración y comandos'), p('config.properties contiene los valores por defecto. Los valores pueden reemplazarse con -D o con variables BASE_URL, BROWSER, HEADLESS, TIMEOUT_SECONDS y SCREENSHOT_ON_FAILURE. javaVersion usa -P, no -D.'), p('browser=CHROME<br/>headless=false<br/>baseUrl=https://example.com/<br/>timeoutSeconds=15<br/>screenshotOnFailure=true', 'CodeX'), table([['Objetivo','Comando'],['Limpiar','.\\gradlew.bat clean'],['Limpiar y ejecutar','.\\gradlew.bat clean test'],['Headless','.\\gradlew.bat clean test -Dheadless=true'],['Chrome','.\\gradlew.bat clean test -Dbrowser=CHROME'],['Edge','.\\gradlew.bat clean test -Dbrowser=EDGE'],['URL','.\\gradlew.bat clean test -DbaseUrl=https://su-aplicacion'],['Tags','.\\gradlew.bat clean test -Dcucumber.filter.tags=@example'],['Tags headless','.\\gradlew.bat clean test -Dheadless=true -Dcucumber.filter.tags=@example'],['Alias Cucumber','.\\gradlew.bat cucumber']], [5.2*cm, 11.1*cm]), Spacer(1,10), p('El smoke test incluido usa la fixture HTML local versionada y no depende de un sitio externo. baseUrl sigue disponible para los Page Objects de aplicaciones reales, pero no modifica este escenario de ejemplo. Los reports se generan en build/reports/cucumber/cucumber.html, build/reports/cucumber/cucumber.json, build/reports/tests/test y build/test-results/test; el log se guarda en build/logs/automation.log y las capturas de fallos en build/evidence/screenshots sólo si falla un escenario, screenshotOnFailure está activo y WebDriver permite capturar.'), PageBreak()]
 story += docker_manual_section('es')
-story += [heading('Docker en GitHub Actions'), p('El workflow CI se activa con Pull Requests hacia main y pushes a main. quality-gate mantiene Java 21 y Gradle; docker-tests construye el Dockerfile y ejecuta Selenium/Cucumber con Chrome headless. No publica la imagen. Un fallo de pruebas deja el job Docker en Failure.'), p('En GitHub abra Pull requests -&gt; su PR -&gt; Checks -&gt; docker-tests -&gt; Details para leer Build test image y Run headless tests and collect evidence. También puede abrir Actions -&gt; CI -&gt; ejecución y seleccionar ambos jobs. En Artifacts descargue docker-test-evidence cuando exista; incluye container.log y reportes, resultados XML, logs y capturas generados bajo build/. La carga se intenta aun ante fallos y conserva los archivos 14 días. Si la ejecución se detiene antes de generar archivos, el artifact puede no aparecer.'), p('El nuevo job necesita una ejecución real en GitHub para confirmar su resultado. v1.3.0 continúa en desarrollo; v1.2.0 es la última release publicada.')]
+story += [heading('Docker en GitHub Actions'), p('El workflow CI se activa con Pull Requests hacia main y pushes a main. quality-gate mantiene Java 21 y Gradle; docker-tests construye el Dockerfile y ejecuta Selenium/Cucumber con Chrome headless. No publica la imagen. Un fallo de pruebas deja el job Docker en Failure.'), p('En GitHub abra Pull requests -&gt; su PR -&gt; Checks -&gt; docker-tests -&gt; Details para leer Build test image y Run headless tests and collect evidence. También puede abrir Actions -&gt; CI -&gt; ejecución y seleccionar ambos jobs. En Artifacts descargue docker-test-evidence cuando exista; incluye container.log, reportes, XML, logs y capturas disponibles. Se excluyen clases, cachés, temporales y binarios internos de Gradle. La carga se intenta aun ante fallos y conserva los archivos 14 días.'), p(ci_context_es)]
 story += [heading('5&#46; Crear la primera automatización'), p('1. Cree src/test/resources/features/login.feature:'), p('# language: en<br/>Feature: Login<br/>&nbsp;&nbsp;Scenario: Successful login<br/>&nbsp;&nbsp;&nbsp;&nbsp;Given the user opens the login page<br/>&nbsp;&nbsp;&nbsp;&nbsp;When the user signs in with "username" and "password"<br/>&nbsp;&nbsp;&nbsp;&nbsp;Then the dashboard is displayed', 'CodeX'), p('2. Cree LoginPage.java en pages. Mantenga locators privados y métodos de intención, por ejemplo open(), login() e isDashboardVisible().'), p('3. Cree LoginSteps.java en steps. Obtenga el driver mediante DriverManager, delegue a LoginPage y use aserciones JUnit.'), p('4. Configure la URL con -DbaseUrl=... y ejecute .\\gradlew.bat test -Dheadless=true.'), p('5. Revise el reporte HTML. Use esperas explícitas WebDriverWait; nunca Thread.sleep.'), Spacer(1,10), heading('6. Reutilización paso a paso'), p('1. Copie o clone el template; conserve la base original sin cambios.'), p('2. Actualice rootProject.name en settings.gradle y group en build.gradle.'), p('3. Configure baseUrl con -DbaseUrl=https://su-aplicacion, sin secretos en Git.'), p('4. Abra la URL manualmente y ejecute una prueba smoke en headless.'), p('5. Cuando el smoke funcione, sustituya el ejemplo por sus Features, Pages y Steps.'), p('6. Añada tags como @smoke y @regression para seleccionar subconjuntos.'), p('7. Inicialice Git, revise .gitignore, cree una rama y abra Pull Request.'), p('8. Revise el workflow incluido en .github/workflows/ci.yml: ya ejecuta pruebas headless y publica las evidencias disponibles.'), p('Criterio de salida: el equipo puede configurar URL, ejecutar una prueba y consultar el reporte sin editar componentes compartidos.'), PageBreak()]
 story += [Spacer(1, .4*cm), heading('7. Contrato CI/CD, buenas prácticas y soporte'), p('Workflow de GitHub Actions', 'H2x'), p('El workflow .github/workflows/ci.yml ejecuta ./gradlew clean test -Dheadless=true con Java 21 de Temurin y el Gradle Wrapper en pull requests y pushes hacia main. En Windows, use .\\gradlew.bat clean test -Dheadless=true para la validación local. Exit code 0 es éxito; cualquier otro código debe fallar el job. El contrato permite BROWSER, BASE_URL, HEADLESS y filtros cucumber.filter.tags; recolecte build/reports/cucumber/ (HTML y JSON), build/reports/tests/test, build/test-results/test, build/logs/automation.log y, sólo ante fallo, build/evidence/screenshots.'), p('Flujo: checkout, Java 21 Temurin, Gradle Setup/Cache, Gradle Wrapper, pruebas headless, reportes y test-evidence. gradle/actions/setup-gradle@v6 usa caché básica para reutilizar dependencias e información de Gradle; puede reducir trabajo repetitivo en ejecuciones posteriores. Si no hay caché (cache miss), Gradle descarga lo necesario y las pruebas continúan. El Wrapper sigue siendo el mecanismo oficial. La caché no cambia Selenium, Cucumber, Page Object Model, features, steps ni el smoke test local.'), p('El workflow usa ubuntu-latest y permisos mínimos de lectura. Intenta publicar las rutas anteriores como test-evidence durante 14 días incluso si Gradle falla. Una ruta vacía, como screenshots en una ejecución sin fallos, se ignora. Descargue el artifact en Artifacts dentro del resumen de GitHub Actions. La evidencia no cambia el estado PASS/FAIL del job. El job docker-tests ejecuta la imagen en el mismo workflow; no publica imágenes ni usa secretos nuevos.'), p('Troubleshooting de Gradle', 'H2x'), p('.\\gradlew.bat --stop detiene Gradle Daemons ante problemas transitorios. Para diagnóstico de dependencias use .\\gradlew.bat clean test --offline o .\\gradlew.bat clean test -PjavaVersion=21 --offline; sólo usa caché y puede fallar si faltan dependencias. Si aparece PKIX path building failed o unable to find valid certification path, revise certificado Java, proxy, inspección SSL, red y daemon; ejecute java -version, .\\gradlew.bat --version, .\\gradlew.bat --stop y .\\gradlew.bat clean test. No deshabilite SSL ni ignore certificados.'), p('Regeneración del manual', 'H2x'), p('scripts/create_manual.py requiere Python 3 y reportlab. Ejecute python scripts/create_manual.py desde la raíz. Genera manuales PDF en docs/ (español) y docs_en/ (inglés). work/ es temporal, está ignorada por Git, no es parte del framework y puede eliminarse.'), p('Buenas prácticas', 'H2x'), p('Un Page Object por pantalla/componente; nombres descriptivos; configuración externa; locators estables; datos aislados; screenshots y logs como evidencia; commits pequeños; ramas, Pull Requests y revisión de código; actualización deliberada de dependencias.'), p('Para problemas de Java, navegador, features o CI, consulte docs/TROUBLESHOOTING.md y conserve el mensaje completo antes de modificar código.'), PageBreak()]
 
@@ -469,15 +554,15 @@ story += [
 
 story += [Spacer(1, .4*cm), heading('15. Glosario'), p('Términos clave del template y de la automatización Web UI.'), glossary_table(glossary_rows[:27]), PageBreak(), heading('Glosario (continuación)'), glossary_table(glossary_rows[27:])]
 
-doc=SimpleDocTemplate(str(OUT), pagesize=A4, rightMargin=2*cm, leftMargin=2*cm, topMargin=1.8*cm, bottomMargin=2*cm, title='Manual Template Automatización Selenium Java Cucumber', author='Automation Template')
+doc=SimpleDocTemplate(str(OUT), pagesize=A4, rightMargin=2*cm, leftMargin=2*cm, topMargin=1.8*cm, bottomMargin=2*cm, title='Manual Template Automatización Selenium Java Cucumber', author='Automation Template', subject=pdf_subject)
 doc.build(story, onFirstPage=footer, onLaterPages=footer)
 print(OUT)
-if args.output is None:
+if args.output is None or args.en_output is not None:
     english = [
         Spacer(1, 5*cm),
-        p('SELENIUM JAVA CUCUMBER', 'Cover'),
-        p('Automation Template - User Manual', 'CoverSub'),
-        p('v1.2.0 - Stable / Validated / Published<br/>Published: October 8, 2026, 06:19:01 UTC<br/>Latest published release: v1.2.0', 'CoverSub'),
+        p('Automation Template Selenium Java Cucumber', 'Cover'),
+        p('User Manual', 'CoverSub'),
+        p(cover_en, 'CoverSub'),
         Spacer(1, 2*cm),
         p('Java 21 default / Java 17 supported - Selenium 4.48.0 - Cucumber 7.34.7 - JUnit 5.13.4 - Gradle 8.14.5', 'CoverSub'),
         PageBreak(),
@@ -488,6 +573,7 @@ if args.output is None:
         PageBreak(),
         heading('Version history'),
         version_table([
+            history_en,
             ('v1.2.0', 'Oct 8, 2026', 'Stable / Validated / Published. Logging, failure evidence, Cucumber HTML/JSON reporting.'),
             ('v1.1.0', 'Oct 1, 2026', 'Stable / Validated / Published. CI quality gate and test artifacts.'),
             ('v1.0.2', 'Sep 26, 2026', 'Published documentation-only hotfix.'),
@@ -520,7 +606,7 @@ if args.output is None:
         heading('Docker in GitHub Actions'),
         p('The CI workflow starts on pull requests targeting main and pushes to main. quality-gate keeps Java 21 and Gradle; docker-tests builds the Dockerfile and runs Selenium/Cucumber with headless Chrome. It does not publish the image. A test failure leaves the Docker job in Failure.'),
         p('On GitHub open Pull requests -&gt; your PR -&gt; Checks -&gt; docker-tests -&gt; Details to read Build test image and Run headless tests and collect evidence. You can also open Actions -&gt; CI -&gt; run and select both jobs. Under Artifacts download docker-test-evidence when present; it includes container.log and generated reports, XML results, logs, and screenshots under build/. Upload is attempted even on failures and files are retained for 14 days. If execution stops before files are generated, the artifact may be absent.'),
-        p('The new job needs a real GitHub run to confirm its result. v1.3.0 remains in development; v1.2.0 is the latest published release.'),
+        p(ci_context_en),
         heading('5. First automation'),
         p('Add a .feature under src/test/resources/features, Java step definitions under steps, and a page object under pages. Place stable locators and explicit waits in the page, and scenario assertions in steps. Start with the included example_domain.feature and ExampleDomainPage.'),
         p('Example feature', 'H2x'),
@@ -639,6 +725,6 @@ if args.output is None:
             canvas.drawRightString(A4[0]-2*cm, 0.9*cm, f'Page {document.page}')
             canvas.restoreState()
     EN_OUT.parent.mkdir(parents=True, exist_ok=True)
-    doc_en = SimpleDocTemplate(str(EN_OUT), pagesize=A4, rightMargin=2*cm, leftMargin=2*cm, topMargin=1.8*cm, bottomMargin=2*cm, title='Selenium Java Cucumber Automation Template - User Manual', author='Automation Template')
+    doc_en = SimpleDocTemplate(str(EN_OUT), pagesize=A4, rightMargin=2*cm, leftMargin=2*cm, topMargin=1.8*cm, bottomMargin=2*cm, title='Selenium Java Cucumber Automation Template - User Manual', author='Automation Template', subject=pdf_subject)
     doc_en.build(english, onFirstPage=footer_en, onLaterPages=footer_en)
     print(EN_OUT)

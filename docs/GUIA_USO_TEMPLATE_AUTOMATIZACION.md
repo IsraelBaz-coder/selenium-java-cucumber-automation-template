@@ -2,7 +2,7 @@
 
 [English](../docs_en/GUIA_USO_TEMPLATE_AUTOMATIZACION.md) · [Índice](README.md)
 
-<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>v1.2.0 · Stable / Validated / Published · 8 de octubre de 2026<br>Última versión publicada: v1.2.0<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
+<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>v1.3.0 · Release Candidate / Pending Publication · fecha objetivo 12/10/2026 UTC (2026-10-12)<br>Última versión publicada: v1.2.0<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
 
 ## Índice
 
@@ -47,12 +47,13 @@ No es necesario conocer este repositorio. Para avanzar con seguridad, siga las s
 
 ## Estado e historial de la release
 
-**Estado técnico y documental.** v1.2.0 es Stable / Validated / Published desde el 8 de octubre de 2026. Reúne logging, [evidencias automáticas](EVIDENCE.md) y [reporting](REPORTING.md). v1.1.0 es la versión publicada anterior.
+**Estado técnico y documental.** v1.3.0 está en Release Candidate / Pending Publication con fecha objetivo 2026-10-12 UTC e incorpora Docker, integración CI y [evidencias automáticas](EVIDENCE.md). v1.2.0 continúa como última versión publicada desde el 8 de octubre de 2026.
 
 En el historial, v1.0.2 fue una release publicada: **Documentation-only Hotfix**, Stable / Validated / Published el 26 de septiembre de 2026. Corrige inconsistencias documentales de estado post-release sin cambios funcionales ni de dependencias. La versión estable publicada actualmente es v1.2.0. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM.
 
 | Versión | Fecha / publicación | Tipo | Estado | Cambios principales |
 |---|---|---|---|---|
+| v1.3.0 | Objetivo 12 de octubre de 2026 UTC | Release candidata | Release Candidate / Pending Publication | Docker, integración CI, hardening y evidencias; aún no publicada. |
 | v1.2.0 | 8 de octubre de 2026 | Release estable | Stable / Validated / Published | Logging con SLF4J/Logback, evidencias automáticas y reporting Cucumber HTML/JSON. Véase [Reporting](REPORTING.md). |
 | v1.1.0 | 1 de octubre de 2026 | Release estable | Stable / Validated / Published | CI, evidencias, caché Gradle, Quality Gate, Branch Protection y documentación operativa validados. |
 | v1.0.2 | 26 de septiembre de 2026 | Documentation-only Hotfix | Stable / Validated / Published | Corrección de inconsistencias de estado post-release; no incluye cambios funcionales, dependencias, CI/CD, Docker, Selenium Grid, Healenium ni Playwright. |
@@ -333,7 +334,7 @@ El workflow ejecuta `./gradlew clean test -Dheadless=true`; en Windows, el coman
 
 El workflow `.github/workflows/ci.yml` ejecuta `./gradlew clean test -Dheadless=true` con Java 21 de Temurin en Pull Requests dirigidos a `main` y pushes a `main`. Usa el Gradle Wrapper existente y falla si Gradle o las pruebas fallan. Después intenta subir el artifact `test-evidence` con reportes Gradle/Cucumber, resultados JUnit, logs y screenshots disponibles. Se conserva 14 días y se descarga desde **Artifacts** en el resumen de la ejecución de GitHub Actions. Screenshots pueden no existir cuando no hay escenarios fallidos; una ruta ausente no hace fallar la carga. El artifact no altera el resultado PASS/FAIL.
 
-El segundo job `docker-tests` construye el Dockerfile y ejecuta `./gradlew --no-daemon test -Dheadless=true` dentro de la imagen. Copia `build/` y guarda `container.log` en `docker-test-evidence`, que también se intenta subir ante fallos. El exit code real de las pruebas determina el estado del job. Consulte [Docker en GitHub Actions](DOCKER.md#docker-en-github-actions) para ver jobs, logs y artifacts. La ejecución de GitHub de este job sigue pendiente de validación en un PR.
+El segundo job `docker-tests` construye el Dockerfile y ejecuta `./gradlew --no-daemon test -Dheadless=true` dentro de la imagen. Copia únicamente reportes Gradle/Cucumber, XML JUnit, logs y capturas disponibles, además de `container.log`; excluye clases, cachés, temporales y resultados binarios internos de Gradle. `docker-test-evidence` también se intenta subir ante fallos y el exit code real de las pruebas determina el estado del job. El PR de hardening y su push posterior a `main` registraron ambos jobs exitosos. Consulte [Docker en GitHub Actions](DOCKER.md#docker-en-github-actions).
 
 Después de configurar Java, `gradle/actions/setup-gradle@v6` prepara la caché básica de Gradle. Reutiliza dependencias y otros datos del directorio de usuario de Gradle cuando hay una entrada disponible, lo que evita trabajo repetitivo y puede reducir el tiempo de preparación en ejecuciones posteriores. Si no existe caché (cache miss), Gradle descarga lo necesario y las pruebas continúan normalmente; la caché no es requisito para el pipeline. `./gradlew` sigue siendo el mecanismo oficial de CI y `.\gradlew.bat` su equivalente en Windows. Esta optimización no cambia la lógica de Selenium, Cucumber, Page Object Model, features, steps ni del smoke test con fixture local.
 

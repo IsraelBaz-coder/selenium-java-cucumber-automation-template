@@ -10,8 +10,13 @@ Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD
 | Current release | **v1.2.0 — Stable / Validated / Published** |
 | v1.2.0 status | **Stable / Validated / Published** |
 | v1.2.0 publication date | **October 8, 2026** |
+| Release candidate | **v1.3.0 — Docker & CI Integration** |
+| v1.3.0 status | **Release Candidate / Pending Publication** |
+| Target date | **2026-10-12 UTC; not an actual publication date** |
 
 v1.2.0 is the latest published release (October 8, 2026). It includes SLF4J/Logback logging, automatic failure evidence and Cucumber HTML/JSON reports. Its status is **Stable / Validated / Published**. See the [audit report](docs_en/HITO4_RELEASE_AUDIT.md) for validation results.
+
+Final candidate validation confirmed `BUILD SUCCESSFUL` locally with `headless=true` and `headless=false` using `--offline`; the Cucumber scenario finished PASSED. The earlier Docker validation remains 6/6 tests. Local CDP 153 → 152 and Docker CDP 155 → 152 warnings were observed; the Cucumber/JUnit selector warning did not reappear.
 
 | Document information | Value |
 |---|---|
@@ -92,7 +97,7 @@ Hooks log scenario start, finish and status; `DriverFactory` and `DriverManager`
 
 ## Browsers, URL and Cucumber
 
-The development v1.3.0 Docker image includes Java 21, Chrome and ChromeDriver 155 for Linux amd64, and uses the Gradle Wrapper. On Windows, start Docker Desktop with WSL2 and its Linux engine; from the repository root run `docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .` and `docker run --rm selenium-java-cucumber-template:1.3.0-dev`. See the [Docker guide](docs_en/DOCKER.md) to retain reports with a mount. Block 3 verified the build, Docker run, and 6/6 tests; TECH-001 remains OPEN and TECH-002 is CLOSED after correcting the selector. Chrome still needs `--no-sandbox` in this container; the base image is pinned by digest, but apt packages may vary across uncached builds. v1.2.0 remains the latest published release.
+The v1.3.0 candidate includes Java 21, Chrome and ChromeDriver 155 for Linux amd64, and uses the Gradle Wrapper. On Windows, start Docker Desktop with WSL2 and its Linux engine; from the repository root run `docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .` and `docker run --rm selenium-java-cucumber-template:1.3.0-dev`. Recorded validation confirmed the build, Docker run, and 6/6 tests; TECH-001 remains OPEN and TECH-002 is CLOSED. Chrome still needs `--no-sandbox`; the base image is pinned by digest, while apt packages may vary across uncached builds. v1.2.0 remains the latest published release.
 
 Chrome is the default browser. Use `-Dbrowser=EDGE` for Edge and `-DbaseUrl=https://your-application` for a temporary URL. Use Cucumber tags such as `@smoke` with `-Dcucumber.filter.tags=@smoke` to select scenarios.
 
@@ -122,7 +127,7 @@ The GitHub Actions workflow runs:
 
 The workflow uses Temurin Java 21 and `gradle/actions/setup-gradle@v6` for caching. A cache miss is not an error: Gradle downloads the required dependencies and continues. The repository's Gradle Wrapper remains the execution method (`./gradlew`; `.\gradlew.bat` on Windows). Gradle exits with code `0` when the build and tests pass; any other code fails the check. Available evidence includes Gradle and Cucumber reports, JUnit XML results, logs, and screenshots when applicable. Use `-Dheadless=true` for local headless execution.
 
-The same workflow adds `docker-tests`: it builds the Dockerfile, runs `./gradlew --no-daemon test -Dheadless=true`, and copies only Gradle/Cucumber reports, JUnit XML, logs, and available screenshots via `docker cp`, plus `container.log`. Classes, caches, and temporary files are excluded. A failed test retains its exit code; a successful test with missing required evidence fails the job. `docker-test-evidence` is also attempted on failure and retained for 14 days. See [Docker in CI](docs_en/DOCKER.md#docker-in-github-actions). This change still needs a real GitHub Actions run in a PR; `v1.3.0` remains in development.
+The same workflow adds `docker-tests`: it builds the Dockerfile, runs `./gradlew --no-daemon test -Dheadless=true`, and copies only Gradle/Cucumber reports, JUnit XML, logs, and available screenshots via `docker cp`, plus `container.log`. Classes, caches, and temporary files are excluded. A failed test retains its exit code; a successful test with missing required evidence fails the job. `docker-test-evidence` is attempted on failure and retained for 14 days. The hardening PR and subsequent `main` run recorded successful `quality-gate` and `docker-tests` jobs with both artifacts. See [Docker in CI](docs_en/DOCKER.md#docker-in-github-actions).
 
 ## Create and reuse
 
@@ -141,6 +146,10 @@ For architecture, VS Code setup, CI/CD, first test tutorial and troubleshooting,
 For the versioning policy and repeatable release procedure, see [Versioning](docs_en/VERSIONING.md) and the [Release process](docs_en/RELEASE_PROCESS.md). Before contributing, read [Contributing](CONTRIBUTING.md), the [Security policy](SECURITY.md), the [Code of Conduct](CODE_OF_CONDUCT.md), and the [Changelog](CHANGELOG.md).
 
 ## Release history
+
+### v1.3.0 — candidate, target 2026-10-12 UTC
+
+**Release Candidate / Pending Publication.** Dockerization, `docker-tests` integration, hardening, and focused evidence collection. The date is a target; v1.2.0 remains the latest published release.
 
 ### v1.2.0 - October 8, 2026
 

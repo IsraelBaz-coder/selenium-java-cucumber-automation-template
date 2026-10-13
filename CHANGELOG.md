@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 Release heading dates use the official GitHub Release `published_at` calendar day in UTC.
 
+## [1.3.0] — Release Candidate / Pending Publication
+
+Target publication date: **2026-10-12 UTC**. This is a planning value and does not assert that v1.3.0 has been published. v1.2.0 remains the latest published release.
+
+### Implemented
+
+- Added a Linux amd64 Docker image with Temurin 21, pinned Chrome/ChromeDriver 155.0.8059.39, a non-root application user, Gradle Wrapper execution, and restricted build context.
+- Added the GitHub Actions `docker-tests` job beside `quality-gate`, with timeouts, exit-code propagation, 2 GiB shared memory, and evidence extraction from the stopped container.
+- Limited CI artifacts to Gradle/Cucumber reports, JUnit XML, logs, screenshots when present, and `container.log`; excluded classes, caches, temporary output, and Gradle binary results.
+- Pinned the Temurin base image by digest and enforced LF for the Unix Gradle wrapper.
+- Replaced the deprecated Cucumber classpath resource selector with `@SelectPackages("features")` while preserving glue, plugins, tags, and feature layout.
+
+### Validated
+
+- Recorded local headless, visible, tagged, and Docker runs completed with 6/6 tests and one Cucumber scenario.
+- Final PowerShell validation completed local headless and visible runs with `--offline`: `BUILD SUCCESSFUL`, and the Cucumber scenario PASSED. Local Chrome/CDP 153 selected CDP 152; Docker Chrome/CDP 155 selected CDP 152. The Cucumber/JUnit selector warning did not reappear.
+- Documentation validation covered 37 Markdown files and 251 internal links with zero errors; the v1.3.0 `prepare` verifier passed.
+- The hardening pull request and subsequent `main` workflow run completed both `quality-gate` and `docker-tests` successfully and produced `test-evidence` and `docker-test-evidence`.
+
+### Known limitations
+
+- TECH-001 remains OPEN: Selenium 4.48.0 selects CDP 152 while Docker Chrome uses CDP 155. Conventional WebDriver tests pass; this does not prove compatibility for DevTools-dependent features.
+- Docker apt packages are not pinned to a repository snapshot, so uncached builds can vary even though the base image digest and browser versions are pinned.
+- Chrome uses `--no-sandbox` inside the container. TECH-002 is CLOSED after the package selector validation did not reproduce the former warning.
+
 ## [1.2.0] - 2026-10-08
 
 The v1.2.0 GitHub Release was published on October 8, 2026 at 06:19:01 UTC with status **Stable / Validated / Published**. Logging, automatic failure evidence, reporting and release hardening are included. v1.1.0 was the previous published release.

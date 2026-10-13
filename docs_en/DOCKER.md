@@ -2,7 +2,7 @@
 
 [Español](../docs/DOCKER.md) · [Index](README.md) · [Technical debt](TECHNICAL_DEBT.md)
 
-**Status:** Docker is a development capability for v1.3.0; v1.2.0 remains the latest official release. Block 3 is validated locally on `feature/hito-5-docker-hardening`; the modified workflow still needs a real GitHub Actions run in a PR.
+**Status:** Docker is part of the v1.3.0 candidate, with Release Candidate / Pending Publication status and a 2026-10-12 UTC target date. v1.2.0 remains the latest published release. The hardening PR and subsequent `main` push completed `quality-gate` and `docker-tests` successfully and produced both evidence artifacts.
 
 ## Download the project from GitHub
 
@@ -21,7 +21,7 @@
    git branch -r
    ~~~
 
-3. Select a Docker-enabled ref such as `main`. To review Block 3 before integration, select `feature/hito-5-docker-hardening` when available on the remote. Check the chosen ref for all three files before proceeding:
+3. Select a Docker-enabled ref such as `main` or the v1.3.0 preparation branch. Check the chosen ref for all three files before proceeding:
 
    ~~~powershell
    Test-Path .\Dockerfile
@@ -30,7 +30,7 @@
    git check-attr eol -- gradlew
    ~~~
 
-   All three `Test-Path` commands must return `True`, and Git must show `gradlew: eol: lf`. The correction since `d173e7d` is part of `main`. To review Block 3 before integration, use `feature/hito-5-docker-hardening` when it is available on the remote.
+   All three `Test-Path` commands must return `True`, and Git must show `gradlew: eol: lf`. The correction since `d173e7d` is part of `main`.
 
 4. With Docker Desktop running, **build the image locally** using `docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .`. Then **run the tests** and retain results on Windows:
 
@@ -178,10 +178,10 @@ Test-Path .\build\logs\automation.log
 
 ## Docker in GitHub Actions
 
-The `.github/workflows/ci.yml` workflow runs on pull requests targeting `main` and pushes to `main`. `quality-gate` keeps the existing Gradle run on Java 21. The new `docker-tests` job builds the image locally from the existing Dockerfile and runs Selenium/Cucumber tests in headless Chrome. The job has a 35-minute limit and the container run a 15-minute limit. The container gets 2 GiB of shared memory for Chrome. No image is pushed to a registry.
+The `.github/workflows/ci.yml` workflow runs on pull requests targeting `main` and pushes to `main`. `quality-gate` keeps the existing Gradle run on Java 21. The `docker-tests` job builds the image locally from the existing Dockerfile and runs Selenium/Cucumber tests in headless Chrome. The job has a 35-minute limit and the container run a 15-minute limit. The container gets 2 GiB of shared memory for Chrome. No image is pushed to a registry.
 
 The job saves `docker-artifacts/container.log` and copies only `build/reports/tests/test/`, `build/reports/cucumber/`, `build/test-results/test/`, `build/logs/`, and `build/evidence/screenshots/` when present. Classes, caches, and temporary files are excluded. Screenshots are optional; if a passing suite is missing required evidence, the job fails. `docker-test-evidence` upload is attempted with `if: always()` even when build or tests fail; if no files exist, no artifact appears. A failed suite retains its exit code. The artifact is retained for 14 days. Review reports and logs before sharing: they may contain tested application data.
 
-To inspect results on GitHub, open **Pull requests → your PR → Checks**, select `quality-gate` or `docker-tests`, then **Details**. Expand **Build test image** or **Run headless tests and collect evidence** to read the error and log. Alternatively, open **Actions → CI → run**, confirm branch, commit, and status, then open each job and its steps. Under **Artifacts** in the run summary, download `test-evidence` or `docker-test-evidence` when available. Extract the ZIP to inspect `container.log` and `build/reports/`, `build/test-results/`, `build/logs/`, and `build/evidence/`. A failure before tests may yield only a log or no artifact. The new job still needs a real PR run on GitHub for validation; a local run cannot establish that result.
+To inspect results on GitHub, open **Pull requests → your PR → Checks**, select `quality-gate` or `docker-tests`, then **Details**. Expand **Build test image** or **Run headless tests and collect evidence** to read the error and log. Alternatively, open **Actions → CI → run**, confirm branch, commit, and status, then open each job and its steps. Under **Artifacts** in the run summary, download `test-evidence` or `docker-test-evidence` when available. Extract the ZIP to inspect `container.log` and `build/reports/`, `build/test-results/`, `build/logs/`, and `build/evidence/`. A failure before tests may yield only a log or no artifact. The recorded PR and `main` runs confirmed both jobs and artifacts; each future change must be validated again in its own PR.
 
-**Block 3 status:** the local Docker build and run passed with 6/6 tests and one scenario. [TECH-001 remains OPEN and TECH-002 is CLOSED](TECHNICAL_DEBT.md). Removing `--no-sandbox` caused Chrome session creation to fail; the flag was restored. The image runs as UID 10001, but Chrome's internal sandbox is disabled. The Temurin base image is pinned by digest; apt packages are not pinned to a snapshot, so a later uncached build may differ. Current versions are retained to avoid arbitrary changes. `v1.3.0` remains in development and GitHub CI validation awaits a PR.
+**Validation status:** the local Docker build and run passed with 6/6 tests and one scenario; the PR and `main` recorded successful `quality-gate` and `docker-tests` jobs. [TECH-001 remains OPEN and TECH-002 is CLOSED](TECHNICAL_DEBT.md). Removing `--no-sandbox` caused Chrome session creation to fail; the flag was restored. The image runs as UID 10001, but Chrome's internal sandbox is disabled. The Temurin base image is pinned by digest; apt packages are not pinned to a snapshot, so a later uncached build may differ. v1.3.0 is not published.
