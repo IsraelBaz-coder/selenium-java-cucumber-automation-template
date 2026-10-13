@@ -4,6 +4,8 @@
 
 **Latest published release:** v1.2.0 (October 8, 2026). Stable / Validated / Published.
 
+**Candidate:** v1.3.0 — Release Candidate / Pending Publication; target date 2026-10-12 UTC.
+
 ## Purpose and architecture
 
 SLF4J 2.0.20 is the logging API in the hooks and driver lifecycle. Logback 1.6.5 supplies the test runtime implementation through `src/test/resources/logback-test.xml`. It writes INFO and higher to the console and `build/logs/automation.log`. Gradle displays test output; CI uploads available logs in `test-evidence`. `clean` removes logs along with other generated files.

@@ -4,6 +4,8 @@
 
 **Última versión publicada:** v1.2.0 (8 de octubre de 2026). Estado: Stable / Validated / Published.
 
+**Candidata:** v1.3.0 — Release Candidate / Pending Publication; fecha objetivo 2026-10-12 UTC.
+
 ## Propósito y arquitectura
 
 El logging permite reconstruir qué ocurrió en cada escenario y en el WebDriver cuando una prueba falla o se ejecuta en CI/CD. El código usa la fachada SLF4J 2.0.20 para que Hooks y driver dependan de una API común, sin configurar la salida en cada clase. Logback 1.6.5 es el proveedor de SLF4J durante las pruebas: centraliza niveles, formato y destinos en `src/test/resources/logback-test.xml`, sin configuración programática ni cambios en los Page Objects o Step Definitions.

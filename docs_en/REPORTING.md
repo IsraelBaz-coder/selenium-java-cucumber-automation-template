@@ -4,6 +4,8 @@
 
 **Latest published release:** v1.2.0 (October 8, 2026). Stable / Validated / Published.
 
+**Candidate:** v1.3.0 — Release Candidate / Pending Publication; target date 2026-10-12 UTC.
+
 ## Purpose and output contract
 
 The JUnit Platform runner uses Cucumber's native `pretty`, `html`, and `json` plugins; Gradle and Logback provide their own output. No external reporting dependency or historical dashboard is implemented.

@@ -24,11 +24,14 @@ v1.0.1 = Hardening + CI/CD Readiness
 v1.0.2 = Documentation-only Hotfix, Stable / Validated / Published
 v1.1.0 = previous published stable release (October 1, 2026); Milestone 3 and Blocks 1–4 Completed / Validated
 v1.2.0 = latest published release (October 8, 2026, 06:19:01 UTC); Stable / Validated / Published
+v1.3.0 = Release Candidate / Pending Publication; target 2026-10-12 UTC; not published
 ```
 
 `v1.0.1` was published on 2026-09-25 UTC. `v1.0.2` was published on 2026-09-26 UTC as a documentation-only PATCH. `v1.0.0` was published on 2026-09-18 UTC. `v1.2.0` is the current published stable version.
 
 `v1.1.0` completed Milestone 3: the GitHub Actions workflow, local smoke-test fixture, evidence artifacts, Gradle caching, and required `quality-gate`. Its historical validation covered PASS, controlled FAIL, evidence, restoration, merge, and post-merge PASS. `v1.1.0` was published on October 1, 2026. Milestone 4 added SLF4J/Logback logging, automatic failure evidence, reporting, and release hardening. The [v1.2.0 GitHub Release](https://github.com/IsraelBaz-coder/selenium-java-cucumber-automation-template/releases/tag/v1.2.0) was published on October 8, 2026 at 06:19:01 UTC.
+
+The 2026-10-12 value is the v1.3.0 target. Only the `published_at` timestamp of a real GitHub Release can establish its official publication date.
 
 ## Version documentation closeout gate
 

@@ -4,11 +4,14 @@
 
 Versión publicada: **v1.2.0**, 8 de octubre de 2026, 06:19:01 UTC ([GitHub Release](https://github.com/IsraelBaz-coder/selenium-java-cucumber-automation-template/releases/tag/v1.2.0)).
 
+Versión candidata: **v1.3.0 — Docker & CI Integration**, Release Candidate / Pending Publication. Fecha objetivo: **2026-10-12 UTC**; no equivale a publicación real.
+
 | Tema | Documento |
 |---|---|
 | Imagen Docker y uso | [Docker](DOCKER.md) |
 | Deuda técnica: TECH-001 OPEN, TECH-002 CLOSED | [Registro](TECHNICAL_DEBT.md) |
 | Diagnóstico y validación del Bloque 3 | [Auditoría local](HITO5_BLOCK3_AUDIT.md) |
+| Preparación integral de v1.3.0 | [Hito 5, Bloque 4](HITO5_BLOCK4_RELEASE_PREPARATION.md) |
 | Guía de uso y Java/Gradle/Cucumber/Selenium/POM | [Guía](GUIA_USO_TEMPLATE_AUTOMATIZACION.md) |
 | Capas y flujo | [Arquitectura](ARCHITECTURE.md) |
 | Logging y diagramas | [Logging](LOGGING.md) |

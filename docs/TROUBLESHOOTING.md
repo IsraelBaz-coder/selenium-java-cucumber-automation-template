@@ -4,6 +4,8 @@
 
 **Última versión publicada:** v1.2.0 (8 de octubre de 2026). Estado: Stable / Validated / Published.
 
+**Candidata:** v1.3.0 — Release Candidate / Pending Publication; fecha objetivo 2026-10-12 UTC.
+
 | Síntoma | Causa probable | Solución |
 |---|---|---|
 | `java` no reconocido | JDK/Path incorrecto | Instale JDK 21 o 17, reinicie PowerShell y valide `java -version`. |

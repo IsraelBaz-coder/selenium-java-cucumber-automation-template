@@ -2,7 +2,7 @@
 
 [English](../docs_en/DOCKER.md) · [Índice](README.md) · [Deuda técnica](TECHNICAL_DEBT.md)
 
-**Estado:** Docker es una capacidad en desarrollo para v1.3.0; la última release oficial sigue siendo v1.2.0. El Bloque 3 se valida localmente en `feature/hito-5-docker-hardening`; el workflow modificado requiere una ejecución real de GitHub Actions en un PR.
+**Estado:** Docker forma parte de la candidata v1.3.0, con estado Release Candidate / Pending Publication y fecha objetivo 2026-10-12 UTC. v1.2.0 sigue siendo la última release publicada. El PR de hardening y el push posterior a `main` completaron `quality-gate` y `docker-tests` con éxito y produjeron ambos artifacts de evidencia.
 
 ## Descargar el proyecto desde GitHub
 
@@ -21,7 +21,7 @@
    git branch -r
    ~~~
 
-3. Seleccione una referencia con Docker, como `main`. Para revisar Bloque 3 antes de integrarlo, seleccione `feature/hito-5-docker-hardening` cuando esté disponible en el remoto. Confirme que la referencia elegida contenga los tres archivos antes de continuar:
+3. Seleccione una referencia que incluya Docker, como `main` o la rama de preparación de v1.3.0. Confirme que la referencia elegida contenga los tres archivos antes de continuar:
 
    ~~~powershell
    Test-Path .\Dockerfile
@@ -30,7 +30,7 @@
    git check-attr eol -- gradlew
    ~~~
 
-   Los tres `Test-Path` deben devolver `True` y Git debe mostrar `gradlew: eol: lf`. La corrección desde `d173e7d` forma parte de `main`. Para revisar el Bloque 3 antes de integrarlo, use `feature/hito-5-docker-hardening` cuando esté disponible en el remoto.
+   Los tres `Test-Path` deben devolver `True` y Git debe mostrar `gradlew: eol: lf`. La corrección desde `d173e7d` forma parte de `main`.
 
 4. Con Docker Desktop activo, **construya la imagen localmente** con `docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .`. Luego **ejecute las pruebas** y conserve los resultados en Windows:
 
@@ -178,10 +178,10 @@ Test-Path .\build\logs\automation.log
 
 ## Docker en GitHub Actions
 
-El workflow `.github/workflows/ci.yml` se activa en pull requests hacia `main` y pushes a `main`. `quality-gate` conserva la ejecución Gradle con Java 21. El nuevo job `docker-tests` construye la imagen local con el Dockerfile existente y ejecuta las pruebas Selenium/Cucumber en Chrome headless. Tiene un límite de 35 minutos; la ejecución del contenedor, 15 minutos. El contenedor tiene 2 GiB de memoria compartida para Chrome. No se envía ninguna imagen a un registro.
+El workflow `.github/workflows/ci.yml` se activa en pull requests hacia `main` y pushes a `main`. `quality-gate` conserva la ejecución Gradle con Java 21. El job `docker-tests` construye la imagen local con el Dockerfile existente y ejecuta las pruebas Selenium/Cucumber en Chrome headless. Tiene un límite de 35 minutos; la ejecución del contenedor, 15 minutos. El contenedor tiene 2 GiB de memoria compartida para Chrome. No se envía ninguna imagen a un registro.
 
 El job guarda `docker-artifacts/container.log` y copia únicamente `build/reports/tests/test/`, `build/reports/cucumber/`, `build/test-results/test/`, `build/logs/` y `build/evidence/screenshots/` cuando existen. No sube clases, cachés ni temporales. Las capturas son opcionales; si la suite pasa y falta una evidencia obligatoria, falla el job. Se intenta subir `docker-test-evidence` con `if: always()` incluso si build o tests fallan; si no hay archivos, no aparece el artifact. El código de salida de una suite fallida se conserva. El artifact dura 14 días. Revise reportes y logs antes de compartir: pueden contener datos de la aplicación probada.
 
-Para consultar el resultado en GitHub: abra **Pull requests → su PR → Checks** y seleccione `quality-gate` o `docker-tests` → **Details**. Expanda **Build test image** o **Run headless tests and collect evidence** para leer el error y el log. También puede abrir **Actions → CI → ejecución**; confirme rama, commit y estado, seleccione cada job y revise sus pasos. En el resumen de esa ejecución, bajo **Artifacts**, descargue `test-evidence` o `docker-test-evidence` cuando existan. Descomprima el ZIP para leer `container.log` y `build/reports/`, `build/test-results/`, `build/logs/` y `build/evidence/`. Un fallo previo a las pruebas puede producir solamente un log o ningún artifact. El nuevo job se validará en GitHub cuando exista una ejecución real del PR; una prueba local no acredita ese resultado.
+Para consultar el resultado en GitHub: abra **Pull requests → su PR → Checks** y seleccione `quality-gate` o `docker-tests` → **Details**. Expanda **Build test image** o **Run headless tests and collect evidence** para leer el error y el log. También puede abrir **Actions → CI → ejecución**; confirme rama, commit y estado, seleccione cada job y revise sus pasos. En el resumen de esa ejecución, bajo **Artifacts**, descargue `test-evidence` o `docker-test-evidence` cuando existan. Descomprima el ZIP para leer `container.log` y `build/reports/`, `build/test-results/`, `build/logs/` y `build/evidence/`. Un fallo previo a las pruebas puede producir solamente un log o ningún artifact. La validación registrada del PR y de `main` confirmó ambos jobs y artifacts; cada cambio futuro debe volver a validarse en su propio PR.
 
-**Estado Bloque 3:** build y prueba Docker locales pasaron con 6/6 pruebas y un escenario. [TECH-001 sigue OPEN y TECH-002 quedó CLOSED](TECHNICAL_DEBT.md). Una prueba de retirar `--no-sandbox` hizo fallar la creación de sesión Chrome; el flag se restauró. La imagen ejecuta como UID 10001, pero Chrome no usa su sandbox interno. La imagen base Temurin está fijada por digest; los paquetes apt no están fijados a un snapshot, por lo que un build sin caché futuro puede variar. Se mantienen las versiones actuales para evitar cambios arbitrarios. `v1.3.0` sigue en desarrollo y la ejecución de CI en GitHub está pendiente de PR.
+**Estado de validación:** build y prueba Docker locales pasaron con 6/6 pruebas y un escenario; el PR y `main` registraron `quality-gate` y `docker-tests` exitosos. [TECH-001 sigue OPEN y TECH-002 quedó CLOSED](TECHNICAL_DEBT.md). Una prueba de retirar `--no-sandbox` hizo fallar la creación de sesión Chrome; el flag se restauró. La imagen ejecuta como UID 10001, pero Chrome no usa su sandbox interno. La imagen base Temurin está fijada por digest; los paquetes apt no están fijados a un snapshot, por lo que un build sin caché futuro puede variar. v1.3.0 aún no está publicada.
