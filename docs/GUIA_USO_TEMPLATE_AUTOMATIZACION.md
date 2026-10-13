@@ -2,7 +2,7 @@
 
 [English](../docs_en/GUIA_USO_TEMPLATE_AUTOMATIZACION.md) · [Índice](README.md)
 
-<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>v1.3.0 · Release Candidate / Pending Publication · fecha objetivo 12/10/2026 UTC (2026-10-12)<br>Última versión publicada: v1.2.0<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
+<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Template reutilizable de automatización Web UI<br>v1.3.0 · Stable / Validated / Published · fecha de publicación 13/10/2026 UTC (2026-10-13)<br>Última versión publicada: v1.3.0<br>Java 21 (predeterminado) / Java 17 (compatible) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
 
 ## Índice
 
@@ -47,13 +47,13 @@ No es necesario conocer este repositorio. Para avanzar con seguridad, siga las s
 
 ## Estado e historial de la release
 
-**Estado técnico y documental.** v1.3.0 está en Release Candidate / Pending Publication con fecha objetivo 2026-10-12 UTC e incorpora Docker, integración CI y [evidencias automáticas](EVIDENCE.md). v1.2.0 continúa como última versión publicada desde el 8 de octubre de 2026.
+**Estado técnico y documental.** v1.3.0 está Stable / Validated / Published desde el 13 de octubre de 2026 UTC (ISO: 2026-10-13) e incorpora Docker, integración CI y [evidencias automáticas](EVIDENCE.md). v1.2.0 es la versión publicada anterior.
 
-En el historial, v1.0.2 fue una release publicada: **Documentation-only Hotfix**, Stable / Validated / Published el 26 de septiembre de 2026. Corrige inconsistencias documentales de estado post-release sin cambios funcionales ni de dependencias. La versión estable publicada actualmente es v1.2.0. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM.
+En el historial, v1.0.2 fue una release publicada: **Documentation-only Hotfix**, Stable / Validated / Published el 26 de septiembre de 2026. Corrige inconsistencias documentales de estado post-release sin cambios funcionales ni de dependencias. La versión estable publicada actualmente es v1.3.0. Los valores propios de cada aplicación —por ejemplo, URL, navegador, datos y secretos administrados externamente— deben configurarse mediante propiedades, variables de entorno o parámetros de JVM.
 
 | Versión | Fecha / publicación | Tipo | Estado | Cambios principales |
 |---|---|---|---|---|
-| v1.3.0 | Objetivo 12 de octubre de 2026 UTC | Release candidata | Release Candidate / Pending Publication | Docker, integración CI, hardening y evidencias; aún no publicada. |
+| v1.3.0 | 13 de octubre de 2026 UTC | Release estable | Stable / Validated / Published | Docker, integración CI, hardening y evidencias. |
 | v1.2.0 | 8 de octubre de 2026 | Release estable | Stable / Validated / Published | Logging con SLF4J/Logback, evidencias automáticas y reporting Cucumber HTML/JSON. Véase [Reporting](REPORTING.md). |
 | v1.1.0 | 1 de octubre de 2026 | Release estable | Stable / Validated / Published | CI, evidencias, caché Gradle, Quality Gate, Branch Protection y documentación operativa validados. |
 | v1.0.2 | 26 de septiembre de 2026 | Documentation-only Hotfix | Stable / Validated / Published | Corrección de inconsistencias de estado post-release; no incluye cambios funcionales, dependencias, CI/CD, Docker, Selenium Grid, Healenium ni Playwright. |
@@ -252,7 +252,7 @@ docker run --rm selenium-java-cucumber-template:1.3.0-dev chromedriver --version
 docker run --rm selenium-java-cucumber-template:1.3.0-dev
 ~~~
 
-El resultado esperado es BUILD SUCCESSFUL y el escenario Example Domain PASSED. `--progress=plain` muestra los pasos del build, `-t` asigna la etiqueta y `--rm` borra el contenedor temporal. [TECH-001](TECHNICAL_DEBT.md) registra la advertencia CDP que sigue OPEN; TECH-002 quedó CLOSED tras corregir el selector de Cucumber. Sin montaje, `build/` desaparece al eliminar el contenedor; la [guía Docker](DOCKER.md) documenta el bind mount y el diagnóstico. En CI, `docker-tests` usa `docker cp` sólo para reportes, XML, logs y capturas disponibles. La última release publicada sigue siendo v1.2.0; v1.3.0 está en desarrollo.
+El resultado esperado es BUILD SUCCESSFUL y el escenario Example Domain PASSED. `--progress=plain` muestra los pasos del build, `-t` asigna la etiqueta y `--rm` borra el contenedor temporal. [TECH-001](TECHNICAL_DEBT.md) registra la advertencia CDP que sigue OPEN; TECH-002 quedó CLOSED tras corregir el selector de Cucumber. Sin montaje, `build/` desaparece al eliminar el contenedor; la [guía Docker](DOCKER.md) documenta el bind mount y el diagnóstico. En CI, `docker-tests` usa `docker cp` sólo para reportes, XML, logs y capturas disponibles. La última release publicada es v1.3.0; v1.3.0 está publicada desde el 13 de octubre de 2026 UTC.
 
 ## Primera automatización
 
@@ -404,7 +404,7 @@ Ana crea `feature/ajuste-page`, modifica un Page Object, prueba localmente, hace
 
 La validación de CI realizada para v1.1.0 comprobó la secuencia **PASS inicial → FAIL controlado → bloqueo del merge por `quality-gate` → `test-evidence` disponible → restauración → PASS → merge → PASS post-merge en `main`**. Las evidencias se publicaron tanto en PASS como en FAIL. No quedó el fallo controlado en `main`.
 
-**v1.1.0:** versión publicada anterior (1 de octubre de 2026). **v1.2.0:** **Stable / Validated / Published** desde el 8 de octubre de 2026.
+**v1.2.0:** versión publicada anterior (8 de octubre de 2026). **v1.3.0:** **Stable / Validated / Published** desde el 13 de octubre de 2026 UTC.
 
 ## Regeneración del manual
 

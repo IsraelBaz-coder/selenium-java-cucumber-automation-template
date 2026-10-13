@@ -2,7 +2,7 @@
 
 [Español](../docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md) · [English index](README.md)
 
-<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Reusable Web UI automation template<br>v1.3.0 · Release Candidate / Pending Publication · target 12/10/2026 UTC (2026-10-12)<br>Latest published release: v1.2.0<br>Java 21 (default) / Java 17 (supported) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
+<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Reusable Web UI automation template<br>v1.3.0 · Stable / Validated / Published · publication date 13/10/2026 UTC (2026-10-13)<br>Latest published release: v1.3.0<br>Java 21 (default) / Java 17 (supported) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
 
 ## Contents
 
@@ -25,7 +25,7 @@
 
 This template provides a reusable Web UI test foundation: Java, Selenium WebDriver, Cucumber/Gherkin, JUnit Platform, Gradle Wrapper, and Page Object Model. Its neutral smoke test opens `src/test/resources/fixtures/example_page.html` and checks the Example Domain heading. The fixture is local; `baseUrl` remains available when adapting the template to an application.
 
-**Current state:** v1.3.0 is Release Candidate / Pending Publication with a 2026-10-12 UTC target date and includes Docker, CI integration, and automatic [evidence](EVIDENCE.md). [v1.2.0](https://github.com/IsraelBaz-coder/selenium-java-cucumber-automation-template/releases/tag/v1.2.0), published October 8, 2026 at 06:19:01 UTC, remains the latest published release.
+**Current release:** [v1.3.0](https://github.com/IsraelBaz-coder/selenium-java-cucumber-automation-template/releases/tag/v1.3.0) is Stable / Validated / Published as of October 13, 2026 UTC (ISO: 2026-10-13) and includes Docker, CI integration, and automatic [evidence](EVIDENCE.md). v1.2.0 is the previous published release.
 
 ### Before you begin
 
@@ -41,11 +41,11 @@ Run all commands from the project root and replace example paths with your own. 
 
 ### Release history
 
-Application-specific URL, browser, test data, and externally managed secrets belong in properties, environment variables, or JVM arguments. v1.3.0 is Release Candidate / Pending Publication with a 2026-10-12 UTC target date; v1.2.0 remains the latest published stable release.
+Application-specific URL, browser, test data, and externally managed secrets belong in properties, environment variables, or JVM arguments. v1.3.0 is Stable / Validated / Published with a 2026-10-13 UTC publication date; v1.3.0 is the latest published stable release.
 
 | Version | Date | Type and status | Main changes |
 |---|---|---|---|
-| v1.3.0 | Target October 12, 2026 UTC | Release Candidate / Pending Publication | Docker, CI integration, hardening, and evidence; not published. |
+| v1.3.0 | October 13, 2026 UTC | Stable / Validated / Published | Docker, CI integration, hardening, and evidence. |
 | v1.2.0 | October 8, 2026 | Stable / Validated / Published | SLF4J/Logback logging, automatic failure evidence, Cucumber HTML/JSON reporting. |
 | v1.1.0 | October 1, 2026 | Stable / Validated / Published | Validated CI, evidence, Gradle cache, Quality Gate, Branch Protection, and operational documentation. |
 | v1.0.2 | September 26, 2026 | Documentation-only Hotfix; Stable / Validated / Published | Corrected post-release status; this release did not add functionality, dependencies, CI/CD, Docker, Selenium Grid, Healenium, or Playwright. |
@@ -143,7 +143,7 @@ docker run --rm selenium-java-cucumber-template:1.3.0-dev chromedriver --version
 docker run --rm selenium-java-cucumber-template:1.3.0-dev
 ~~~
 
-Expect BUILD SUCCESSFUL and Example Domain PASSED. `--progress=plain` displays build steps, `-t` names the image, and `--rm` deletes the temporary container. [TECH-001](TECHNICAL_DEBT.md) tracks the CDP warning that remains OPEN; TECH-002 is CLOSED after correcting the Cucumber selector. Without a mount, `build/` disappears with the container; the [Docker guide](DOCKER.md) covers the bind mount and troubleshooting. In CI, `docker-tests` uses `docker cp` only for reports, XML, logs, and available screenshots. v1.2.0 remains the latest published release; v1.3.0 is in development.
+Expect BUILD SUCCESSFUL and Example Domain PASSED. `--progress=plain` displays build steps, `-t` names the image, and `--rm` deletes the temporary container. [TECH-001](TECHNICAL_DEBT.md) tracks the CDP warning that remains OPEN; TECH-002 is CLOSED after correcting the Cucumber selector. Without a mount, `build/` disappears with the container; the [Docker guide](DOCKER.md) covers the bind mount and troubleshooting. In CI, `docker-tests` uses `docker cp` only for reports, XML, logs, and available screenshots. v1.3.0 is the latest published release; v1.3.0 was published on October 13, 2026 UTC.
 
 ## First automation and reuse
 
@@ -340,7 +340,7 @@ Branch Protection limits integration into main. The documented ruleset requires 
 
 Ana creates feature/page-change, edits a Page Object, tests locally, commits, pushes, and opens a PR. Actions starts quality-gate. On Success, a reviewer may merge once all rules are met. On Failure, she reads Details and test-evidence, fixes the branch, reruns tests, commits, and pushes; the PR and check update.
 
-The v1.1.0 CI validation recorded **initial PASS → controlled FAIL → quality-gate blocking merge → test-evidence available → restoration → PASS → merge → post-merge PASS on main**. Evidence was available in PASS and FAIL; the controlled failure was not left on main. v1.1.0 was published October 1, 2026, and v1.2.0 has been Stable / Validated / Published since October 8, 2026.
+The v1.1.0 CI validation recorded **initial PASS → controlled FAIL → quality-gate blocking merge → test-evidence available → restoration → PASS → merge → post-merge PASS on main**. Evidence was available in PASS and FAIL; the controlled failure was not left on main. v1.1.0 was published October 1, 2026, and v1.2.0 was the previous published release; v1.3.0 has been Stable / Validated / Published since October 13, 2026 UTC.
 
 ## Full glossary and report generation
 

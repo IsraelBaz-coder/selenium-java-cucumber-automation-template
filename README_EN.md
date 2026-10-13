@@ -6,17 +6,15 @@ Reusable Web UI test template based on Java 21, Selenium WebDriver, Cucumber BDD
 
 | Release | Value |
 |---|---|
-| Published stable version | **v1.2.0** |
-| Current release | **v1.2.0 — Stable / Validated / Published** |
-| v1.2.0 status | **Stable / Validated / Published** |
-| v1.2.0 publication date | **October 8, 2026** |
-| Release candidate | **v1.3.0 — Docker & CI Integration** |
-| v1.3.0 status | **Release Candidate / Pending Publication** |
-| Target date | **2026-10-12 UTC; not an actual publication date** |
+| Published stable version | **v1.3.0** |
+| Current release | **v1.3.0 — Docker & CI Integration** |
+| v1.3.0 status | **Stable / Validated / Published** |
+| v1.3.0 publication date | **October 13, 2026 UTC** |
+| GitHub `published_at` | **2026-10-13T04:56:27Z** |
 
-v1.2.0 is the latest published release (October 8, 2026). It includes SLF4J/Logback logging, automatic failure evidence and Cucumber HTML/JSON reports. Its status is **Stable / Validated / Published**. See the [audit report](docs_en/HITO4_RELEASE_AUDIT.md) for validation results.
+v1.3.0 is the latest published release as of October 13, 2026 UTC; its status is **Stable / Validated / Published**. v1.2.0 remains in the history as the previous published release.
 
-Final candidate validation confirmed `BUILD SUCCESSFUL` locally with `headless=true` and `headless=false` using `--offline`; the Cucumber scenario finished PASSED. The earlier Docker validation remains 6/6 tests. Local CDP 153 → 152 and Docker CDP 155 → 152 warnings were observed; the Cucumber/JUnit selector warning did not reappear.
+Final release validation confirmed `BUILD SUCCESSFUL` locally with `headless=true` and `headless=false` using `--offline`; the Cucumber scenario finished PASSED. The earlier Docker validation remains 6/6 tests. Local CDP 153 → 152 and Docker CDP 155 → 152 warnings were observed; the Cucumber/JUnit selector warning did not reappear.
 
 | Document information | Value |
 |---|---|
@@ -97,7 +95,7 @@ Hooks log scenario start, finish and status; `DriverFactory` and `DriverManager`
 
 ## Browsers, URL and Cucumber
 
-The v1.3.0 candidate includes Java 21, Chrome and ChromeDriver 155 for Linux amd64, and uses the Gradle Wrapper. On Windows, start Docker Desktop with WSL2 and its Linux engine; from the repository root run `docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .` and `docker run --rm selenium-java-cucumber-template:1.3.0-dev`. Recorded validation confirmed the build, Docker run, and 6/6 tests; TECH-001 remains OPEN and TECH-002 is CLOSED. Chrome still needs `--no-sandbox`; the base image is pinned by digest, while apt packages may vary across uncached builds. v1.2.0 remains the latest published release.
+The published v1.3.0 release includes Java 21, Chrome and ChromeDriver 155 for Linux amd64, and uses the Gradle Wrapper. On Windows, start Docker Desktop with WSL2 and its Linux engine; from the repository root run `docker build --progress=plain -t selenium-java-cucumber-template:1.3.0-dev .` and `docker run --rm selenium-java-cucumber-template:1.3.0-dev`. Recorded validation confirmed the build, Docker run, and 6/6 tests; TECH-001 remains OPEN and TECH-002 is CLOSED. Chrome still needs `--no-sandbox`; the base image is pinned by digest, while apt packages may vary across uncached builds. v1.3.0 is the latest published release.
 
 Chrome is the default browser. Use `-Dbrowser=EDGE` for Edge and `-DbaseUrl=https://your-application` for a temporary URL. Use Cucumber tags such as `@smoke` with `-Dcucumber.filter.tags=@smoke` to select scenarios.
 
@@ -147,9 +145,9 @@ For the versioning policy and repeatable release procedure, see [Versioning](doc
 
 ## Release history
 
-### v1.3.0 — candidate, target 2026-10-12 UTC
+### v1.3.0 — published 2026-10-13 UTC
 
-**Release Candidate / Pending Publication.** Dockerization, `docker-tests` integration, hardening, and focused evidence collection. The date is a target; v1.2.0 remains the latest published release.
+**Stable / Validated / Published.** Dockerization, `docker-tests` integration, hardening, and focused evidence collection. GitHub confirms publication at 2026-10-13T04:56:27Z.
 
 ### v1.2.0 - October 8, 2026
 
