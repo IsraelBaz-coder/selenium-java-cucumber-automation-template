@@ -4,7 +4,7 @@
 
 This procedure keeps releases repeatable and traceable. It documents future actions; it does not create a release by itself.
 
-The current candidate is **v1.3.0 — Docker & CI Integration**, Stable / Validated / Published, with a **2026-10-13 UTC** publication date. The publication date does not establish publication; v1.3.0 is the latest published release.
+The **v1.3.0 — Docker & CI Integration** release is officially published with **Stable / Validated / Published** status, as confirmed by GitHub `published_at`: **2026-10-13T04:56:27Z**.
 
 ## 1. Work on a branch
 
@@ -70,7 +70,7 @@ Exact post-merge order:
 1. Confirm that `main` contains the approved commit and that `quality-gate` and `docker-tests` passed.
 2. Create and publish the authorized tag and GitHub Release named `v1.3.0 — Docker & CI Integration`. Do not attach the candidate PDFs.
 3. Confirm that GitHub exposes `published_at`, then run `git fetch --tags` so the tag exists locally.
-4. Identify the full SHA of the commit authorized by the merge. Run `python scripts/finalize_release_docs.py finalize --date 2026-10-13 --expected-commit <AUTHORIZED_SHA>`. It reads the real GitHub Release, rejects drafts and prereleases, validates the release name and tag, compares `published_at` with October 12 UTC, and checks that the tag points to the authorized commit. It then updates the current README files, changelog, and ES/EN technical documentation, and regenerates both PDFs as Stable / Validated / Published. If GitHub records a different UTC day, it reports the discrepancy and uses the confirmed actual date. It creates no commit, tag, release, or upload.
+4. Identify the full SHA of the commit authorized by the merge. Run `python scripts/finalize_release_docs.py finalize --date 2026-10-13 --expected-commit <AUTHORIZED_SHA>`. It reads the real GitHub Release, rejects drafts and prereleases, validates the release name and tag, checks the actual `published_at` date against the originally planned October 12 UTC date, and checks that the tag points to the authorized commit. It then updates the current README files, changelog, and ES/EN technical documentation, and regenerates both PDFs as Stable / Validated / Published. If GitHub records a different UTC day, it reports the discrepancy and uses the confirmed actual date. It creates no commit, tag, release, or upload.
 5. Run `python scripts/validate_docs.py` and `python scripts/finalize_release_docs.py postrelease --date 2026-10-13 --expected-commit <AUTHORIZED_SHA>`. Visually inspect both PDF covers and version histories.
 6. Integrate the post-release diff through the mechanism allowed by `main` protection. If `main` requires a Pull Request, this integration requires a PR; do not bypass the ruleset or declare Published before GitHub.
 7. Upload only the finalized PDFs: `gh release upload v1.3.0 docs/Manual_Template_Automatizacion_Selenium_Java_Cucumber.pdf docs_en/Manual_Selenium_Java_Cucumber_Automation_Template.pdf --clobber`.

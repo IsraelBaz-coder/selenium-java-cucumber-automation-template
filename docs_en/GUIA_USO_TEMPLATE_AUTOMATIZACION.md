@@ -2,7 +2,7 @@
 
 [Español](../docs/GUIA_USO_TEMPLATE_AUTOMATIZACION.md) · [English index](README.md)
 
-<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Reusable Web UI automation template<br>v1.3.0 · Stable / Validated / Published · target 13/10/2026 UTC (2026-10-13)<br>Latest published release: v1.3.0<br>Java 21 (default) / Java 17 (supported) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
+<p align="center"><strong>Automation Template Selenium Java Cucumber</strong><br>Reusable Web UI automation template<br>v1.3.0 · Stable / Validated / Published · publication date 13/10/2026 UTC (2026-10-13)<br>Latest published release: v1.3.0<br>Java 21 (default) / Java 17 (supported) · Selenium 4.48.0 · Cucumber 7.34.7 · JUnit 5.13.4 · Gradle 8.14.5</p>
 
 ## Contents
 

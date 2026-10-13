@@ -72,7 +72,7 @@ Instale **Extension Pack for Java**, **Gradle for Java**, **Cucumber (Gherkin) F
 
 Java 21 es el valor predeterminado de la configuración actual. Las únicas toolchains admitidas son Java 17 y Java 21, seleccionadas mediante la propiedad Gradle `javaVersion`:
 
-| Publicada | PowerShell |
+| Objetivo | PowerShell |
 |---|---|
 | Java predeterminado (21) | `.\gradlew.bat clean test` |
 | Usar Java 17 | `.\gradlew.bat clean test -PjavaVersion=17` |
@@ -88,7 +88,7 @@ Para la instalación, configuración de `JAVA_HOME`, VS Code, validación y regr
 
 El smoke test interno usa la fixture local; `baseUrl` queda disponible para los Page Objects de una aplicación real y no cambia esta prueba de ejemplo.
 
-| Publicada | PowerShell |
+| Objetivo | PowerShell |
 |---|---|
 | Limpiar | `.\gradlew.bat clean` |
 | Ejecutar | `.\gradlew.bat test` |
