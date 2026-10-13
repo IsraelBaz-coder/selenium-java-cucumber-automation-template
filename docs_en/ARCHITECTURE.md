@@ -2,7 +2,7 @@
 
 [Español](../docs/ARCHITECTURE.md) · [English index](README.md)
 
-**Latest published release:** v1.2.0 (October 8, 2026). Stable / Validated / Published.
+**Latest published release:** v1.3.0 (October 13, 2026 UTC; ISO: 2026-10-13). Stable / Validated / Published.
 
 ## Layers and responsibilities
 
@@ -29,4 +29,4 @@ flowchart TD
   H --> R[Reports and screenshots]
 ```
 
-JUnit Platform discovers the runner; Cucumber calls `@Before`; `DriverManager` creates a driver per thread; steps call pages; `@After` records eligible failure evidence before closing the browser. Steps hold no locators, pages hold no scenario assertions, and hooks hold no business logic. Configuration precedence is JVM `-D`, environment, then `config.properties`. See [logging](LOGGING.md), [evidence](EVIDENCE.md), and [reporting](REPORTING.md). Docker was not part of published v1.2.0; the v1.3.0 candidate image is described in [Docker](DOCKER.md). The candidate is Pending Publication with a 2026-10-12 UTC target date. Grid and Healenium are not implemented.
+JUnit Platform discovers the runner; Cucumber calls `@Before`; `DriverManager` creates a driver per thread; steps call pages; `@After` records eligible failure evidence before closing the browser. Steps hold no locators, pages hold no scenario assertions, and hooks hold no business logic. Configuration precedence is JVM `-D`, environment, then `config.properties`. See [logging](LOGGING.md), [evidence](EVIDENCE.md), and [reporting](REPORTING.md). Docker was not part of published v1.2.0; the published v1.3.0 release image is described in [Docker](DOCKER.md). v1.3.0 is published with a 2026-10-13 UTC publication date. Grid and Healenium are not implemented.

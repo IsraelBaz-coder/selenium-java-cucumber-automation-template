@@ -2,7 +2,7 @@
 
 [English](../docs_en/TECHNICAL_DEBT.md) · [Índice](README.md)
 
-Registro aplicable a la candidata v1.3.0 — Release Candidate / Pending Publication; fecha objetivo 2026-10-12 UTC.
+Registro aplicable a v1.3.0 — Stable / Validated / Published; publicada 13 de octubre de 2026 UTC (ISO: 2026-10-13).
 
 ## TECH-001 — Compatibilidad Selenium CDP
 

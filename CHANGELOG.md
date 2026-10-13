@@ -6,9 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 Release heading dates use the official GitHub Release `published_at` calendar day in UTC.
 
-## [1.3.0] — Release Candidate / Pending Publication
+## [1.3.0] - 2026-10-13
 
-Target publication date: **2026-10-12 UTC**. This is a planning value and does not assert that v1.3.0 has been published. v1.2.0 remains the latest published release.
+The v1.3.0 GitHub Release was published at **2026-10-13T04:56:27Z** with status **Stable / Validated / Published**. v1.2.0 is the previous published release.
 
 ### Implemented
 

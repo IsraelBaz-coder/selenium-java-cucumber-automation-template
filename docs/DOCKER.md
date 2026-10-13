@@ -2,7 +2,7 @@
 
 [English](../docs_en/DOCKER.md) · [Índice](README.md) · [Deuda técnica](TECHNICAL_DEBT.md)
 
-**Estado:** Docker forma parte de la candidata v1.3.0, con estado Release Candidate / Pending Publication y fecha objetivo 2026-10-12 UTC. v1.2.0 sigue siendo la última release publicada. El PR de hardening y el push posterior a `main` completaron `quality-gate` y `docker-tests` con éxito y produjeron ambos artifacts de evidencia.
+**Estado:** Docker forma parte de la versión publicada v1.3.0, con estado Stable / Validated / Published y fecha de publicación 2026-10-13 UTC. v1.3.0 es la última release publicada. El PR de hardening y el push posterior a `main` completaron `quality-gate` y `docker-tests` con éxito y produjeron ambos artifacts de evidencia.
 
 ## Descargar el proyecto desde GitHub
 

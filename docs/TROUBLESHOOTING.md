@@ -2,9 +2,9 @@
 
 [English](../docs_en/TROUBLESHOOTING.md) · [Índice](README.md)
 
-**Última versión publicada:** v1.2.0 (8 de octubre de 2026). Estado: Stable / Validated / Published.
+**Última versión publicada:** v1.3.0 (13 de octubre de 2026 UTC; ISO: 2026-10-13). Estado: Stable / Validated / Published.
 
-**Candidata:** v1.3.0 — Release Candidate / Pending Publication; fecha objetivo 2026-10-12 UTC.
+**Versión publicada:** v1.3.0 — Stable / Validated / Published; publicada 13 de octubre de 2026 UTC (ISO: 2026-10-13).
 
 | Síntoma | Causa probable | Solución |
 |---|---|---|

@@ -2,7 +2,7 @@
 
 [Español](../docs/DOCKER.md) · [Index](README.md) · [Technical debt](TECHNICAL_DEBT.md)
 
-**Status:** Docker is part of the v1.3.0 candidate, with Release Candidate / Pending Publication status and a 2026-10-12 UTC target date. v1.2.0 remains the latest published release. The hardening PR and subsequent `main` push completed `quality-gate` and `docker-tests` successfully and produced both evidence artifacts.
+**Status:** Docker is part of the published v1.3.0 release, with Stable / Validated / Published status and a 2026-10-13 UTC publication date. v1.3.0 is the latest published release. The hardening PR and subsequent `main` push completed `quality-gate` and `docker-tests` successfully and produced both evidence artifacts.
 
 ## Download the project from GitHub
 
@@ -184,4 +184,4 @@ The job saves `docker-artifacts/container.log` and copies only `build/reports/te
 
 To inspect results on GitHub, open **Pull requests → your PR → Checks**, select `quality-gate` or `docker-tests`, then **Details**. Expand **Build test image** or **Run headless tests and collect evidence** to read the error and log. Alternatively, open **Actions → CI → run**, confirm branch, commit, and status, then open each job and its steps. Under **Artifacts** in the run summary, download `test-evidence` or `docker-test-evidence` when available. Extract the ZIP to inspect `container.log` and `build/reports/`, `build/test-results/`, `build/logs/`, and `build/evidence/`. A failure before tests may yield only a log or no artifact. The recorded PR and `main` runs confirmed both jobs and artifacts; each future change must be validated again in its own PR.
 
-**Validation status:** the local Docker build and run passed with 6/6 tests and one scenario; the PR and `main` recorded successful `quality-gate` and `docker-tests` jobs. [TECH-001 remains OPEN and TECH-002 is CLOSED](TECHNICAL_DEBT.md). Removing `--no-sandbox` caused Chrome session creation to fail; the flag was restored. The image runs as UID 10001, but Chrome's internal sandbox is disabled. The Temurin base image is pinned by digest; apt packages are not pinned to a snapshot, so a later uncached build may differ. v1.3.0 is not published.
+**Validation status:** the local Docker build and run passed with 6/6 tests and one scenario; the PR and `main` recorded successful `quality-gate` and `docker-tests` jobs. [TECH-001 remains OPEN and TECH-002 is CLOSED](TECHNICAL_DEBT.md). Removing `--no-sandbox` caused Chrome session creation to fail; the flag was restored. The image runs as UID 10001, but Chrome's internal sandbox is disabled. The Temurin base image is pinned by digest; apt packages are not pinned to a snapshot, so a later uncached build may differ. v1.3.0 is published.

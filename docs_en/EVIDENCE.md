@@ -2,9 +2,9 @@
 
 [Español](../docs/EVIDENCE.md) · [English index](README.md)
 
-**Latest published release:** v1.2.0 (October 8, 2026). Stable / Validated / Published.
+**Latest published release:** v1.3.0 (October 13, 2026 UTC; ISO: 2026-10-13). Stable / Validated / Published.
 
-**Candidate:** v1.3.0 — Release Candidate / Pending Publication; target date 2026-10-12 UTC.
+**Published release:** v1.3.0 — Stable / Validated / Published; published October 13, 2026 UTC (ISO: 2026-10-13).
 
 On a failed Cucumber scenario, the `@After` hook calls `EvidenceManager` before quitting WebDriver if `screenshotOnFailure=true`. The manager requires an active `RemoteWebDriver` session and `TakesScreenshot`, saves PNG bytes, and calls `Scenario.attach(..., "image/png", "failure-screenshot")`. Passing scenarios produce no failure screenshot. Missing or closed drivers and capture failures generate warnings without replacing the original failure; attachment is still attempted if file storage fails.
 

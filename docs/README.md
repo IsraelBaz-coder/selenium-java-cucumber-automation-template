@@ -2,9 +2,9 @@
 
 [English technical documentation](../docs_en/README.md) · [README en español](../README_ES.md)
 
-Versión publicada: **v1.2.0**, 8 de octubre de 2026, 06:19:01 UTC ([GitHub Release](https://github.com/IsraelBaz-coder/selenium-java-cucumber-automation-template/releases/tag/v1.2.0)).
+Versión publicada: **v1.3.0 — Docker & CI Integration**, 13 de octubre de 2026 UTC ([GitHub Release](https://github.com/IsraelBaz-coder/selenium-java-cucumber-automation-template/releases/tag/v1.3.0)); **Stable / Validated / Published**; `published_at` 2026-10-13T04:56:27Z.
 
-Versión candidata: **v1.3.0 — Docker & CI Integration**, Release Candidate / Pending Publication. Fecha objetivo: **2026-10-12 UTC**; no equivale a publicación real.
+Versión publicada: **v1.3.0 — Docker & CI Integration**, Stable / Validated / Published. Fecha de publicación: **2026-10-13 UTC**; no equivale a publicación real.
 
 | Tema | Documento |
 |---|---|
